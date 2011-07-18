@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Entrypoint into the dotfiles configuration.
 
 # Setup the dotfile home dynamically
 if [ -s ~/.bashrc ];

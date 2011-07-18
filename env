@@ -1,4 +1,6 @@
-# Environment Configuration
+#!/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Configures the environment by setting commonly referenced environment variables.
 
 # Set default home for this configuration
 export DOTFILES_HOME=$BASE_CONFIG_PATH
