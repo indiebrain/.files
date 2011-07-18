@@ -11,7 +11,6 @@ fi
 
 # Setup Git
 GIT_CONFIG=$DOFILES_THIRD_PARTY_HOME/git
-echo $GIT_CONFIG
 if [ -f $GIT_CONFIG ];
    then source $GIT_CONFIG
 fi
