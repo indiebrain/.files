@@ -1,0 +1,8 @@
+# Environment Configuration
+
+# Set default home for this configuration
+export DOTFILES_HOME=$BASE_CONFIG_PATH
+export DOFILES_THIRD_PARTY_HOME=$DOTFILES_HOME/third_party
+
+# Setup the user's path
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH:~/.bin

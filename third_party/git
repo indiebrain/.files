@@ -1,0 +1,7 @@
+# Git Configurations
+
+# Git CLI Tab Completion 
+GIT_TAB_COMPLETION_FILE=/usr/local/etc/bash_completion.d/git-completion.bash
+if [ -f $GIT_TAB_COMPLETION_FILE ];
+   then source $GIT_TAB_COMPLETION_FILE
+fi
