@@ -1,3 +1,7 @@
+#/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Configure the git version control system and git related libraries.
+
 # Git Configurations
 
 # Git CLI Tab Completion 

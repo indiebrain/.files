@@ -1,7 +1,9 @@
-# Shell Configuration
+#!/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Configures the shell 
 
-# Configure the shell
-export CLICOLOR=1 # Add pretty colors
+# Add pretty colors
+export CLICOLOR=1
 
 # Setup Ruby Version Manager
 RVM_CONFIG=$DOFILES_THIRD_PARTY_HOME/rvm

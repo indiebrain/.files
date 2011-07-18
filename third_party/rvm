@@ -1,2 +1,6 @@
+#!/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Configure Ruby and Ruby related libaries.
+
 # Ruby Version Manager Configuration
 [[ -s "$HOME/.rvm/scripts/rvm" ]] && . "$HOME/.rvm/scripts/rvm"  # This loads RVM into a shell session.
