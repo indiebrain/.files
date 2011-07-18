@@ -5,4 +5,8 @@ export DOTFILES_HOME=$BASE_CONFIG_PATH
 export DOFILES_THIRD_PARTY_HOME=$DOTFILES_HOME/third_party
 
 # Setup the user's path
-export PATH=/usr/local/bin:/usr/local/sbin:$PATH:~/.bin
+# Binaries in /usr/local take precedence
+export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+
+# Add user's custom binaries to the path
+export PATH=$PATH:$BASE_CONFIG_PATH/scripts
