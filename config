@@ -1,0 +1,17 @@
+# Shell Configuration
+
+# Configure the shell
+export CLICOLOR=1 # Add pretty colors
+
+# Setup Ruby Version Manager
+RVM_CONFIG=$DOFILES_THIRD_PARTY_HOME/rvm
+if [ -f $RVM_CONFIG ];
+   then source $RVM_CONFIG
+fi
+
+# Setup Git
+GIT_CONFIG=$DOFILES_THIRD_PARTY_HOME/git
+echo $GIT_CONFIG
+if [ -f $GIT_CONFIG ];
+   then source $GIT_CONFIG
+fi
