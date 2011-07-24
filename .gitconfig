@@ -8,3 +8,4 @@
 [alias]
 	co = checkout
 	cb = checkout -b
+	rclone = clone --recursive
