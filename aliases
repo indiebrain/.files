@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 # Author: Aaron Kuehler
 # Purpose: Sets up custom shell aliases
+alias ls='ls -lh'
