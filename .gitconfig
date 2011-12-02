@@ -6,7 +6,8 @@
 [color]
 	ui = true
 [alias]
-	co = checkout
-	cb = checkout -b
-	db = branch -d
+	co  = checkout
+	cb  = checkout -b
+	crb = checkout --track -b
+	db  = branch -d
 	rclone = clone --recursive
