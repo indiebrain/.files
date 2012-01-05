@@ -3,6 +3,7 @@
 	email = aaron.kuehler@gmail.com
 [core]
 	editor = emacs
+	excludesfile = ~/.gitignore
 [color]
 	ui = true
 [alias]
