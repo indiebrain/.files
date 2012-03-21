@@ -3,3 +3,4 @@
 # Purpose: Sets up custom shell aliases
 alias ls='ls -lha'
 alias gs='clear && git status'
+alias gl='clear && git log --graph --oneline'
