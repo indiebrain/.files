@@ -4,3 +4,4 @@
 alias ls='ls -lha'
 alias gs='clear && git status'
 alias gl='clear && git log --graph --oneline'
+alias tmux='TERM=xterm-256color tmux'
