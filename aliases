@@ -3,5 +3,5 @@
 # Purpose: Sets up custom shell aliases
 alias ls='ls -lha'
 alias gs='clear && git status'
-alias gl='clear && git log --graph --oneline'
+alias gl='clear && git log --graph --oneline --decorate --all'
 alias tmux='TERM=xterm-256color tmux'
