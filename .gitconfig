@@ -12,5 +12,3 @@
 	crb = checkout --track -b
 	db  = branch -d
 	rclone = clone --recursive
-[merge]
-	ff = flase
