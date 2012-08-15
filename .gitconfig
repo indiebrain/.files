@@ -11,3 +11,5 @@
 	cb  = checkout -b
 	db  = branch -d
 	rclone = clone --recursive
+[clean]
+	requireForce = false
