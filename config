@@ -23,3 +23,8 @@ if [ -f $GIT_CONFIG ];
    then source $GIT_CONFIG
 fi
 
+# Setup Git Flow
+GIT_FLOW_CONFIG=$DOFILES_THIRD_PARTY_HOME/git_flow
+if [ -f $GIT_FLOW_CONFIG ];
+   then source $GIT_FLOW_CONFIG
+fi
