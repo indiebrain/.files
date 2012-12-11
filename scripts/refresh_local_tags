@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Delete all local tags and refresh from origin
+git tag -l | xargs git tag -d && git fetch
