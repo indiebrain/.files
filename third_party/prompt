@@ -26,5 +26,5 @@ function rvm_info {
 }
 
 # Set the prompt pattern
-export PS1='╭─ \[\033[0;32m\]\@\[\033[0m\] \u@\h  \[\033[1;33m\]\w\[\033[0m\]$(parse_git_branch)$(rvm_info)
+export PS1='╭─ \[\033[0;32m\]\@\[\033[0m\] \u@\h  \[\033[1;33m\]\w\[\033[0m\] $(parse_git_branch)$(rvm_info)
 ╰─➤ '
