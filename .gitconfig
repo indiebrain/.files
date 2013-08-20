@@ -1,15 +1,15 @@
 [user]
-	name = Aaron Kuehler
-	email = aaron.kuehler@gmail.com
+  name = Aaron Kuehler
+  email = aaron.kuehler@gmail.com
 [core]
-	editor = emacs
-	excludesfile = ~/.gitignore
+  editor = vim
+  excludesfile = ~/.gitignore
 [color]
-	ui = true
+  ui = true
 [alias]
-	co  = checkout
-	cb  = checkout -b
-	db  = branch -d
-	rclone = clone --recursive
+  co  = checkout
+  cb  = checkout -b
+  db  = branch -d
+  rclone = clone --recursive
 [clean]
-	requireForce = false
+  requireForce = false
