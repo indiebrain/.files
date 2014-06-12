@@ -1,5 +1,9 @@
 #/usr/bin/env bash
 # Author: Aaron Kuehler
-# Purpose: Adds rbenv command to the path
+# Purpose: Configure shell to use rbenv
 
-PATH=$HOME/.rbenv/bin:$PATH
+# Use Homebrew installed rbenv
+RBENV_ROOT=/usr/local/var/rbenv
+
+# Initialize rbenv
+if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
