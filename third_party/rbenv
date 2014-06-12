@@ -1,0 +1,5 @@
+#/usr/bin/env bash
+# Author: Aaron Kuehler
+# Purpose: Adds rbenv command to the path
+
+PATH=$HOME/.rbenv/bin:$PATH
