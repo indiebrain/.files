@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Author: Aaron Kuehler
-# Purpose: Configures the shell 
+# Purpose: Configures the shell
 
 # Add pretty colors
 export CLICOLOR=1
@@ -11,6 +11,10 @@ if [ -f $PROMPT_CONFIG ];
     then source $PROMPT_CONFIG
 fi
 
+# Setup Ruby Management (RVM, or RBENV, or Whatever)
+RUBY_MANAGER_CONFIG=$DOFILES_THIRD_PARTY_HOME/rbenv
+if [ -f $RUBY_MANAGER_CONFIG ];
+    then source $RUBY_MANAGER_CONFIG
 fi
 
 # Setup Git
