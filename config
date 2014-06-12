@@ -11,10 +11,6 @@ if [ -f $PROMPT_CONFIG ];
     then source $PROMPT_CONFIG
 fi
 
-# Setup Ruby Version Manager
-RVM_CONFIG=$DOFILES_THIRD_PARTY_HOME/rvm
-if [ -f $RVM_CONFIG ];
-   then source $RVM_CONFIG
 fi
 
 # Setup Git
