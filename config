@@ -5,26 +5,7 @@
 # Add pretty colors
 export CLICOLOR=1
 
-# Setup Prompt
-PROMPT_CONFIG=$DOFILES_THIRD_PARTY_HOME/prompt
-if [ -f $PROMPT_CONFIG ];
-    then source $PROMPT_CONFIG
-fi
+for file in $DOTFILES_THIRD_PARTY_HOME/*; do
+  source $file;
+done
 
-# Setup Ruby Management (RVM, or RBENV, or Whatever)
-RUBY_MANAGER_CONFIG=$DOFILES_THIRD_PARTY_HOME/rbenv
-if [ -f $RUBY_MANAGER_CONFIG ];
-    then source $RUBY_MANAGER_CONFIG
-fi
-
-# Setup Git
-GIT_CONFIG=$DOFILES_THIRD_PARTY_HOME/git
-if [ -f $GIT_CONFIG ];
-   then source $GIT_CONFIG
-fi
-
-# Setup Git Flow
-GIT_FLOW_CONFIG=$DOFILES_THIRD_PARTY_HOME/git_flow
-if [ -f $GIT_FLOW_CONFIG ];
-   then source $GIT_FLOW_CONFIG
-fi

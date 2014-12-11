@@ -4,7 +4,7 @@
 
 # Set default home for this configuration
 export DOTFILES_HOME=$BASE_CONFIG_PATH
-export DOFILES_THIRD_PARTY_HOME=$DOTFILES_HOME/third_party
+export DOTFILES_THIRD_PARTY_HOME=$DOTFILES_HOME/third_party
 
 # Setup the user's path
 # Binaries in /usr/local take precedence
