@@ -3,7 +3,7 @@ Indiebrain Dotfiles
 
 Installation
 -------------------
-* Make a local clone of this repository. I like to clone into a hidden directory in my user's home: ~/.bin.
+* Make a local clone of this repository. I like to clone into a hidden directory in my user's home: ~/.dotfiles.
 * Symlink to the .bashrc and .bash_profile files provided in the clone.
 
 env
@@ -16,7 +16,7 @@ Configures attributes of the shell itself. This includes prompt formatting, cons
 
 aliases
 -------------------
-Adds custom command aliases to the shell environment. 
+Adds custom command aliases to the shell environment.
 
 third_party
 -------------------
@@ -24,4 +24,4 @@ This directory could be used to house configuration scripts for systems not dire
 
 scripts
 -------------------
-This directory is automatically added to the user's PATH variable in the config script. Users can place their custom shell scripts in this directory and they will automatically be available the next time the shell loads. There is one caveat, the custom scripts must be made executable in order to to be made available at the prompt. 
+This directory is automatically added to the user's PATH variable in the config script. Users can place their custom shell scripts in this directory and they will automatically be available the next time the shell loads. There is one caveat, the custom scripts must be made executable in order to to be made available at the prompt.
