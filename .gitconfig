@@ -2,7 +2,6 @@
   name = Aaron Kuehler
   email = aaron.kuehler@gmail.com
 [core]
-  editor = vim
   excludesfile = ~/.gitignore
 [color]
   ui = true

@@ -5,7 +5,8 @@
 # Add pretty colors
 export CLICOLOR=1
 
+export EDITOR=emacs
+
 for file in $DOTFILES_THIRD_PARTY_HOME/*; do
   source $file;
 done
-
