@@ -12,3 +12,5 @@
   rclone = clone --recursive
 [clean]
   requireForce = false
+[push]
+	default = simple
