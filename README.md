@@ -4,7 +4,7 @@ Indiebrain Dotfiles
 Installation
 -------------------
 * Make a local clone of this repository. I like to clone into a hidden directory in my user's home: ~/.dotfiles.
-* Symlink to the .bashrc and .bash_profile files provided in the clone.
+* run `install.sh`
 
 env
 -------------------
