@@ -1,10 +1,10 @@
 #! /usr/bin/env ruby
 
 current_branch = `git branch | grep '*'`.strip
-unless `git branch --contains master | grep '\\#{current_branch}'`.strip == current_branch
-  puts "cannot lint check between master and head if there is no master in commit chain"
-  return
-end
+#unless `git branch --contains master | grep '\\#{current_branch}'`.strip == current_branch
+#  puts "cannot lint check between master and head if there is no master in commit chain"
+#  return
+#end
 
 diff = `git show master..head | grep -E '^\\+\\+\\+ |^@@ '`
 
@@ -30,7 +30,7 @@ line_ranges.each do |file_name, ranges|
     if line_number = line.scan(/^[^:]+(\.rb|\.js):(\d+):\d+:/).flatten.map(&:to_i).last
       ranges.each do |range|
         if range.include? line_number
-          puts line 
+          puts line
           error_count += 1
         end
       end
