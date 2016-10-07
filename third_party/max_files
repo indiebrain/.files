@@ -1,6 +1,0 @@
-#/usr/bin/env bash
-# Author: Aaron Kuehler
-# Purpose: Configure the shell's max allow open files
-
-ulimit -n 65536
-ulimit -u 2048
