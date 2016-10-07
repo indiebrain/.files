@@ -3,7 +3,6 @@
   email = aaron.kuehler@gmail.com
 [core]
   excludesfile = ~/.gitignore
-  editor = $GIT_EDITOR
 [color]
   ui = true
 [alias]

@@ -5,8 +5,6 @@
 # Add pretty colors
 export CLICOLOR=1
 
-export EDITOR=emacs
-export GIT_EDITOR='emacs -nw --eval "(global-git-commit-mode t)"'
 for file in $DOTFILES_THIRD_PARTY_HOME/*; do
   source $file;
 done
