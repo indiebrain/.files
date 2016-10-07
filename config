@@ -10,11 +10,3 @@ export GIT_EDITOR='emacs -nw --eval "(global-git-commit-mode t)"'
 for file in $DOTFILES_THIRD_PARTY_HOME/*; do
   source $file;
 done
-
-# # Save Bash History forever
-export HISTCONTROL=ignoredups:erasedups
-# When the shell exits, append to the history file instead of overwriting it
-shopt -s histappend
-
-# After each command, append to the history file and reread it
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}history -a; history -c; history -r"
