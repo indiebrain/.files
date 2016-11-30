@@ -3,6 +3,7 @@
   email = aaron.kuehler@gmail.com
 [core]
   excludesfile = ~/.gitignore
+  editor = emacs -nw --eval '(global-git-commit-mode t)'
 [color]
   ui = true
 [alias]
