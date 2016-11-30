@@ -1,0 +1,1 @@
+pg_dump --verbose -Fc --no-acl --no-owner bntp_dev > ~/Documents/bntp_dev.dump
