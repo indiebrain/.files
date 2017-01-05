@@ -2,6 +2,9 @@
 # Author: Aaron Kuehler
 # Purpose: Configures the environment by setting commonly referenced environment variables.
 
+# Set the default EDITORs
+export EDITOR=emacs
+
 # Set default home for this configuration
 export DOTFILES_HOME=$BASE_CONFIG_PATH
 export DOTFILES_THIRD_PARTY_HOME=$DOTFILES_HOME/third_party
