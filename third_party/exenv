@@ -1,0 +1,8 @@
+# Author: Aaron Kuehler
+# Purpose: Configure shell to use exenv
+
+# Use Homebrew's directories for elixir installation
+export "EXENV_ROOT=/usr/local/var/exenv"
+
+# Enable shims and autocompletion
+if which exenv > /dev/null; then eval "$(exenv init -)"; fi
