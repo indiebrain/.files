@@ -7,12 +7,12 @@ DOTFILES_HOME=$HOME/.files
 function clone_or_update_repo() {
     if [ -e $DOTFILES_HOME ]; then
         echo "Updating $DOTFILES_HOME"
-        pushd $DOTFILES_HOME
+        cd $DOTFILES_HOME
         git pull
     else
         echo "Installing dotfiles to: $DOTFILES_HOME"
         git clone git@github.com:indiebrain/.files.git $DOTFILES_HOME
-        pushd $DOTFILES_HOME
+        cd $DOTFILES_HOME
     fi
 }
 
