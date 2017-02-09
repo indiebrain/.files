@@ -1,4 +1,4 @@
-dropdb bntp_dev &&
+dropdb --if-exists bntp_dev &&
 heroku pg:pull DATABASE_URL bntp_dev --app bntp-production &&
 aws s3 sync --acl public-read s3://bxm-bntp-production s3://bxm-bntp-dev &&
 printf '\033[0;32mDone\033[0m\n'
