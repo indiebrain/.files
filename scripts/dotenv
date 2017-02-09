@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-# Author: Aaron Kuehler
-# Purpose: List the environment variables relevant to the dotfiles configuration.
-#          This is provided as an example of how a custom executable script placed
-#          in the scripts dir of the dotfiles installation is automatically added to
-#          the user's path; so long as its name does not conflict with a script listed
-#          previously on the path.
-env | grep DOTFILES_
