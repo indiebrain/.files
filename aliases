@@ -1,7 +1,0 @@
-#!/usr/bin/env bash
-# Author: Aaron Kuehler
-# Purpose: Sets up custom shell aliases
-alias ls='ls -lha'
-alias gs='git status'
-alias gl='git log --graph --oneline --decorate --max-count 10'
-alias tmux='TERM=xterm-256color tmux'
