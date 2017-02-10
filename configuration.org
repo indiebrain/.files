@@ -336,8 +336,21 @@ Shell and CLI Tooling configuration
    Ensures that a local git repository's tags are in sync with the
    remote origin
 
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ refresh_tags
+   #+END_SRC
+
+
+*** Source
+
    #+BEGIN_SRC sh :tangle ~/.bin/refresh_tags :mkdirp yes :shebang "#!/bin/bash"
-     # Purpose: Delete all local tags and refresh from origin
+     # Purpose:
+     #   Delete all local tags and refresh from origin
+     # Usage:
+     #   $ refresh_tags
+
      git tag -l | xargs git tag -d && git fetch
    #+END_SRC
 
@@ -346,9 +359,20 @@ Shell and CLI Tooling configuration
 
    Provides a shorthand to backup a postgres database
 
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ postgres_backup --database [database_name]
+   #+END_SRC
+
+
+*** Source
+
    #+BEGIN_SRC ruby :tangle ~/.bin/postgres_backup :mkdirp yes :shebang "#! /usr/bin/env ruby"
-     # Purpose: Makes a backup of the specified database
-     #
+     # Purpose:
+     #   Makes a backup of the specified database
+     # Usage:
+     $   $ postgres_backup --database [database_name]
 
      def system!(*args)
        system(*args) || abort("\n== Command #{args} failed ==")
@@ -393,37 +417,48 @@ Shell and CLI Tooling configuration
 
    Provides a shorthand to restore the latest backup of a postgres database
 
-      #+BEGIN_SRC ruby :tangle ~/.bin/postgres_restore :mkdirp yes :shebang "#! /usr/bin/env ruby"
-        # Purpose: Makes a backup of the specified database
-        #
+*** Usage
 
-        def system!(*args)
-          system(*args) || abort("\n== Command #{args} failed ==")
+    #+BEGIN_SRC sh
+      $ postgres_restore --database [database_name]
+    #+END_SRC
+
+
+*** Source
+
+    #+BEGIN_SRC ruby :tangle ~/.bin/postgres_restore :mkdirp yes :shebang "#! /usr/bin/env ruby"
+      # Purpose:
+      #   Makes a backup of the specified database
+      # Usage:
+      #   $ postgres_restore --database [database_name]
+
+      def system!(*args)
+        system(*args) || abort("\n== Command #{args} failed ==")
+      end
+
+      require 'time'
+      require 'optparse'
+
+      options = {}
+
+      OptionParser.new do |opts|
+        opts.banner = "Usage: postgres_backup --database [database-name]"
+
+        opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
+          options[:database] = database
         end
+      end.parse!
 
-        require 'time'
-        require 'optparse'
+      backups_path = File.join(Dir.home, ".backups")
+      database_backups_path = File.join(backups_path, options[:database])
+      latest_backup_path = File.join(database_backups_path, "lastest.dump")
 
-        options = {}
-
-        OptionParser.new do |opts|
-          opts.banner = "Usage: postgres_backup --database [database-name]"
-
-          opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
-            options[:database] = database
-          end
-        end.parse!
-
-        backups_path = File.join(Dir.home, ".backups")
-        database_backups_path = File.join(backups_path, options[:database])
-        latest_backup_path = File.join(database_backups_path, "lastest.dump")
-
-        if File.exists?(latest_backup_path)
-          system! "pg_restore --verbose --clean --no-acl --no-owner -d #{options[:database]} #{latest_backup_path}"
-        else
-          puts "Cannot find latest backup: #{latest_backup_path}"
-        end
-   #+END_SRC
+      if File.exists?(latest_backup_path)
+        system! "pg_restore --verbose --clean --no-acl --no-owner -d #{options[:database]} #{latest_backup_path}"
+      else
+        puts "Cannot find latest backup: #{latest_backup_path}"
+      end
+    #+END_SRC
 
 
 ** Copy Heroku BNTP Databases and Assets
@@ -431,10 +466,21 @@ Shell and CLI Tooling configuration
    Copies data from one heroku instance to another then syncs image
    assets.
 
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ copy_bntp --from production --to charlie
+    #+END_SRC
+
+
+*** Source
+
    #+BEGIN_SRC ruby :tangle ~/.bin/copy_bntp :mkdirp yes :shebang "#! /usr/bin/env ruby"
-     # Purpose: Mirrors one heroku BNTP instance to another. Copies data
-     # and assets.
-     #
+     # Purpose:
+     #   Mirrors one heroku BNTP instance to another. Copies data
+     #   and assets.
+     # Usage:
+     #   $ copy_bntp --from production --to charlie
      def redify(string)
        "\033[0;31m#{string}\033[0m"
      end
@@ -488,12 +534,24 @@ Shell and CLI Tooling configuration
    ref. This is probably going to be removed soon as I now use
    =flycheck= in Emacs to lint changes in real-time.
 
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ rg
+    #+END_SRC
+
+
+*** Source
+
    #+BEGIN_SRC ruby :tangle ~/.bin/rg :mkdirp yes :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Checks the style of all changes made between master and the head
+     #   reference of a git repository
+     # Usage:
+     #   $ rg
+
      current_branch = `git branch | grep '*'`.strip
-     #unless `git branch --contains master | grep '\\#{current_branch}'`.strip == current_branch
-     #  puts "cannot lint check between master and head if there is no master in commit chain"
-     #  return
-     #end
+
 
      diff = `git show master..head | grep -E '^\\+\\+\\+ |^@@ '`
 
