@@ -1,0 +1,26 @@
+#+TITLE: Dotfiles
+
+* Prerequisites
+
+  Installation requires an Emacs installation with =org-mode=,
+  =org-babel=, and =org-babel-tangle= available -- all of which are
+  part of the standard library of modern Emacs versions. Installation
+  should Just Work™ with Emacs v24+.
+
+
+* Installation
+
+** Automated from the web with cURL
+
+  #+BEGIN_SRC sh
+    curl -L https://github.com/indiebrain/.files/raw/master/install.sh | sh
+  #+END_SRC
+
+
+** Manually
+
+   #+BEGIN_SRC sh
+     $ git clone git@github.com:indiebrain/.files.git ~/.files
+     $ cd ~/.files
+     $ ./install.sh
+   #+END_SRC
