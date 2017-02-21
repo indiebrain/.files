@@ -331,6 +331,27 @@ Shell and CLI Tooling configuration
 
   Version controlled scripts used to automate various repetitive tasks
 
+** Flush DNS cache
+
+   Invalidates the local DNS cache:
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ flush_dns_cache
+   #+END_SRC
+
+*** Source
+
+    #+BEGIN_SRC sh :tangle ~/.bin/flush_dns_cache :mkdirp yes :shebang "#!/bin/bash"
+      # Purpose:
+      #   Flush the local DNS cache
+      # Usage:
+      #   $ flush_dns_cache
+
+      sudo killall -HUP mDNSResponder
+    #+END_SRC
+
 ** Refresh local git tags
 
    Ensures that a local git repository's tags are in sync with the
