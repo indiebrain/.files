@@ -182,6 +182,9 @@
      #   and assets.
      # Usage:
      #   $ copy_bntp --from production --to charlie
+
+     LOCALHOST_SYNONYMS = %w|local localhost dev development|.freeze
+
      def redify(string)
        "\033[0;31m#{string}\033[0m"
      end
@@ -222,9 +225,15 @@
      proceed = gets.chomp
 
      if "Yes" == proceed
-       if "dev" == options[:to].downcase || "development" == options[:to].downcase
+       if LOCALHOST_SYNONYMS.include?(options[:to].downcase)
+
+         puts "Dropping bntp_dev"
          system! "dropdb --if-exists bntp_dev"
+
+         puts "Copying database from #{options[:from]} to bntp_dev ..."
          system! "heroku pg:pull HEROKU_POSTGRESQL_BRONZE_URL bntp_dev --app bntp-#{options[:from]}"
+
+         puts "Copying images from #{options[:from]} to bxm-bntp-dev..."
          system! "aws s3 sync --acl public-read s3://bxm-bntp-#{options[:from]} s3://bxm-bntp-dev"
        else
          puts "Copying database from #{options[:from]} to #{options[:to]} ..."
