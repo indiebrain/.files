@@ -1,0 +1,299 @@
+#+TITLE: Scripts
+
+* Scripts
+
+:PROPERTIES:
+:header-args: :mkdirp yes
+:END:
+
+  Version controlled scripts used to automate various repetitive tasks
+
+** Flush DNS cache
+
+   Invalidates the local DNS cache:
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ flush_dns_cache
+   #+END_SRC
+
+*** Source
+
+    #+BEGIN_SRC sh :tangle ~/.bin/flush_dns_cache :shebang "#!/bin/bash"
+      # Purpose:
+      #   Flush the local DNS cache
+      # Usage:
+      #   $ flush_dns_cache
+
+      sudo killall -HUP mDNSResponder
+    #+END_SRC
+
+
+** Refresh local git tags
+
+   Ensures that a local git repository's tags are in sync with the
+   remote origin
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ refresh_tags
+   #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC sh :tangle ~/.bin/refresh_tags :shebang "#!/bin/bash"
+     # Purpose:
+     #   Delete all local tags and refresh from origin
+     # Usage:
+     #   $ refresh_tags
+
+     git tag -l | xargs git tag -d && git fetch
+   #+END_SRC
+
+
+** Backup Postgres Database
+
+   Provides a shorthand to backup a postgres database
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ postgres_backup --database [database_name]
+   #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/postgres_backup :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Makes a backup of the specified database
+     # Usage:
+     $   $ postgres_backup --database [database_name]
+
+     def system!(*args)
+       system(*args) || abort("\n== Command #{args} failed ==")
+     end
+
+     require 'time'
+     require 'optparse'
+
+     options = {}
+
+     OptionParser.new do |opts|
+       opts.banner = "Usage: postgres_backup --database [database-name]"
+
+       opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
+         options[:database] = database
+       end
+     end.parse!
+
+     if options[:database] == nil || options[:database] == ""
+       abort "--database is a required argument"
+     end
+
+     backups_path = File.join(Dir.home, ".backups")
+     Dir.mkdir(backups_path) if !Dir.exists?(backups_path)
+
+     database_backups_path = File.join(backups_path, options[:database])
+     puts "database_backups_path: #{database_backups_path}"
+     Dir.mkdir(database_backups_path) if !Dir.exists?(database_backups_path)
+
+     backup_tag = DateTime.now.strftime("%Y_%m_%d_%H_%M%S%L")
+     backup_name = "#{options[:database]}-#{backup_tag}.dump"
+     backup_path = "#{database_backups_path}/#{backup_name}"
+
+     latest_backup_path = File.join(database_backups_path, "lastest.dump")
+
+     system! "pg_dump --verbose -Fc --no-acl --no-owner #{options[:database]} > #{backup_path}"
+     system! "ln -s #{backup_path} #{latest_backup_path}"
+   #+END_SRC
+
+
+** Restore latest Postgres database backup
+
+   Provides a shorthand to restore the latest backup of a postgres database
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ postgres_restore --database [database_name]
+    #+END_SRC
+
+
+*** Source
+
+    #+BEGIN_SRC ruby :tangle ~/.bin/postgres_restore :shebang "#! /usr/bin/env ruby"
+      # Purpose:
+      #   Makes a backup of the specified database
+      # Usage:
+      #   $ postgres_restore --database [database_name]
+
+      def system!(*args)
+        system(*args) || abort("\n== Command #{args} failed ==")
+      end
+
+      require 'time'
+      require 'optparse'
+
+      options = {}
+
+      OptionParser.new do |opts|
+        opts.banner = "Usage: postgres_backup --database [database-name]"
+
+        opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
+          options[:database] = database
+        end
+      end.parse!
+
+      backups_path = File.join(Dir.home, ".backups")
+      database_backups_path = File.join(backups_path, options[:database])
+      latest_backup_path = File.join(database_backups_path, "lastest.dump")
+
+      if File.exists?(latest_backup_path)
+        system! "pg_restore --verbose --clean --no-acl --no-owner -d #{options[:database]} #{latest_backup_path}"
+      else
+        puts "Cannot find latest backup: #{latest_backup_path}"
+      end
+    #+END_SRC
+
+
+** Copy Heroku BNTP Databases and Assets
+
+   Copies data from one heroku instance to another then syncs image
+   assets.
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ copy_bntp --from production --to charlie
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/copy_bntp :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Mirrors one heroku BNTP instance to another. Copies data
+     #   and assets.
+     # Usage:
+     #   $ copy_bntp --from production --to charlie
+     def redify(string)
+       "\033[0;31m#{string}\033[0m"
+     end
+
+     def orangify(string)
+       "\033[0;33m#{string}\033[0m"
+     end
+
+     def system!(*args)
+       system(*args) || abort("\n== Command #{args} failed ==")
+     end
+
+     require 'optparse'
+
+     options = {}
+
+     OptionParser.new do |opts|
+       opts.banner = "Usage: copy_bntp --from instance-name --to instance-name"
+
+       opts.on("--from [instance-name]", "Instance from which data will be copied") do |from|
+         options[:from] = from
+       end
+
+       opts.on("--to [instance-name]", "Instance to which data will be copied") do |to|
+         options[:to] = to
+       end
+     end.parse!
+
+     if "production" == options[:to].downcase
+       abort("Aborting! Don't use this script to copy data to production. It's too risky!")
+     end
+
+     puts "Are you sure you want to:"
+     puts "1.) " + redify("Destroy the database on #{options[:to]}")
+     puts "2.) " + orangify("Copy data the database from #{options[:from]} to #{options[:to]}")
+     puts "3.) " + orangify("Sync images from #{options[:from]} to #{options[:to]}")
+     puts "(Yes/no)?"
+     proceed = gets.chomp
+
+     if "Yes" == proceed
+       if "dev" == options[:to].downcase || "development" == options[:to].downcase
+         system! "dropdb --if-exists bntp_dev"
+         system! "heroku pg:pull HEROKU_POSTGRESQL_BRONZE_URL bntp_dev --app bntp-#{options[:from]}"
+         system! "aws s3 sync --acl public-read s3://bxm-bntp-#{options[:from]} s3://bxm-bntp-dev"
+       else
+         puts "Copying database from #{options[:from]} to #{options[:to]} ..."
+         system! "heroku pg:copy bntp-#{options[:from]}::DATABASE_URL DATABASE_URL --app bntp-#{options[:to]}"
+
+         puts "Copying images from #{options[:from]} to #{options[:to]} ..."
+         system! "aws s3 sync --acl public-read s3://bxm-bntp-#{options[:from]} s3://bxm-bntp-#{options[:to]}"
+       end
+
+     else
+       puts "Aborting at user's request. Responded #{proceed}... "
+     end
+   #+END_SRC
+
+
+** Rubocop
+
+   Run the linter against the diff between master and the local head
+   ref. This is probably going to be removed soon as I now use
+   =flycheck= in Emacs to lint changes in real-time.
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ rg
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/rg :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Checks the style of all changes made between master and the head
+     #   reference of a git repository
+     # Usage:
+     #   $ rg
+
+     current_branch = `git branch | grep '*'`.strip
+
+
+     diff = `git show master..head | grep -E '^\\+\\+\\+ |^@@ '`
+
+     line_ranges = {}
+     current_file = ''
+     diff.split("\n").each do |line|
+       if line =~ /^\+\+\+ /
+         current_file = line.split('/',2).last
+         line_ranges[current_file] = []
+       end
+
+       if line =~ /^@@ /
+         line_number, offset = line.scan(/\+(\d+),?(\d+)?/).flatten.map(&:to_i)
+         line_ranges[current_file] << (line_number..(line_number+offset))
+       end
+     end
+
+     error_count = 0
+     line_ranges.each do |file_name, ranges|
+       next unless File.exist? file_name
+       report = `ruby -W0 -S rubocop #{file_name} --config config/lint/.ruby-style.yml`
+       report.split("\n").each do |line|
+         if line_number = line.scan(/^[^:]+(\.rb|\.js):(\d+):\d+:/).flatten.map(&:to_i).last
+           ranges.each do |range|
+             if range.include? line_number
+               puts line
+               error_count += 1
+             end
+           end
+         end
+       end
+     end
+
+     puts "No lint errors were found!" if error_count == 0
+   #+END_SRC
