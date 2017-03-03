@@ -104,6 +104,28 @@
    #+END_SRC
 
 
+** History
+
+*** Store Unique Commands
+
+    Store only unique commands in bash history. Also provide a way to
+    manually exclude commands from being recorded in the history. To do
+    this, prefix the command with whitespace.
+
+     #+BEGIN_SRC sh
+       export HISTCONTROL=ignoreboth:erasedups
+     #+END_SRC
+
+
+*** Number of History Entries
+
+    Set the number of commands which can be stored in the history.
+
+    #+BEGIN_SRC sh
+      export HISTSIZE=1000
+      export HISTFILESIZE=1000
+    #+END_SRC
+
 ** exenv
 
 *** elixir installation path
