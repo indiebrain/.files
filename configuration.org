@@ -8,16 +8,30 @@ Shell and CLI Tooling configuration
 
 ** .gitconfig
 
+   :PROPERTIES:
+   :header-args: :tangle ~/.gitconfig
+   :END:
+
 *** Author
 
   Configure information used by git to determine how to write the
   author information for commits
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [user]
       name = Aaron Kuehler
       email = aaron.kuehler@gmail.com
   #+END_SRC
+
+*** Github Credentials
+
+    Include credentials for CLI authentication with the github gist
+    API
+
+    #+BEGIN_SRC conf
+      [include]
+        path = ~/credentials/.github
+    #+END_SRC
 
 
 *** Core configuration
@@ -27,7 +41,7 @@ Shell and CLI Tooling configuration
 
   Use Emacs as the commit editor
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [core]
       excludesfile = ~/.gitignore
       editor = emacs -nw --eval '(global-git-commit-mode t)'
@@ -38,7 +52,7 @@ Shell and CLI Tooling configuration
 
   Enable coloring of git output
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [color]
       ui = true
   #+END_SRC
@@ -48,7 +62,7 @@ Shell and CLI Tooling configuration
 
   Set aliases for frequently used git incantations.
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [alias]
       co  = checkout
       cb  = checkout -b
@@ -61,7 +75,7 @@ Shell and CLI Tooling configuration
 
   Disable the safeguard flag when running =git clean=
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [clean]
       requireForce = false
   #+END_SRC
@@ -72,7 +86,7 @@ Shell and CLI Tooling configuration
   Only push the current branch, rather than all
   branches, when =git push= is invoked.
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [push]
       default = simple
   #+END_SRC
@@ -80,7 +94,7 @@ Shell and CLI Tooling configuration
 
 *** Filter
 
-  #+BEGIN_SRC conf :tangle ~/.gitconfig
+  #+BEGIN_SRC conf
     [filter "lfs"]
       clean = git-lfs clean %f
       smudge = git-lfs smudge %f
