@@ -2,6 +2,197 @@
 
 Shell and CLI Tooling configuration
 
+* bashrc
+
+  :PROPERTIES:
+  :header-args: :tangle ~/.bashrc
+  :END:
+
+** CLI Colors
+
+   For commands that support colors, enable the use of colors to
+   better visually understand the output of commands.
+
+   #+BEGIN_SRC sh
+     export CLICOLOR=1
+   #+END_SRC
+
+
+** $PATH
+
+*** /usr/local/bin
+
+   Binaries stored in the =/usr/local/bin= directory take precedence
+   over their counterparts stored elsewhere on the =PATH=
+
+   #+BEGIN_SRC sh
+     export PATH=/usr/local/bin:/usr/local/sbin:$PATH
+   #+END_SRC
+
+
+*** .bin
+
+   I keep personal scripts in =~/.bin=. Ensure that scripts found in
+   =~/.bin= are available on the =PATH= so they can be executed
+   without providing full paths:
+
+   For example, instead of typing =~/.bin/script-name= simply type
+   =script-name=.
+
+   #+BEGIN_SRC sh
+     export PATH=$PATH:$HOME/.bin
+   #+END_SRC
+
+
+
+** Aliases
+
+*** *nix aliases
+
+  Make =ls= output more information about files and directories in a
+  human readable format.
+
+  #+BEGIN_SRC sh
+    alias ls='ls -lha'
+  #+END_SRC
+
+
+
+*** Git aliases
+
+   =gs= is shorthand for the status of a git repository.
+
+   #+BEGIN_SRC sh
+     alias gs="git status"
+   #+END_SRC
+
+   =gl= shows the railroad tracks of the current head ref
+
+   #+BEGIN_SRC sh
+     alias gl='git log --graph --oneline --decorate --max-count 10'
+   #+END_SRC
+
+
+
+** Prompt
+
+  Configure the shell prompt. This happens to check if we're in a git
+  managed directory and adds some status info to the command line.
+
+  #+BEGIN_SRC sh
+    # Get a graphical representation of the clean/dirty state of a git repository
+    function parse_git_dirty {
+      [[ $(git status 2> /dev/null | tail -n1) != "nothing to commit, working tree clean" ]] && echo -e '\033[31m ✪ \033[0m'|| echo -e '\033[32m ✪ \033[0m'
+    }
+
+    # Get the name of the current git brank
+    function parse_git_branch {
+      git branch --no-color 2> /dev/null | sed -e '/^[^*]/d' -e "s/* \(.*\)/[\1$(parse_git_dirty)]/"
+    }
+
+    # Set the prompt pattern
+    export PS1='
+    \[\033[0;32m\]\@\[\033[0m\] \[\033[1;33m\]\w\[\033[0m\] $(parse_git_branch)
+    => '
+  #+END_SRC
+
+
+** Editors
+
+   Use emacs as the default editor for the shell
+
+   #+BEGIN_SRC sh
+     export EDITOR=emacs
+   #+END_SRC
+
+
+** History
+
+*** Store Unique Commands
+
+    Store only unique commands in bash history. Also provide a way to
+    manually exclude commands from being recorded in the history. To do
+    this, prefix the command with whitespace.
+
+     #+BEGIN_SRC sh
+       export HISTCONTROL=ignoreboth:erasedups
+     #+END_SRC
+
+
+*** Number of History Entries
+
+    Set the number of commands which can be stored in the history.
+
+    #+BEGIN_SRC sh
+      export HISTSIZE=1000
+      export HISTFILESIZE=1000
+    #+END_SRC
+
+
+** exenv
+
+*** elixir installation path
+
+  Use the [[https://github.com/mururu/exenv][exenv]] project to manage local [[http://elixir-lang.org/][Elixir]] installations.
+
+  Store installations in =/usr/local/var/exenv= instead of the user
+  home directory so they're available to all users of the system.
+
+  #+BEGIN_SRC sh
+    export "EXENV_ROOT=/usr/local/var/exenv"
+  #+END_SRC
+
+
+*** exenv initialization
+
+  If the =exenv= command is available initialize the exenv
+  system. This provides access to shims and autocompletion.
+
+  #+BEGIN_SRC sh
+    if which exenv > /dev/null; then eval "$(exenv init -)"; fi
+  #+END_SRC
+
+
+
+** rbenv
+
+*** ruby installation path
+
+  Use the [[https://github.com/rbenv/rbenv][rbenv]] project to manage local [[https://www.ruby-lang.org][Ruby]] installations.
+
+  Store installations in =/usr/local/var/rbenv= instead of the user
+  home directory so they are available to all users of the system.
+
+  #+BEGIN_SRC sh
+    RBENV_ROOT=/usr/local/var/rbenv
+  #+END_SRC
+
+
+*** rbenv initialization
+
+  If the =rbenv= command is available initialize the rbenv
+  system. This provides access to shims and autocompletion.
+
+  #+BEGIN_SRC sh
+    if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
+  #+END_SRC
+
+
+* bash_profile
+
+  :PROPERTIES:
+  :header-args: :tangle ~/.bash_profile
+  :END:
+
+  Use the same configuration for =.bash_profile= as the =.bashrc=
+
+  #+BEGIN_SRC sh
+    if [ -f ~/.bashrc ];
+        then source ~/.bashrc
+    fi
+  #+END_SRC
+
+
 * git
 
   Git Configuration
@@ -22,6 +213,7 @@ Shell and CLI Tooling configuration
       name = Aaron Kuehler
       email = aaron.kuehler@gmail.com
   #+END_SRC
+
 
 *** Github Credentials
 
@@ -104,13 +296,18 @@ Shell and CLI Tooling configuration
 
 ** .gitignore
 
+   :PROPERTIES:
+   :header-args: :tangle ~/.gitignore
+   :END:
+
 *** Mac OS Finder cache
 
   Never ever store Mac OS Finder metadata in a git repository.
 
-  #+BEGIN_SRC txt :tangle ~/.gitignore
+  #+BEGIN_SRC text
     .DS_Store
   #+END_SRC
+
 
 *** Emacs temp files
 
@@ -178,3 +375,312 @@ Shell and CLI Tooling configuration
   #+BEGIN_SRC text :tangle ~/.rspec
     --order random
   #+END_SRC
+
+* Scripts
+
+:PROPERTIES:
+:header-args: :mkdirp yes
+:END:
+
+  Version controlled scripts used to automate various repetitive tasks
+
+** Flush DNS cache
+
+   Invalidates the local DNS cache:
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ flush_dns_cache
+   #+END_SRC
+
+*** Source
+
+    #+BEGIN_SRC sh :tangle ~/.bin/flush_dns_cache :shebang "#!/bin/bash"
+      # Purpose:
+      #   Flush the local DNS cache
+      # Usage:
+      #   $ flush_dns_cache
+
+      if [[ `uname` == "Darwin" ]]; then
+          sudo killall -HUP mDNSResponder
+      fi
+    #+END_SRC
+
+
+** Refresh local git tags
+
+   Ensures that a local git repository's tags are in sync with the
+   remote origin
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ refresh_tags
+   #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC sh :tangle ~/.bin/refresh_tags :shebang "#!/bin/bash"
+     # Purpose:
+     #   Delete all local tags and refresh from origin
+     # Usage:
+     #   $ refresh_tags
+
+     git tag -l | xargs git tag -d && git fetch
+   #+END_SRC
+
+
+** Backup Postgres Database
+
+   Provides a shorthand to backup a postgres database
+
+*** Usage
+
+   #+BEGIN_SRC sh
+     $ postgres_backup --database [database_name]
+   #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/postgres_backup :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Makes a backup of the specified database
+     # Usage:
+     $   $ postgres_backup --database [database_name]
+
+     def system!(*args)
+       system(*args) || abort("\n== Command #{args} failed ==")
+     end
+
+     require 'time'
+     require 'optparse'
+
+     options = {}
+
+     OptionParser.new do |opts|
+       opts.banner = "Usage: postgres_backup --database [database-name]"
+
+       opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
+         options[:database] = database
+       end
+     end.parse!
+
+     if options[:database] == nil || options[:database] == ""
+       abort "--database is a required argument"
+     end
+
+     backups_path = File.join(Dir.home, ".backups")
+     Dir.mkdir(backups_path) if !Dir.exists?(backups_path)
+
+     database_backups_path = File.join(backups_path, options[:database])
+     puts "database_backups_path: #{database_backups_path}"
+     Dir.mkdir(database_backups_path) if !Dir.exists?(database_backups_path)
+
+     backup_tag = DateTime.now.strftime("%Y_%m_%d_%H_%M%S%L")
+     backup_name = "#{options[:database]}-#{backup_tag}.dump"
+     backup_path = "#{database_backups_path}/#{backup_name}"
+
+     latest_backup_path = File.join(database_backups_path, "lastest.dump")
+
+     system! "pg_dump --verbose -Fc --no-acl --no-owner #{options[:database]} > #{backup_path}"
+     system! "ln -s #{backup_path} #{latest_backup_path}"
+   #+END_SRC
+
+
+** Restore latest Postgres database backup
+
+   Provides a shorthand to restore the latest backup of a postgres database
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ postgres_restore --database [database_name]
+    #+END_SRC
+
+
+*** Source
+
+    #+BEGIN_SRC ruby :tangle ~/.bin/postgres_restore :shebang "#! /usr/bin/env ruby"
+      # Purpose:
+      #   Makes a backup of the specified database
+      # Usage:
+      #   $ postgres_restore --database [database_name]
+
+      def system!(*args)
+        system(*args) || abort("\n== Command #{args} failed ==")
+      end
+
+      require 'time'
+      require 'optparse'
+
+      options = {}
+
+      OptionParser.new do |opts|
+        opts.banner = "Usage: postgres_backup --database [database-name]"
+
+        opts.on("--database [instance-name]", "Instance from which data will be copied") do |database|
+          options[:database] = database
+        end
+      end.parse!
+
+      backups_path = File.join(Dir.home, ".backups")
+      database_backups_path = File.join(backups_path, options[:database])
+      latest_backup_path = File.join(database_backups_path, "lastest.dump")
+
+      if File.exists?(latest_backup_path)
+        system! "pg_restore --verbose --clean --no-acl --no-owner -d #{options[:database]} #{latest_backup_path}"
+      else
+        puts "Cannot find latest backup: #{latest_backup_path}"
+      end
+    #+END_SRC
+
+
+** Copy Heroku BNTP Databases and Assets
+
+   Copies data from one heroku instance to another then syncs image
+   assets.
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ copy_bntp --from production --to charlie
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/copy_bntp :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Mirrors one heroku BNTP instance to another. Copies data
+     #   and assets.
+     # Usage:
+     #   $ copy_bntp --from production --to charlie
+
+     LOCALHOST_SYNONYMS = %w|local localhost dev development|.freeze
+
+     def redify(string)
+       "\033[0;31m#{string}\033[0m"
+     end
+
+     def orangify(string)
+       "\033[0;33m#{string}\033[0m"
+     end
+
+     def system!(*args)
+       system(*args) || abort("\n== Command #{args} failed ==")
+     end
+
+     require 'optparse'
+
+     options = {}
+
+     OptionParser.new do |opts|
+       opts.banner = "Usage: copy_bntp --from instance-name --to instance-name"
+
+       opts.on("--from [instance-name]", "Instance from which data will be copied") do |from|
+         options[:from] = from
+       end
+
+       opts.on("--to [instance-name]", "Instance to which data will be copied") do |to|
+         options[:to] = to
+       end
+     end.parse!
+
+     if "production" == options[:to].downcase
+       abort("Aborting! Don't use this script to copy data to production. It's too risky!")
+     end
+
+     puts "Are you sure you want to:"
+     puts "1.) " + redify("Destroy the database on #{options[:to]}")
+     puts "2.) " + orangify("Copy data the database from #{options[:from]} to #{options[:to]}")
+     puts "3.) " + orangify("Sync images from #{options[:from]} to #{options[:to]}")
+     puts "(Yes/no)?"
+     proceed = gets.chomp
+
+     if "Yes" == proceed
+       if LOCALHOST_SYNONYMS.include?(options[:to].downcase)
+
+         puts "Dropping bntp_dev"
+         system! "dropdb --if-exists bntp_dev"
+
+         puts "Copying database from #{options[:from]} to bntp_dev ..."
+         system! "heroku pg:pull HEROKU_POSTGRESQL_BRONZE_URL bntp_dev --app bntp-#{options[:from]}"
+
+         puts "Copying images from #{options[:from]} to bxm-bntp-dev..."
+         system! "aws s3 sync --acl public-read s3://bxm-bntp-#{options[:from]} s3://bxm-bntp-dev"
+       else
+         puts "Copying database from #{options[:from]} to #{options[:to]} ..."
+         system! "heroku pg:copy bntp-#{options[:from]}::DATABASE_URL DATABASE_URL --app bntp-#{options[:to]}"
+
+         puts "Copying images from #{options[:from]} to #{options[:to]} ..."
+         system! "aws s3 sync --acl public-read s3://bxm-bntp-#{options[:from]} s3://bxm-bntp-#{options[:to]}"
+       end
+
+     else
+       puts "Aborting at user's request. Responded #{proceed}... "
+     end
+   #+END_SRC
+
+
+** Rubocop
+
+   Run the linter against the diff between master and the local head
+   ref. This is probably going to be removed soon as I now use
+   =flycheck= in Emacs to lint changes in real-time.
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ rg
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/rg :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Checks the style of all changes made between master and the head
+     #   reference of a git repository
+     # Usage:
+     #   $ rg
+
+     current_branch = `git branch | grep '*'`.strip
+
+
+     diff = `git show master..head | grep -E '^\\+\\+\\+ |^@@ '`
+
+     line_ranges = {}
+     current_file = ''
+     diff.split("\n").each do |line|
+       if line =~ /^\+\+\+ /
+         current_file = line.split('/',2).last
+         line_ranges[current_file] = []
+       end
+
+       if line =~ /^@@ /
+         line_number, offset = line.scan(/\+(\d+),?(\d+)?/).flatten.map(&:to_i)
+         line_ranges[current_file] << (line_number..(line_number+offset))
+       end
+     end
+
+     error_count = 0
+     line_ranges.each do |file_name, ranges|
+       next unless File.exist? file_name
+       report = `ruby -W0 -S rubocop #{file_name} --config config/lint/.ruby-style.yml`
+       report.split("\n").each do |line|
+         if line_number = line.scan(/^[^:]+(\.rb|\.js):(\d+):\d+:/).flatten.map(&:to_i).last
+           ranges.each do |range|
+             if range.include? line_number
+               puts line
+               error_count += 1
+             end
+           end
+         end
+       end
+     end
+
+     puts "No lint errors were found!" if error_count == 0
+   #+END_SRC
