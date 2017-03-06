@@ -24,3 +24,32 @@
      $ cd ~/.files
      $ ./install.sh
    #+END_SRC
+
+
+* Credentials
+
+  Some CLI tools require sensitive credentials. Obviously we don't
+  want to store these in the repository. Sensitive credentials are
+  stored in the excluded-from-version-control =credentials.org=. The
+  folowing is an example of the structure of the =credentials.org=
+  configuration file:
+
+  #+BEGIN_SRC org
+    ,#+TITLE: Credentials
+
+    Authentication credentials for CLI tools
+
+    ,** Github
+
+       :PROPERTIES:
+       :header-args: :tangle ~/credentials/.github :mkdirp yes
+       :END:
+
+       Github Credentials for the =gist.el= Emacs module.
+
+       ,#+BEGIN_SRC conf
+         [github]
+           user = <github.username>
+           oauth-token = <github.oauth-token>
+       ,#+END_SRC
+  #+END_SRC
