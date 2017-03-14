@@ -376,6 +376,7 @@ Shell and CLI Tooling configuration
     --order random
   #+END_SRC
 
+
 * Scripts
 
 :PROPERTIES:
@@ -391,12 +392,12 @@ Shell and CLI Tooling configuration
 *** Usage
 
    #+BEGIN_SRC sh
-     $ flush_dns_cache
+     $ flush_dns
    #+END_SRC
 
 *** Source
 
-    #+BEGIN_SRC sh :tangle ~/.bin/flush_dns_cache :shebang "#!/bin/bash"
+    #+BEGIN_SRC sh :tangle ~/.bin/flush_dns :shebang "#!/bin/bash"
       # Purpose:
       #   Flush the local DNS cache
       # Usage:
