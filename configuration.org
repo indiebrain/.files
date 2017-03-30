@@ -626,6 +626,62 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
+** Heroku Rolling Restart
+
+   Performs a rolling restart of web dynos for a Heroku application
+
+*** Usage
+
+    #+BEGIN_SRC sh
+    $ heroku_rolling_restart --app heroku-app-name --wait time-in-seconds
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC ruby :tangle ~/.bin/heroku_rolling_restart :shebang "#! /usr/bin/env ruby"
+     # Purpose:
+     #   Mirrors one heroku BNTP instance to another. Copies data
+     #   and assets.
+     # Usage:
+     #   $ heroku_rolling_restat --app heroku-app-name
+     def system!(*args)
+       system(*args) || abort("\n== Command #{args} failed ==")
+     end
+
+     require 'optparse'
+
+     options = {}
+
+     OptionParser.new do |opts|
+       opts.banner = "Usage: heroku_rolling_restart --app heroku-app-name"
+
+       opts.on("--app [APP]", "The Heroku app for which a rolling restart of web Dynos is requested") do |app|
+         options[:app] = app
+       end
+
+       opts.on("--wait [time-in-seconds]", Integer, "The amount of time to wait between each subsequent Dyno restart request (default 5)") do |wait|
+         options[:wait]
+       end
+     end.parse!
+
+     if options[:app].nil?
+       puts "--app APP needs a value"
+       exit
+     end
+
+     dyno_info = `heroku ps:scale --app #{options[:app]}`
+     web_dyno_count = /.*(web=\d+).*/.match(dyno_info).captures.first.gsub("web=", "").to_i
+
+     puts "Detected #{web_dyno_count} web Dynos, initiating restarts..."
+
+     (1..web_dyno_count).each do |n|
+       system!("heroku ps:restart web.#{n} --app #{options[:app]}")
+       sleep options[:wait] || 10
+     end
+    #+END_SRC
+
+
 ** Rubocop
 
    Run the linter against the diff between master and the local head
