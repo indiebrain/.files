@@ -450,7 +450,7 @@ Shell and CLI Tooling configuration
      # Purpose:
      #   Makes a backup of the specified database
      # Usage:
-     $   $ postgres_backup --database [database_name]
+     #   $ postgres_backup --database [database_name]
 
      def system!(*args)
        system(*args) || abort("\n== Command #{args} failed ==")
