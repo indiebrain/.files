@@ -527,6 +527,10 @@ Shell and CLI Tooling configuration
         end
       end.parse!
 
+      if options[:database] == nil || options[:database] == ""
+        abort "--database is a required argument"
+      end
+
       backups_path = File.join(Dir.home, ".backups")
       database_backups_path = File.join(backups_path, options[:database])
       latest_backup_path = File.join(database_backups_path, "lastest.dump")
