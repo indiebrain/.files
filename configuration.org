@@ -53,10 +53,24 @@ Shell and CLI Tooling configuration
   human readable format.
 
   #+BEGIN_SRC sh
-    alias ls='ls -lha'
+    LS_OPTIONS="lAh"
+    if [ `uname` == "Linux" ]; then
+        alias ls='ls -$LS_OPTIONS --color'
+    elif [ `uname` == "Darwin" ]; then
+        alias ls='ls -$LS_OPTIONS'
+    fi
   #+END_SRC
 
+  Make =grep= highlight matches.
 
+  #+BEGIN_SRC sh
+    GREP_OPTS=""
+    if [ `uname` == "Linux" ]; then
+        alias grep='grep -$GREP_OPTS --color'
+    elif [ `uname` == "Darwin" ]; then
+        alias grep='grep -$GREP_OPTS'
+    fi
+  #+END_SRC
 
 *** Git aliases
 
