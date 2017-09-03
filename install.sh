@@ -21,7 +21,7 @@ function tangle_files() {
     DIR=`pwd`
     FILES=""
 
-    for file in `ls -1 | grep \.org`; do
+    for file in `ls -1 | grep \.org | grep -v README.org`; do
         FILES="$FILES \"$file\""
     done
 
