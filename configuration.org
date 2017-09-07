@@ -87,7 +87,6 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
-
 ** Prompt
 
   Configure the shell prompt. This happens to check if we're in a git
@@ -178,7 +177,9 @@ Shell and CLI Tooling configuration
   home directory so they are available to all users of the system.
 
   #+BEGIN_SRC sh
-    RBENV_ROOT=/usr/local/var/rbenv
+    if [ `uname` == "Darwin" ]; then
+        RBENV_ROOT=/usr/local/var/rbenv
+    fi
   #+END_SRC
 
 
