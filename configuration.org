@@ -49,6 +49,8 @@ Shell and CLI Tooling configuration
 
 *** *nix aliases
 
+**** ls
+
   Make =ls= output more information about files and directories in a
   human readable format.
 
@@ -61,6 +63,8 @@ Shell and CLI Tooling configuration
     fi
   #+END_SRC
 
+**** grep
+
   Make =grep= highlight matches.
 
   #+BEGIN_SRC sh
@@ -69,6 +73,16 @@ Shell and CLI Tooling configuration
         alias grep='grep -$GREP_OPTS --color'
     elif [ `uname` == "Darwin" ]; then
         alias grep='grep -$GREP_OPTS'
+    fi
+  #+END_SRC
+
+**** pbcopy
+
+  On linux systems, add a shorthand to copy data to the system clipboard on the clicolor
+
+  #+BEGIN_SRC sh
+    if [ `uname` == "Linux" ]; then
+        alias pbcopy='xclip -selection clipboard'
     fi
   #+END_SRC
 
