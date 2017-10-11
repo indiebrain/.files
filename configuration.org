@@ -715,6 +715,43 @@ Shell and CLI Tooling configuration
     #+END_SRC
 
 
+** Watch items in fastly
+
+   Observes cache attributes of an item in the fastly cache
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ watch_fastly [URL]
+    #+END_SRC
+
+
+*** Source
+
+   #+BEGIN_SRC sh :tangle ~/.bin/watch_fastly :shebang "#! /usr/bin/env bash"
+     # Purpose:
+     #   Observes cache attributes of an item in the fastly cache
+     # Usage:
+     #   $ watch_fastly [URL]
+     # Dependencies:
+     #   - watch
+     #   - httpie
+     #   - the-silver-searcher
+     #!/usr/bin/env bash
+
+     COMMAND="watch \""
+
+     for URL in $@; do
+       COMMAND="$COMMAND echo $URL && time http -ph $URL | ag Age\|X-Cache\|HTTP\|Etag && echo \"---------\" &&"
+     done
+
+     COMMAND="$COMMAND echo\""
+
+     eval $COMMAND
+
+   #+END_SRC
+
+
 ** Rubocop
 
    Run the linter against the diff between master and the local head
