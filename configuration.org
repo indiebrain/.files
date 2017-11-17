@@ -742,7 +742,7 @@ Shell and CLI Tooling configuration
      COMMAND="watch \""
 
      for URL in $@; do
-       COMMAND="$COMMAND echo $URL && time http -ph $URL | ag Age\|X-Cache\|HTTP\|Etag && echo \"---------\" &&"
+       COMMAND="$COMMAND echo $URL && time http -ph $URL | ag Age\|X-Served-By\|X-Cache\|HTTP\|Etag && echo \"---------\" &&"
      done
 
      COMMAND="$COMMAND echo\""
