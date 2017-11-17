@@ -353,7 +353,7 @@ Shell and CLI Tooling configuration
 
   Enable tab completion for the git.
 
-  #+BEGIN_SRC sh :tangle ~/.bashrc
+  #+BEGIN_SRC sh
     GIT_TAB_COMPLETION_FILE=/usr/local/etc/bash_completion.d/git-completion.bash
     if [ -f $GIT_TAB_COMPLETION_FILE ];
        then source $GIT_TAB_COMPLETION_FILE
