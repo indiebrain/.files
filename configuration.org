@@ -207,6 +207,14 @@ Shell and CLI Tooling configuration
   #+END_SRC
 
 
+** ruby
+
+   Too many times have I been bitten by the [[https://github.com/rails/spring][spring]] gem. Kill it with fire.
+
+   #+BEGIN_SRC sh
+     DISABLE_SPRING=1
+   #+END_SRC
+
 * bash_profile
 
   :PROPERTIES:
