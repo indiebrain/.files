@@ -235,6 +235,17 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
+** exercism
+
+   Load the exercism bash completions if they exits
+
+   #+BEGIN_SRC sh
+     if [ -f ~/.config/exercism/exercism_completion.bash ]; then
+         source ~/.config/exercism/exercism_completion.bash
+     fi
+   #+END_SRC
+
+
 * bash_profile
 
   :PROPERTIES:
