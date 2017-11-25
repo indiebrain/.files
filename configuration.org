@@ -215,6 +215,26 @@ Shell and CLI Tooling configuration
      DISABLE_SPRING=1
    #+END_SRC
 
+
+** npm
+
+   Ensure that =npm= installs 'global' packages in a directory which the user has write permissions.
+
+   #+BEGIN_SRC sh
+     NPM_GLOBAL_PATH=~/.npm/global
+     if [ ! -d  $NPM_GLOBAL_PATH ]
+     then
+         mkdir -p $NPM_GLOBAL_PATH
+     fi
+
+     if [ -f `which npm` ]
+     then
+         npm config set prefix $NPM_GLOBAL_PATH
+         export PATH=$NPM_GLOBAL_PATH/bin:$PATH
+     fi
+   #+END_SRC
+
+
 * bash_profile
 
   :PROPERTIES:
