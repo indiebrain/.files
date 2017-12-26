@@ -819,3 +819,17 @@ Shell and CLI Tooling configuration
      eval $COMMAND
 
    #+END_SRC
+
+* ssh
+
+  Automatically load the private key into the ssh-agent and store
+  passwords in the keychain on macOS Sierra 10.12.2+
+
+  1. Copy this manually into ~/.ssh/config
+
+  #+BEGIN_SRC text
+    Host *
+     AddKeysToAgent yes
+     UseKeychain yes
+     IdentityFile ~/.ssh/id_rsa
+  #+END_SRC
