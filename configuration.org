@@ -194,6 +194,10 @@ Shell and CLI Tooling configuration
     if [ `uname` == "Darwin" ]; then
         RBENV_ROOT=/usr/local/var/rbenv
     fi
+    if [ `uname` == "Linux" ]; then
+        RBENV_ROOT=$HOME/.rbenv
+        export PATH="$HOME/.rbenv/bin:$PATH"
+    fi
   #+END_SRC
 
 
