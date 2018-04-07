@@ -55,11 +55,8 @@ Shell and CLI Tooling configuration
   human readable format.
 
   #+BEGIN_SRC sh
-    LS_OPTIONS="lAh"
     if [ `uname` == "Linux" ]; then
-        alias ls='ls -$LS_OPTIONS --color'
-    elif [ `uname` == "Darwin" ]; then
-        alias ls='ls -$LS_OPTIONS'
+        alias ls='ls --color'
     fi
   #+END_SRC
 
