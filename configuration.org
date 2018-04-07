@@ -68,11 +68,8 @@ Shell and CLI Tooling configuration
   Make =grep= highlight matches.
 
   #+BEGIN_SRC sh
-    GREP_OPTS=""
     if [ `uname` == "Linux" ]; then
-        alias grep='grep -$GREP_OPTS --color'
-    elif [ `uname` == "Darwin" ]; then
-        alias grep='grep -$GREP_OPTS'
+        alias grep='grep --color'
     fi
   #+END_SRC
 
@@ -823,6 +820,7 @@ Shell and CLI Tooling configuration
      eval $COMMAND
 
    #+END_SRC
+
 
 * ssh
 
