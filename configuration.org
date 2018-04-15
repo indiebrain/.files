@@ -214,6 +214,13 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
+** rust
+
+   #+BEGIN_SRC sh
+     export PATH="$HOME/.cargo/bin:$PATH"
+   #+END_SRC
+
+
 ** npm
 
    Ensure that =npm= installs 'global' packages in a directory which the user has write permissions.
