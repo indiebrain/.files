@@ -181,8 +181,7 @@ Shell and CLI Tooling configuration
 
   Use the [[https://github.com/rbenv/rbenv][rbenv]] project to manage local [[https://www.ruby-lang.org][Ruby]] installations.
 
-  Store installations in =/usr/local/var/rbenv= instead of the user
-  home directory so they are available to all users of the system.
+  Store installations in the user home directory.
 
   #+BEGIN_SRC sh
     RBENV_ROOT=$HOME/.rbenv
@@ -300,6 +299,7 @@ Shell and CLI Tooling configuration
     [user]
       name = Aaron Kuehler
       email = aaron.kuehler@gmail.com
+      signingkey = F76B135A9A380BA6
   #+END_SRC
 
 
