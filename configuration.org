@@ -216,22 +216,12 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
-** npm
-
-   Ensure that =npm= installs 'global' packages in a directory which the user has write permissions.
+** nvm
 
    #+BEGIN_SRC sh
-     NPM_GLOBAL_PATH=~/.npm/global
-     if [ ! -d  $NPM_GLOBAL_PATH ]
-     then
-         mkdir -p $NPM_GLOBAL_PATH
-     fi
-
-     if [ -f `which npm` ]
-     then
-         npm config set prefix $NPM_GLOBAL_PATH
-         export PATH=$NPM_GLOBAL_PATH/bin:$PATH
-     fi
+     export NVM_DIR="$HOME/.nvm"
+     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
+     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
    #+END_SRC
 
 
