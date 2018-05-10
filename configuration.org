@@ -56,7 +56,7 @@ Shell and CLI Tooling configuration
 
   #+BEGIN_SRC sh
     if [ `uname` == "Linux" ]; then
-	alias ls='ls --color'
+        alias ls='ls --color'
     fi
   #+END_SRC
 
@@ -66,7 +66,7 @@ Shell and CLI Tooling configuration
 
   #+BEGIN_SRC sh
     if [ `uname` == "Linux" ]; then
-	alias grep='grep --color'
+        alias grep='grep --color'
     fi
   #+END_SRC
 
@@ -76,7 +76,7 @@ Shell and CLI Tooling configuration
 
   #+BEGIN_SRC sh
     if [ `uname` == "Linux" ]; then
-	alias pbcopy='xclip -selection clipboard'
+        alias pbcopy='xclip -selection clipboard'
     fi
   #+END_SRC
 
@@ -231,7 +231,7 @@ Shell and CLI Tooling configuration
 
    #+BEGIN_SRC sh
      if [ -f ~/.config/exercism/exercism_completion.bash ]; then
-	 source ~/.config/exercism/exercism_completion.bash
+         source ~/.config/exercism/exercism_completion.bash
      fi
    #+END_SRC
 
@@ -246,7 +246,7 @@ Shell and CLI Tooling configuration
 
   #+BEGIN_SRC sh
     if [ -f ~/.bashrc ];
-	then source ~/.bashrc
+    then source ~/.bashrc
     fi
   #+END_SRC
 
@@ -310,7 +310,7 @@ Shell and CLI Tooling configuration
 
     #+BEGIN_SRC conf
       [include]
-	path = ~/credentials/.github
+        path = ~/credentials/.github
     #+END_SRC
 
 
@@ -492,7 +492,7 @@ Shell and CLI Tooling configuration
       #   $ flush_dns_cache
 
       if [[ `uname` == "Darwin" ]]; then
-	  sudo killall -HUP mDNSResponder
+          sudo killall -HUP mDNSResponder
       fi
     #+END_SRC
 
