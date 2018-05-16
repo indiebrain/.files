@@ -302,7 +302,6 @@ Shell and CLI Tooling configuration
       signingkey = F76B135A9A380BA6
   #+END_SRC
 
-
 *** Github Credentials
 
     Include credentials for CLI authentication with the github gist
@@ -350,6 +349,15 @@ Shell and CLI Tooling configuration
       rclone = clone --recursive
   #+END_SRC
 
+
+*** Commit
+
+  GPG Sign commits
+
+  #+BEGIN_SRC conf
+    [commit]
+      gpgsign = true
+  #+END_SRC
 
 *** Clean
 
