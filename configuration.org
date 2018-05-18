@@ -542,5 +542,4 @@ Shell and CLI Tooling configuration
     Host *
      AddKeysToAgent yes
      UseKeychain yes
-     IdentityFile ~/.ssh/id_rsa
   #+END_SRC
