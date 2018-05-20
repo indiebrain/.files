@@ -54,30 +54,24 @@ Shell and CLI Tooling configuration
   Make =ls= output more information about files and directories in a
   human readable format.
 
-  #+BEGIN_SRC sh
-    if [ `uname` == "Linux" ]; then
-        alias ls='ls --color'
-    fi
+  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+    alias ls='ls --color'
   #+END_SRC
 
 **** grep
 
   Make =grep= highlight matches.
 
-  #+BEGIN_SRC sh
-    if [ `uname` == "Linux" ]; then
-        alias grep='grep --color'
-    fi
+  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+    alias grep='grep --color'
   #+END_SRC
 
 **** pbcopy
 
-  On linux systems, add a shorthand to copy data to the system clipboard on the clicolor
+  Add a shorthand to copy data to the system clipboard on the cli
 
-  #+BEGIN_SRC sh
-    if [ `uname` == "Linux" ]; then
-        alias pbcopy='xclip -selection clipboard'
-    fi
+  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+    alias pbcopy='xclip -selection clipboard'
   #+END_SRC
 
 *** Git aliases
