@@ -536,9 +536,9 @@ Shell and CLI Tooling configuration
 :END:
 
   Automatically load the private key into the ssh-agent and store
-  passwords in the keychain.
+  passwords in the keychain on OS X hosts.
 
-  #+BEGIN_SRC text :tangle ~/.ssh/config
+  #+BEGIN_SRC text :tangle (when (eq system-type 'darwin) "~/.ssh/config")
     Host *
      AddKeysToAgent yes
      UseKeychain yes
