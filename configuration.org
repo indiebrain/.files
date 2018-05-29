@@ -537,3 +537,25 @@ Shell and CLI Tooling configuration
      AddKeysToAgent yes
      UseKeychain yes
   #+END_SRC
+
+* Librem hardware fixes
+
+** Keyboard
+
+   The purism keyboard screws up the pipe key, it outputs a right
+   angle bracket. This bit corrects the output of that key
+   specifically. Add this to
+   =/etc/udev/hwdb.d/90-purism-pipe-symbol-fix.hwdb=.
+   #+BEGIN_SRC conf
+     evdev:atkbd:dmi:bvn*:bvr*:bd*:svnPurism:pnLibrem13v2*
+      KEYBOARD_KEY_56=backslash
+   #+END_SRC
+
+   Afterward run:
+
+   #+BEGIN_SRC sh
+     sudo systemd-hwdb update
+     sudo udevadm trigger
+   #+END_SRC
+
+   For reference: https://forums.puri.sm/t/keyboard-layout-unable-to-recognize-pipe/2022/10
