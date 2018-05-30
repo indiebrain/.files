@@ -229,6 +229,15 @@ Shell and CLI Tooling configuration
    #+END_SRC
 
 
+** Departure
+
+   We use departure at work with MySQL. It makes stuff break all the
+   time. Here I globally disable it.
+
+   #+BEGIN_SRC sh
+     export DISABLE_DEPARTURE=1
+   #+END_SRC
+
 * bash_profile
 
   :PROPERTIES:
