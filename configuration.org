@@ -98,7 +98,7 @@ Shell and CLI Tooling configuration
     # Get a graphical representation of the clean/dirty state of a git repository
     # colors
     case "$TERM" in
-        xterm*|rxvt*|screen*)
+        xterm*|rxvt*|screen*|eterm-color)
             ESC="\033"
             RED="\[$ESC[01;31m\]"
             LIGHT_RED="\[$ESC[1;31m\]"
@@ -402,6 +402,32 @@ Shell and CLI Tooling configuration
 
 ** History
 
+   A ton of the following is ripped directly from the [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use Bash
+   History Commands and Expansions on a Linux VPS]] guide.
+
+*** Immediately store commands
+
+    To do this correctly, we need to do a bit of a hack. We need to
+    append to the history file immediately with history -a, clear the
+    current history in our session with history -c, and then read the
+    history file that we've appended to, back into our session history
+    with history -r.
+
+    #+BEGIN_SRC sh
+      export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+    #+END_SRC
+
+*** Append to the history logs
+
+    By default, bash writes its history at the end of each session,
+    overwriting the existing file with an updated version. This means
+    that if you are logged in with multiple bash sessions, only the
+    last one to exit will have its history saved.
+
+    #+BEGIN_SRC sh
+      shopt -s histappend
+    #+END_SRC
+
 *** Store Unique Commands
 
     Store only unique commands in bash history. Also provide a way to
@@ -418,8 +444,8 @@ Shell and CLI Tooling configuration
     Set the number of commands which can be stored in the history.
 
     #+BEGIN_SRC sh
-      export HISTSIZE=1000
-      export HISTFILESIZE=1000
+      export HISTSIZE=5000
+      export HISTFILESIZE=10000
     #+END_SRC
 
 
