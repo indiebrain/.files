@@ -3,7 +3,6 @@
 Shell and CLI Tooling configuration
 
 * bashrc
-
   :PROPERTIES:
   :header-args: :tangle ~/.bashrc
   :END:
@@ -17,7 +16,6 @@ Shell and CLI Tooling configuration
      export CLICOLOR=1
    #+END_SRC
 
-
 ** $PATH
 
 *** /usr/local/bin
@@ -28,7 +26,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      export PATH=/usr/local/bin:/usr/local/sbin:$PATH
    #+END_SRC
-
 
 *** bin
 
@@ -42,8 +39,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      export PATH=$PATH:$HOME/bin
    #+END_SRC
-
-
 
 ** Aliases
 
@@ -87,7 +82,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      alias gl='git log --graph --oneline --decorate --max-count 10'
    #+END_SRC
-
 
 ** Prompt
 
@@ -390,7 +384,6 @@ Shell and CLI Tooling configuration
     PROMPT_COMMAND=__git_prompt
   #+END_SRC
 
-
 ** Editors
 
    Use emacs as the default editor for the shell
@@ -398,7 +391,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      export EDITOR=emacs
    #+END_SRC
-
 
 ** History
 
@@ -438,7 +430,6 @@ Shell and CLI Tooling configuration
        export HISTCONTROL=ignoreboth:erasedups
      #+END_SRC
 
-
 *** Number of History Entries
 
     Set the number of commands which can be stored in the history.
@@ -447,7 +438,6 @@ Shell and CLI Tooling configuration
       export HISTSIZE=5000
       export HISTFILESIZE=10000
     #+END_SRC
-
 
 ** exenv
 
@@ -462,7 +452,6 @@ Shell and CLI Tooling configuration
     export "EXENV_ROOT=/usr/local/var/exenv"
   #+END_SRC
 
-
 *** exenv initialization
 
   If the =exenv= command is available initialize the exenv
@@ -471,8 +460,6 @@ Shell and CLI Tooling configuration
   #+BEGIN_SRC sh
     if which exenv > /dev/null; then eval "$(exenv init -)"; fi
   #+END_SRC
-
-
 
 ** rbenv
 
@@ -487,7 +474,6 @@ Shell and CLI Tooling configuration
     export PATH="$HOME/.rbenv/bin:$PATH"
   #+END_SRC
 
-
 *** rbenv initialization
 
   If the =rbenv= command is available initialize the rbenv
@@ -497,7 +483,6 @@ Shell and CLI Tooling configuration
     if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
   #+END_SRC
 
-
 ** ruby
 
    Too many times have I been bitten by the [[https://github.com/rails/spring][spring]] gem. Kill it with fire.
@@ -506,13 +491,11 @@ Shell and CLI Tooling configuration
      DISABLE_SPRING=1
    #+END_SRC
 
-
 ** rust
 
    #+BEGIN_SRC sh
      export PATH="$HOME/.cargo/bin:$PATH"
    #+END_SRC
-
 
 ** nvm
 
@@ -521,7 +504,6 @@ Shell and CLI Tooling configuration
      [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
      [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
    #+END_SRC
-
 
 ** exercism
 
@@ -532,7 +514,6 @@ Shell and CLI Tooling configuration
          source ~/.config/exercism/exercism_completion.bash
      fi
    #+END_SRC
-
 
 ** Departure
 
@@ -545,7 +526,6 @@ Shell and CLI Tooling configuration
 
 
 * bash_profile
-
   :PROPERTIES:
   :header-args: :tangle ~/.bash_profile
   :END:
@@ -558,9 +538,7 @@ Shell and CLI Tooling configuration
     fi
   #+END_SRC
 
-
 * gnome-terminal
-
   :PROPERTIES:
   :header-args: :tangle ~/.gruvbox-profile.dconf
   :END:
@@ -588,13 +566,11 @@ Shell and CLI Tooling configuration
     audible-bell=false
   #+END_SRC
 
-
 * git
 
   Git Configuration
 
 ** .gitconfig
-
    :PROPERTIES:
    :header-args: :tangle ~/.gitconfig
    :END:
@@ -698,9 +674,7 @@ Shell and CLI Tooling configuration
       required = true
   #+END_SRC
 
-
 ** .gitignore
-
    :PROPERTIES:
    :header-args: :tangle ~/.gitignore
    :END:
@@ -724,7 +698,6 @@ Shell and CLI Tooling configuration
     ,*#
   #+END_SRC
 
-
 ** tab completion
 
   Enable tab completion for the git.
@@ -735,7 +708,6 @@ Shell and CLI Tooling configuration
        then source $GIT_TAB_COMPLETION_FILE
     fi
   #+END_SRC
-
 
 * gem
 
@@ -749,8 +721,10 @@ Shell and CLI Tooling configuration
     gem: --no-document
   #+END_SRC
 
-
 * Rspec
+  :PROPERTIES:
+  :header-args: :tangle ~/.rspec
+  :END:
 
   rspec CLI configuration
 
@@ -758,35 +732,31 @@ Shell and CLI Tooling configuration
 
   Enable colorized output
 
-  #+BEGIN_SRC text :tangle ~/.rspec
+  #+BEGIN_SRC text
     --color
   #+END_SRC
-
 
 ** Output format
 
   Output from spec runs should look like a progress bar
 
-  #+BEGIN_SRC text :tangle ~/.rspec
+  #+BEGIN_SRC text
     --format progress
   #+END_SRC
-
 
 ** Ordering
 
   Always run specs in a random order to ensure that examples are
   independent of one another.
 
-  #+BEGIN_SRC text :tangle ~/.rspec
+  #+BEGIN_SRC text
     --order random
   #+END_SRC
 
-
 * Scripts
-
-:PROPERTIES:
-:header-args: :mkdirp yes
-:END:
+  :PROPERTIES:
+  :header-args: :mkdirp yes
+  :END:
 
   Version controlled scripts used to automate various repetitive tasks
 
@@ -813,7 +783,6 @@ Shell and CLI Tooling configuration
       fi
     #+END_SRC
 
-
 ** Refresh local git tags
 
    Ensures that a local git repository's tags are in sync with the
@@ -824,7 +793,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      $ refresh_tags
    #+END_SRC
-
 
 *** Source
 
@@ -837,12 +805,10 @@ Shell and CLI Tooling configuration
      git tag -l | xargs git tag -d && git fetch
    #+END_SRC
 
-
 * ssh
-
-:PROPERTIES:
-:header-args: :mkdirp yes
-:END:
+  :PROPERTIES:
+  :header-args: :mkdirp yes
+  :END:
 
   Automatically load the private key into the ssh-agent and store
   passwords in the keychain on OS X hosts.
