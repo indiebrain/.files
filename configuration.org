@@ -338,13 +338,10 @@ Shell and CLI Tooling configuration
 *** Immediately store commands
 
     To do this correctly, we need to do a bit of a hack. We need to
-    append to the history file immediately with history -a, clear the
-    current history in our session with history -c, and then read the
-    history file that we've appended to, back into our session history
-    with history -r.
+    append to the history file immediately with =history -a=
 
     #+BEGIN_SRC sh
-      export PROMPT_COMMAND="history -a; history -c; history -r; $PROMPT_COMMAND"
+      export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
     #+END_SRC
 
 *** Append to the history logs
