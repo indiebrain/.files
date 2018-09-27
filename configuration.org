@@ -459,6 +459,15 @@ Shell and CLI Tooling configuration
      export DISABLE_DEPARTURE=1
    #+END_SRC
 
+** Power
+
+   Source in the power user credentials/secrets
+   #+BEGIN_SRC sh
+     if [ -f ~/credentials/.power ]
+     then source ~/credentials/.power
+     fi
+   #+END_SRC
+
 * bash_profile
   :PROPERTIES:
   :header-args: :tangle ~/.bash_profile
