@@ -374,49 +374,16 @@ Shell and CLI Tooling configuration
       export HISTFILESIZE=10000
     #+END_SRC
 
-** exenv
+** ASDF Version Manager
 
-*** elixir installation path
+   I've used disparate version managers for ruby, elixir, node, etc
+   for years. [[https://github.com/asdf-vm/asdf][ASDF]] promises to unify the interface across all of these
+   version managers - so I'm going to give it a shot.
 
-  Use the [[https://github.com/mururu/exenv][exenv]] project to manage local [[http://elixir-lang.org/][Elixir]] installations.
-
-  Store installations in =/usr/local/var/exenv= instead of the user
-  home directory so they're available to all users of the system.
-
-  #+BEGIN_SRC sh
-    export "EXENV_ROOT=/usr/local/var/exenv"
-  #+END_SRC
-
-*** exenv initialization
-
-  If the =exenv= command is available initialize the exenv
-  system. This provides access to shims and autocompletion.
-
-  #+BEGIN_SRC sh
-    if which exenv > /dev/null; then eval "$(exenv init -)"; fi
-  #+END_SRC
-
-** rbenv
-
-*** ruby installation path
-
-  Use the [[https://github.com/rbenv/rbenv][rbenv]] project to manage local [[https://www.ruby-lang.org][Ruby]] installations.
-
-  Store installations in the user home directory.
-
-  #+BEGIN_SRC sh
-    RBENV_ROOT=$HOME/.rbenv
-    export PATH="$HOME/.rbenv/bin:$PATH"
-  #+END_SRC
-
-*** rbenv initialization
-
-  If the =rbenv= command is available initialize the rbenv
-  system. This provides access to shims and autocompletion.
-
-  #+BEGIN_SRC sh
-    if which rbenv > /dev/null; then eval "$(rbenv init -)"; fi
-  #+END_SRC
+   #+BEGIN_SRC sh
+     source $HOME/.asdf/asdf.sh
+     source $HOME/.asdf/completions/asdf.bash
+   #+END_SRC
 
 ** ruby
 
@@ -443,15 +410,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      export PATH="$HOME/.cargo/bin:$PATH"
    #+END_SRC
-
-** nvm
-
-   #+BEGIN_SRC sh
-     export NVM_DIR="$HOME/.nvm"
-     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" # This loads nvm
-     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion" # This loads nvm bash_completion
-   #+END_SRC
-
 ** exercism
 
    Load the exercism bash completions if they exits
@@ -492,6 +450,23 @@ Shell and CLI Tooling configuration
     then source ~/.bashrc
     fi
   #+END_SRC
+
+* ASDF Version manager
+
+** .asdfrc
+  :PROPERTIES:
+  :header-args: :tangle ~/.asdfrc
+  :END:
+
+   Each language's version manager communities seem to have come to
+   different conclusions on how to represent "required versions". This
+   setting tells asdf to allow the language specific plugin to attempt
+   to use the language's version manager community's default file for
+   specifying a version.
+
+   #+BEGIN_SRC conf
+     legacy_version_file = yes
+   #+END_SRC
 
 * gnome-terminal
   :PROPERTIES:
