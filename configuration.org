@@ -405,11 +405,6 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      BUNDLE_FORCE_RUBY_PLATFORM=1
    #+END_SRC
-** rust
-
-   #+BEGIN_SRC sh
-     export PATH="$HOME/.cargo/bin:$PATH"
-   #+END_SRC
 ** exercism
 
    Load the exercism bash completions if they exits
