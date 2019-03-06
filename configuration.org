@@ -415,6 +415,12 @@ Shell and CLI Tooling configuration
      fi
    #+END_SRC
 
+** go
+
+   #+BEGIN_SRC sh
+     export GOPATH=$HOME/Developer/go
+     export PATH=$PATH:$GOPATH/bin
+   #+END_SRC
 ** Departure
 
    We use departure at work with MySQL. It makes stuff break all the
