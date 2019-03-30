@@ -40,7 +40,6 @@
     Authentication credentials for CLI tools
 
     ,** Github
-
        :PROPERTIES:
        :header-args: :tangle ~/credentials/.github :mkdirp yes
        :END:
