@@ -525,7 +525,7 @@ Shell and CLI Tooling configuration
     [user]
       name = Aaron Kuehler
       email = aaron.kuehler@gmail.com
-      signingkey = F76B135A9A380BA6
+      signingkey = 9E3E4C59E2694215
   #+END_SRC
 
 *** Github Credentials
