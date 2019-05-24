@@ -718,6 +718,26 @@ Shell and CLI Tooling configuration
      git tag -l | xargs git tag -d && git fetch
    #+END_SRC
 
+** Emacs Lisp Testing
+
+   Runs an elisp test
+
+*** Usage
+
+    #+BEGIN_SRC sh
+      $ ert-run <path-to-test>.el
+    #+END_SRC
+
+*** Source
+
+   #+BEGIN_SRC sh :tangle ~/bin/ert-run :shebang "#!/bin/bash"
+     # Purpose:
+     #   Runs an elisp test
+     # Usage:
+     #  $ ert-run <path-to-test>.el
+
+     emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
+   #+END_SRC
 * ssh
   :PROPERTIES:
   :header-args: :mkdirp yes
