@@ -404,6 +404,17 @@ Shell and CLI Tooling configuration
      DISABLE_SPRING=1
    #+END_SRC
 
+*** Bundler
+   Sometimes bundler installs and pins gems to palatform specific
+   versions - IE gems which would only be valid on OSx hosts. To
+   prevent this, the bundler documentation suggests setting the
+   =BUNDLE_FORCE_RUBY_PLATFORM= variable to ignore the host's platform
+   when installing gems and compile native extensions on gem install
+   instead.
+
+   #+BEGIN_SRC sh
+     BUNDLE_FORCE_RUBY_PLATFORM=1
+   #+END_SRC
 ** exercism
 
    Load the exercism bash completions if they exits
@@ -419,6 +430,23 @@ Shell and CLI Tooling configuration
    #+BEGIN_SRC sh
      export GOPATH=$HOME/Developer/go
      export PATH=$PATH:$GOPATH/bin
+   #+END_SRC
+** Departure
+
+   We use departure at work with MySQL. It makes stuff break all the
+   time. Here I globally disable it.
+
+   #+BEGIN_SRC sh
+     export DISABLE_DEPARTURE=1
+   #+END_SRC
+
+** Power
+
+   Source in the power user credentials/secrets
+   #+BEGIN_SRC sh
+     if [ -f ~/credentials/.power ]
+     then source ~/credentials/.power
+     fi
    #+END_SRC
 
 * bash_profile
