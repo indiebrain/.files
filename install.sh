@@ -9,7 +9,7 @@ function ensure_package_manager() {
     if [ $PLATFORM == "Darwin" ] && ! [ -x "$(command -v brew)" ]
     then
         echo "Installing Homebrew..."
-        bash -c "/usr/bin/ruby -e '$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)'"
+        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         brew update
     elif [ $PLATFORM == "Linux" ]
     then
@@ -62,6 +62,7 @@ function tangle_files() {
                      (kill-buffer)) '($FILES)))"
 }
 
+ensure_package_manager
 ensure_dependencies
 clone_or_update_repo
 tangle_files
