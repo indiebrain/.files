@@ -12,9 +12,9 @@ Shell and CLI Tooling configuration
    For commands that support colors, enable the use of colors to
    better visually understand the output of commands.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export CLICOLOR=1
-   #+END_SRC
+   #+end_src
 
 ** $PATH
 
@@ -23,11 +23,11 @@ Shell and CLI Tooling configuration
    Binaries stored in the =/usr/local/bin= directory take precedence
    over their counterparts stored elsewhere on the =PATH=
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-   #+END_SRC
+   #+end_src
 
-*** bin
+*** ~/bin
 
    I keep personal scripts in =~/bin=. Ensure that scripts found in
    =~/bin= are available on the =PATH= so they can be executed
@@ -36,9 +36,9 @@ Shell and CLI Tooling configuration
    For example, instead of typing =~/bin/script-name= simply type
    =script-name=.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export PATH=$PATH:$HOME/bin
-   #+END_SRC
+   #+end_src
 
 ** Aliases
 
@@ -49,46 +49,46 @@ Shell and CLI Tooling configuration
   Make =ls= output more information about files and directories in a
   human readable format.
 
-  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
     alias ls='ls --color'
-  #+END_SRC
+  #+end_src
 
 **** grep
 
   Make =grep= highlight matches.
 
-  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
     alias grep='grep --color'
-  #+END_SRC
+  #+end_src
 
 **** pbcopy
 
   Add a shorthand to copy data to the system clipboard on the cli
 
-  #+BEGIN_SRC sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
     alias pbcopy='xclip -selection clipboard'
-  #+END_SRC
+  #+end_src
 
 *** Git aliases
 
    =gs= is shorthand for the status of a git repository.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      alias gs="git status"
-   #+END_SRC
+   #+end_src
 
    =gl= shows the railroad tracks of the current head ref
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      alias gl='git log --graph --oneline --decorate --max-count 10'
-   #+END_SRC
+   #+end_src
 
 ** Prompt
 
   Configure the shell prompt. This happens to check if we're in a git
   managed directory and adds some status info to the command line.
 
-  #+BEGIN_SRC sh
+  #+begin_src sh
     # Get a graphical representation of the clean/dirty state of a git repository
     # colors
     case "$TERM" in
@@ -320,15 +320,15 @@ Shell and CLI Tooling configuration
         PS1="\n${PS1} →\n${marker} "
     }
     PROMPT_COMMAND=__git_prompt
-  #+END_SRC
+  #+end_src
 
 ** Editors
 
    Use emacs as the default editor for the shell
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export EDITOR=emacs
-   #+END_SRC
+   #+end_src
 
 ** History
 
@@ -340,9 +340,9 @@ Shell and CLI Tooling configuration
     To do this correctly, we need to do a bit of a hack. We need to
     append to the history file immediately with =history -a=
 
-    #+BEGIN_SRC sh
+    #+begin_src sh
       export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-    #+END_SRC
+    #+end_src
 
 *** Append to the history logs
 
@@ -351,9 +351,9 @@ Shell and CLI Tooling configuration
     that if you are logged in with multiple bash sessions, only the
     last one to exit will have its history saved.
 
-    #+BEGIN_SRC sh
+    #+begin_src sh
       shopt -s histappend
-    #+END_SRC
+    #+end_src
 
 *** Store Unique Commands
 
@@ -361,28 +361,35 @@ Shell and CLI Tooling configuration
     manually exclude commands from being recorded in the history. To do
     this, prefix the command with whitespace.
 
-     #+BEGIN_SRC sh
+     #+begin_src sh
        export HISTCONTROL=ignoreboth:erasedups
-     #+END_SRC
+     #+end_src
 
 *** Number of History Entries
 
     Set the number of commands which can be stored in the history.
 
-    #+BEGIN_SRC sh
+    #+begin_src sh
       export HISTSIZE=5000
       export HISTFILESIZE=10000
-    #+END_SRC
+    #+end_src
 
 ** Bash Completion
 
-   #+BEGIN_SRC sh
-     if type brew 2&>/dev/null; then
-       for completion_file in $(brew --prefix)/etc/bash_completion.d/*; do
-         source "$completion_file"
-       done
-     fi
-   #+END_SRC
+   On macOS hosts bash-completion will be installed via Homebrew and
+   we'll load completions according to its conventions - see =brew info bash-completion=.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")
+       [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+   #+end_src
+
+   However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official means of loading bash-completion completions]].
+
+   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
+     # Use bash-completion, if available
+     [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+         source /usr/share/bash-completion/bash_completion
+   #+end_src
 
 ** ASDF Version Manager
 
@@ -390,64 +397,64 @@ Shell and CLI Tooling configuration
    for years. [[https://github.com/asdf-vm/asdf][ASDF]] promises to unify the interface across all of these
    version managers - so I'm going to give it a shot.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      source $HOME/.asdf/asdf.sh
      source $HOME/.asdf/completions/asdf.bash
-   #+END_SRC
+   #+end_src
 
 ** ruby
 
 *** Spring
    Too many times have I been bitten by the [[https://github.com/rails/spring][spring]] gem. Kill it with fire.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      DISABLE_SPRING=1
-   #+END_SRC
+   #+end_src
 
 *** Bundler
    Sometimes bundler installs and pins gems to palatform specific
-   versions - IE gems which would only be valid on OSx hosts. To
+   versions - IE gems which would only be valid on macOS hosts. To
    prevent this, the bundler documentation suggests setting the
    =BUNDLE_FORCE_RUBY_PLATFORM= variable to ignore the host's platform
    when installing gems and compile native extensions on gem install
    instead.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      BUNDLE_FORCE_RUBY_PLATFORM=1
-   #+END_SRC
+   #+end_src
 ** exercism
 
    Load the exercism bash completions if they exits
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      if [ -f ~/.config/exercism/exercism_completion.bash ]; then
          source ~/.config/exercism/exercism_completion.bash
      fi
-   #+END_SRC
+   #+end_src
 
 ** go
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export GOPATH=$HOME/Developer/go
      export PATH=$PATH:$GOPATH/bin
-   #+END_SRC
+   #+end_src
 ** Departure
 
    We use departure at work with MySQL. It makes stuff break all the
    time. Here I globally disable it.
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      export DISABLE_DEPARTURE=1
-   #+END_SRC
+   #+end_src
 
 ** Power
 
    Source in the power user credentials/secrets
-   #+BEGIN_SRC sh
+   #+begin_src sh
      if [ -f ~/credentials/.power ]
      then source ~/credentials/.power
      fi
-   #+END_SRC
+   #+end_src
 
 * bash_profile
   :PROPERTIES:
@@ -456,11 +463,11 @@ Shell and CLI Tooling configuration
 
   Use the same configuration for =.bash_profile= as the =.bashrc=
 
-  #+BEGIN_SRC sh
+  #+begin_src sh
     if [ -f ~/.bashrc ];
     then source ~/.bashrc
     fi
-  #+END_SRC
+  #+end_src
 
 * ASDF Version manager
 
@@ -475,9 +482,9 @@ Shell and CLI Tooling configuration
    to use the language's version manager community's default file for
    specifying a version.
 
-   #+BEGIN_SRC conf
+   #+begin_src conf
      legacy_version_file = yes
-   #+END_SRC
+   #+end_src
 
 * gnome-terminal
   :PROPERTIES:
@@ -494,7 +501,7 @@ Shell and CLI Tooling configuration
   4. Import the profile settings into the new profile
      =cat ~/.gruvbox-profile.dconf | dconf load /org/gnome/terminal/legacy/profiles:/:<profile-uuid-here>/=
 
-  #+BEGIN_SRC text
+  #+begin_src text
     [/]
     foreground-color='rgb(235,219,178)'
     visible-name='Gruvbox'
@@ -505,7 +512,7 @@ Shell and CLI Tooling configuration
     scrollback-unlimited=false
     background-color='rgb(40,40,40)'
     audible-bell=false
-  #+END_SRC
+  #+end_src
 
 * git
 
@@ -521,22 +528,22 @@ Shell and CLI Tooling configuration
   Configure information used by git to determine how to write the
   author information for commits
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [user]
       name = Aaron Kuehler
       email = aaron.kuehler@gmail.com
       signingkey = 9E3E4C59E2694215
-  #+END_SRC
+  #+end_src
 
 *** Github Credentials
 
     Include credentials for CLI authentication with the github gist
     API
 
-    #+BEGIN_SRC conf
+    #+begin_src conf
       [include]
         path = ~/credentials/.github
-    #+END_SRC
+    #+end_src
 
 
 *** Core configuration
@@ -546,53 +553,53 @@ Shell and CLI Tooling configuration
 
   Use Emacs as the commit editor
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [core]
       excludesfile = ~/.gitignore
       editor = emacs -nw --eval '(global-git-commit-mode t)'
-  #+END_SRC
+  #+end_src
 
 
 *** Colors
 
   Enable coloring of git output
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [color]
       ui = true
-  #+END_SRC
+  #+end_src
 
 
 *** Aliases
 
   Set aliases for frequently used git incantations.
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [alias]
       co  = checkout
       cb  = checkout -b
       db  = branch -d
       rclone = clone --recursive
-  #+END_SRC
+  #+end_src
 
 
 *** Commit
 
   GPG Sign commits
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [commit]
       gpgsign = true
-  #+END_SRC
+  #+end_src
 
 *** Clean
 
   Disable the safeguard flag when running =git clean=
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [clean]
       requireForce = false
-  #+END_SRC
+  #+end_src
 
 
 *** Push
@@ -600,20 +607,20 @@ Shell and CLI Tooling configuration
   Only push the current branch, rather than all
   branches, when =git push= is invoked.
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [push]
       default = simple
-  #+END_SRC
+  #+end_src
 
 
 *** Filter
 
-  #+BEGIN_SRC conf
+  #+begin_src conf
     [filter "lfs"]
       clean = git-lfs clean %f
       smudge = git-lfs smudge %f
       required = true
-  #+END_SRC
+  #+end_src
 
 ** .gitignore
    :PROPERTIES:
@@ -624,31 +631,31 @@ Shell and CLI Tooling configuration
 
   Never ever store Mac OS Finder metadata in a git repository.
 
-  #+BEGIN_SRC text
+  #+begin_src text
     .DS_Store
-  #+END_SRC
+  #+end_src
 
 
 *** Emacs temp files
 
   Never store Emacs autosave and backup files in a git repository.
 
-  #+BEGIN_SRC text
+  #+begin_src text
     ,*~
     .#*
     ,*#
-  #+END_SRC
+  #+end_src
 
 ** tab completion
 
   Enable tab completion for the git.
 
-  #+BEGIN_SRC sh
+  #+begin_src sh
     GIT_TAB_COMPLETION_FILE=/usr/local/etc/bash_completion.d/git-completion.bash
     if [ -f $GIT_TAB_COMPLETION_FILE ];
        then source $GIT_TAB_COMPLETION_FILE
     fi
-  #+END_SRC
+  #+end_src
 
 * gem
 
@@ -658,9 +665,9 @@ Shell and CLI Tooling configuration
 
   When a gem is installed forego the generation of its documentation.
 
-  #+BEGIN_SRC text :tangle ~/.gemrc
+  #+begin_src text :tangle ~/.gemrc
     gem: --no-document
-  #+END_SRC
+  #+end_src
 
 * Rspec
   :PROPERTIES:
@@ -673,26 +680,26 @@ Shell and CLI Tooling configuration
 
   Enable colorized output
 
-  #+BEGIN_SRC text
+  #+begin_src text
     --color
-  #+END_SRC
+  #+end_src
 
 ** Output format
 
   Output from spec runs should look like a progress bar
 
-  #+BEGIN_SRC text
+  #+begin_src text
     --format progress
-  #+END_SRC
+  #+end_src
 
 ** Ordering
 
   Always run specs in a random order to ensure that examples are
   independent of one another.
 
-  #+BEGIN_SRC text
+  #+begin_src text
     --order random
-  #+END_SRC
+  #+end_src
 
 * Scripts
   :PROPERTIES:
@@ -707,13 +714,13 @@ Shell and CLI Tooling configuration
 
 *** Usage
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      $ flush_dns
-   #+END_SRC
+   #+end_src
 
 *** Source
 
-    #+BEGIN_SRC sh :tangle ~/bin/flush_dns :shebang "#!/bin/bash"
+    #+begin_src sh :tangle ~/bin/flush_dns :shebang "#!/bin/bash"
       # Purpose:
       #   Flush the local DNS cache
       # Usage:
@@ -722,7 +729,7 @@ Shell and CLI Tooling configuration
       if [[ `uname` == "Darwin" ]]; then
           sudo killall -HUP mDNSResponder
       fi
-    #+END_SRC
+    #+end_src
 
 ** Refresh local git tags
 
@@ -731,20 +738,20 @@ Shell and CLI Tooling configuration
 
 *** Usage
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      $ refresh_tags
-   #+END_SRC
+   #+end_src
 
 *** Source
 
-   #+BEGIN_SRC sh :tangle ~/bin/refresh_tags :shebang "#!/bin/bash"
+   #+begin_src sh :tangle ~/bin/refresh_tags :shebang "#!/bin/bash"
      # Purpose:
      #   Delete all local tags and refresh from origin
      # Usage:
      #   $ refresh_tags
 
      git tag -l | xargs git tag -d && git fetch
-   #+END_SRC
+   #+end_src
 
 ** Emacs Lisp Testing
 
@@ -752,20 +759,20 @@ Shell and CLI Tooling configuration
 
 *** Usage
 
-    #+BEGIN_SRC sh
+    #+begin_src sh
       $ ert-run <path-to-test>.el
-    #+END_SRC
+    #+end_src
 
 *** Source
 
-   #+BEGIN_SRC sh :tangle ~/bin/ert-run :shebang "#!/bin/bash"
+   #+begin_src sh :tangle ~/bin/ert-run :shebang "#!/bin/bash"
      # Purpose:
      #   Runs an elisp test
      # Usage:
      #  $ ert-run <path-to-test>.el
 
      emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
-   #+END_SRC
+   #+end_src
 * ssh
   :PROPERTIES:
   :header-args: :mkdirp yes
@@ -774,11 +781,213 @@ Shell and CLI Tooling configuration
   Automatically load the private key into the ssh-agent and store
   passwords in the keychain on OS X hosts.
 
-  #+BEGIN_SRC text :tangle (when (eq system-type 'darwin) "~/.ssh/config")
+  #+begin_src text :tangle (when (eq system-type 'darwin) "~/.ssh/config")
     Host *
      AddKeysToAgent yes
      UseKeychain yes
-  #+END_SRC
+  #+end_src
+
+* setup
+
+   Generates the =.files/setup.sh= script used to bootstrap new system
+   with the tools and configuration I use across hosts.
+
+** Common Packages
+
+   Define and install basic packages required to build and install software
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
+   #+end_src
+
+** macOS Packages
+
+   macOS has a surprising lack of "package management
+   system". Homebrew is the closest thing, but has a few functional
+   deficiencies. Nonetheless, in most cases it's better than nothing
+   so we ensure that it exists on macOS hosts here.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     if ! [ -x "$(command -v brew)" ]; then
+       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+     fi
+     brew update
+     brew tap homebrew/cask-versions
+   #+end_src
+
+*** Additional macOS Packages
+
+   On macOS, ensure that these programs are present. Generally they're
+   required to build or support the tools I use to produce software.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     PACKAGES="$PACKAGES ncurses openssl readline the_silver_searcher"
+   #+end_src
+
+*** macOS Binary Packages
+
+    On macOS clients, also ensure that the following binary
+    applications are available for use.
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     BINARY_PACKAGES="emacs docker firefox-developer-edition iterm2 keepassxc keybase mactex nextcloud signal skitch slack spectacle"
+   #+end_src
+
+*** macOS update =GNU bash=
+
+   Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to
+   update the =bash= shell in macOS for quite some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact
+   they've gone so far as switching the user's default shell to zsh,
+   and added an annoying depreciation warning when using bash in their
+   latest OS update]]... LOLWAT? Here we'll use Homebrew to install a
+   recent version of =GNU bash= and make sure it's our user's default
+   shell.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
+     then
+         sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
+     fi
+
+     chsh -s /usr/local/bin/bash
+   #+end_src
+
+** GNU/Linux Packages
+
+   On GNU/Linux hosts, ensure that the following packages are present.
+
+   #+begin_src sh
+     PACKAGES="$PACKAGES aspell git silversearcher-ag"
+   #+end_src
+
+** Install Packages
+
+   And now we're ready to ensure that each of the packages are
+   installed. On macOS hosts, we use Homebrew to install packages.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     for package in $PACKAGES; do
+         if [ "$( brew list -1 | grep $package )" == "" ]; then
+           echo "installing $package"
+           brew install $package
+         else
+             echo "$package installed"
+         fi
+     done
+
+     for package in $BINARY_PACKAGES; do
+         if [ "$( brew cask list -1 | grep $package )" == "" ]; then
+           echo "installing $package"
+           brew cask install $package
+         else
+             echo "$package installed"
+         fi
+     done
+   #+end_src
+
+   And on GNU/Linux hosts - for which I always use Debian GNU/Linux -
+   we'll use the Aptitude Package Manager.
+
+   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
+     for package in $PACKAGES; do
+         if [ "$(sudo apt-cache policy $package | grep 'Installed: (none)')" ]
+         then
+             sudo apt install -y $package
+         else
+             echo "$package is already installed";
+         fi
+     done
+   #+end_src
+
+** Install asdf
+
+   I use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manage the tooling
+   and runtimes in which I typically write software.
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     ASDF_DIR=$HOME/.asdf
+     if [ -e $ASDF_DIR ]; then
+       echo "Updating $ASDF_DIR"
+       asdf update
+     else
+       echo "Installing ASDF"
+       git clone https://github.com/asdf-vm/asdf.git $ASDF_DIR
+       cd $ASDF_DIR
+       git checkout "$(git describe --abbrev=0 --tags)"
+     fi
+   #+end_src
+
+   Now that asdf-vm is in place, install the language specific plugins I typically use.
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     ASDF_PLUGINS='ruby nodejs'
+     for plugin in $ASDF_PLUGINS; do
+       if [ -e $ASDF_DIR/plugins/$plugin ]; then
+         echo "asdf $plugin plugin already installed"
+         asdf plugin-update $plugin
+       else
+         echo "installing asdf $plugin plugin"
+         asdf plugin-add $plugin
+       fi
+     done
+   #+end_src
+
+** Install Docker
+
+   Ensures that docker is installed. On Mac OS X hosts, we use
+   [[https://brew.sh/][Homebrew]] to install Docker:
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     if [ $(which docker) ]; then
+       echo "docker is already installed"
+     else
+       brew cask install docker
+     fi
+   #+end_src
+
+   While on GNU/Linux hosts, we assume we're using my favorite distro -
+   Debian - and use the [[https://wiki.debian.org/Aptitude][Aptitude Package Manager]] to install Docker.
+
+   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
+     if [ $(which docker) ]
+     then
+         echo "docker is already installed"
+     else
+         echo "installing docker"
+         sudo apt-get remove docker docker-engine docker.io containerd runc
+         sudo apt-get update
+         sudo apt-get install \
+              apt-transport-https \
+              ca-certificates \
+              curl \
+              gnupg2 \
+              software-properties-common
+
+         curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+         sudo add-apt-repository \
+              "deb [arch=amd64] https://download.docker.com/linux/debian \
+                 $(lsb_release -cs) \
+                 stable"
+         sudo apt-get update
+         sudo apt install -y docker-ce docker-ce-cli containerd.io
+         sudo groupadd docker
+         sudo usermod -aG docker $USER
+         newgrp docker
+     fi
+   #+end_src
+
+** Install docker-compose
+
+  Ensures that docker-compose is installed and ready to use. On Mac OS
+  X this comes bundled in the Homebrew cask version of Docker, so
+  there's nothing for us to do. However on GNU/Linux hosts we need to
+  do some additional steps to get everything up and running.
+
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+  #+end_src
 
 * Librem hardware fixes
 
@@ -788,16 +997,16 @@ Shell and CLI Tooling configuration
    angle bracket. This bit corrects the output of that key
    specifically. Add this to
    =/etc/udev/hwdb.d/90-purism-pipe-symbol-fix.hwdb=.
-   #+BEGIN_SRC conf
+   #+begin_src conf
      evdev:atkbd:dmi:bvn*:bvr*:bd*:svnPurism:pnLibrem13v2*
       KEYBOARD_KEY_56=backslash
-   #+END_SRC
+   #+end_src
 
    Afterward run:
 
-   #+BEGIN_SRC sh
+   #+begin_src sh
      sudo systemd-hwdb update
      sudo udevadm trigger
-   #+END_SRC
+   #+end_src
 
    For reference: https://forums.puri.sm/t/keyboard-layout-unable-to-recognize-pipe/2022/10
