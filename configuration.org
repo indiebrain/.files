@@ -833,6 +833,31 @@ Shell and CLI Tooling configuration
      BINARY_PACKAGES="emacs docker firefox-developer-edition iterm2 keepassxc keybase mactex nextcloud signal skitch slack spectacle"
    #+end_src
 
+*** Install Packages
+
+   And now we're ready to ensure that each of the packages are
+   installed. On macOS hosts, we use Homebrew to install packages.
+
+   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+     for package in $PACKAGES; do
+         if [ "$( brew list -1 | grep $package )" == "" ]; then
+           echo "installing $package"
+           brew install $package
+         else
+             echo "$package installed"
+         fi
+     done
+
+     for package in $BINARY_PACKAGES; do
+         if [ "$( brew cask list -1 | grep $package )" == "" ]; then
+           echo "installing $package"
+           brew cask install $package
+         else
+             echo "$package installed"
+         fi
+     done
+   #+end_src
+
 *** macOS update =GNU bash=
 
    Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to
@@ -860,32 +885,8 @@ Shell and CLI Tooling configuration
      PACKAGES="$PACKAGES aspell git silversearcher-ag"
    #+end_src
 
-** Install Packages
-
-   And now we're ready to ensure that each of the packages are
-   installed. On macOS hosts, we use Homebrew to install packages.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     for package in $PACKAGES; do
-         if [ "$( brew list -1 | grep $package )" == "" ]; then
-           echo "installing $package"
-           brew install $package
-         else
-             echo "$package installed"
-         fi
-     done
-
-     for package in $BINARY_PACKAGES; do
-         if [ "$( brew cask list -1 | grep $package )" == "" ]; then
-           echo "installing $package"
-           brew cask install $package
-         else
-             echo "$package installed"
-         fi
-     done
-   #+end_src
-
-   And on GNU/Linux hosts - for which I always use Debian GNU/Linux -
+*** Install Packages
+   On GNU/Linux hosts - for which I always use Debian GNU/Linux -
    we'll use the Aptitude Package Manager.
 
    #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
