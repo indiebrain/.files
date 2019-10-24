@@ -19,11 +19,9 @@ function ensure_package_manager() {
 
 function ensure_dependencies() {
     local deps="emacs git"
-    local binary_deps="emacs"
     if [ $PLATFORM == "Darwin" ]
     then
         brew install $deps
-        brew cask install $binary_deps
     elif [ $PLATFORM == "Linux" ]
     then
         sudo apt install -y $deps
