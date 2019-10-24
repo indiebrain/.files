@@ -990,6 +990,27 @@ Shell and CLI Tooling configuration
     sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
   #+end_src
 
+** Install Emacs configuration
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     EMACS_CONFIG_DIR=$HOME/.emacs.d
+     if ! [ -d $EMACS_CONFIG_DIR ]
+     then
+         echo "Cloning emacs configuration"
+         git clone git@github.com:indiebrain/.emacs.d.git $HOME/.emacs.d
+     elif [ -d $EMACS_CONFIG_DIR/.git ]
+     then
+          echo "Attempting to update the emacs configuration"
+          pushd $EMACS_CONFIG_DIR
+          git pull --rebase
+          popd
+     else
+         echo "Emacs configuration is not yet managed by this script. Skipping for now."
+         echo "If you want the .files installation to place the emacs configuration,"
+         echo "and re run the setup script."
+     fi
+   #+end_src
+
 * Librem hardware fixes
 
 ** Keyboard
