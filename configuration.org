@@ -802,6 +802,8 @@ Shell and CLI Tooling configuration
 
 ** macOS Packages
 
+*** Add "Package Manager"
+
    macOS has a surprising lack of "package management
    system". Homebrew is the closest thing, but has a few functional
    deficiencies. Nonetheless, in most cases it's better than nothing
