@@ -830,7 +830,7 @@ Shell and CLI Tooling configuration
     applications are available for use.
 
    #+begin_src sh :tangle "~/.files/setup.sh"
-     BINARY_PACKAGES="emacs docker firefox-developer-edition iterm2 keepassxc keybase mactex nextcloud signal skitch slack spectacle"
+     BINARY_PACKAGES="emacs firefox-developer-edition iterm2 keepassxc keybase mactex nextcloud signal skitch slack spectacle"
    #+end_src
 
 *** Install Packages
@@ -877,11 +877,20 @@ Shell and CLI Tooling configuration
      chsh -s /usr/local/bin/bash
    #+end_src
 
+  Change the shell to bash for the rest of the setup script.  This
+  also has the affect of loading the newly generated bash
+  configuration which makes installing things like ASDF a bit easier.
+
+  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
+    /usr/local/bin/bash
+    source $HOME/.bashrc
+  #+end_src
+
 ** GNU/Linux Packages
 
    On GNU/Linux hosts, ensure that the following packages are present.
 
-   #+begin_src sh
+   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
      PACKAGES="$PACKAGES aspell git silversearcher-ag"
    #+end_src
 
@@ -899,6 +908,15 @@ Shell and CLI Tooling configuration
          fi
      done
    #+end_src
+
+*** Load the bash config
+
+  Load the newly generated bash configuration which makes installing
+  things like ASDF a bit easier.
+
+  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
+    source $HOME/.bashrc
+  #+end_src
 
 ** Install asdf
 
