@@ -30,7 +30,7 @@ function ensure_dependencies() {
     fi
 }
 
-function clone_or_update_repo() {
+function ensure_latest_dotfiles() {
     if [ -e $DOTFILES_HOME ]
     then
         echo "Updating $DOTFILES_HOME"
@@ -72,7 +72,7 @@ function run_setup() {
 
 ensure_package_manager
 ensure_dependencies
-clone_or_update_repo
+ensure_latest_dotfiles
 tangle_files
 run_setup
 
