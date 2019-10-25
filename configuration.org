@@ -398,8 +398,8 @@ Shell and CLI Tooling configuration
    version managers - so I'm going to give it a shot.
 
    #+begin_src sh
-     source $HOME/.asdf/asdf.sh
-     source $HOME/.asdf/completions/asdf.bash
+     [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+     [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
    #+end_src
 
 ** ruby
@@ -936,6 +936,8 @@ Shell and CLI Tooling configuration
        cd $ASDF_DIR
        git checkout "$(git describe --abbrev=0 --tags)"
      fi
+     [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+     [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
    #+end_src
 
    Now that asdf-vm is in place, install the language specific plugins I typically use.
