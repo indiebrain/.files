@@ -456,6 +456,14 @@ Shell and CLI Tooling configuration
      fi
    #+end_src
 
+** Homebrew
+*** Disable tracking
+
+   Homebrew client captures metrics about its host and usage. No, sir; do not want.
+
+   #+begin_src sh
+     export HOMEBREW_NO_ANALYTICS=1
+   #+end_src
 * bash_profile
   :PROPERTIES:
   :header-args: :tangle ~/.bash_profile
@@ -816,7 +824,6 @@ Shell and CLI Tooling configuration
      brew update
      brew tap homebrew/cask-versions
    #+end_src
-
 *** Additional macOS Packages
 
    On macOS, ensure that these programs are present. Generally they're
