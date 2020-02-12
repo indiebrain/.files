@@ -464,6 +464,24 @@ Shell and CLI Tooling configuration
    #+begin_src sh
      export HOMEBREW_NO_ANALYTICS=1
    #+end_src
+** libffi
+
+   When on macOS hosts, it is necessary to provide compiler flags for
+   =libffi= in order to build some packages - like GNU Guile.
+
+  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")"
+    export LDFLAGS="$LDFLAGS -L/usr/local/opt/libffi/lib"
+    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/libffi/lib/pkgconfig"
+  #+end_src
+
+** readline
+
+  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")
+    export LDFLAGS="$LDFLAGS -L/usr/local/opt/readline/lib"
+    export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/readline/include"
+    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/readline/lib/pkgconfig"
+  #+end_src
+
 * bash_profile
   :PROPERTIES:
   :header-args: :tangle ~/.bash_profile
