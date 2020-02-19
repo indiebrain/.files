@@ -644,6 +644,7 @@ Shell and CLI Tooling configuration
   #+begin_src conf
     [remote "origin"]
       tagOpt = --no-tags
+      prune = true
   #+end_src
 
 *** Filter
