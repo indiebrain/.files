@@ -571,7 +571,6 @@ Shell and CLI Tooling configuration
         path = ~/credentials/.github
     #+end_src
 
-
 *** Core configuration
 
   In addition to any files included in a project's =.gitignore= file,
@@ -585,7 +584,6 @@ Shell and CLI Tooling configuration
       editor = emacs -nw --eval '(global-git-commit-mode t)'
   #+end_src
 
-
 *** Colors
 
   Enable coloring of git output
@@ -594,7 +592,6 @@ Shell and CLI Tooling configuration
     [color]
       ui = true
   #+end_src
-
 
 *** Aliases
 
@@ -607,7 +604,6 @@ Shell and CLI Tooling configuration
       db  = branch -d
       rclone = clone --recursive
   #+end_src
-
 
 *** Commit
 
@@ -627,7 +623,6 @@ Shell and CLI Tooling configuration
       requireForce = false
   #+end_src
 
-
 *** Push
 
   Only push the current branch, rather than all
@@ -638,6 +633,18 @@ Shell and CLI Tooling configuration
       default = simple
   #+end_src
 
+*** Fetch
+
+  Don't fetch remote tags. I work on some projects which automatically
+  tag every commit. Not only does this makes tags useless, but it also
+  causes a degradation of git operations locally. Here I tell =git
+  fetch= to ignore tags on the =origin= remote. I'll fetch them myself
+  later if I want them.
+
+  #+begin_src conf
+    [remote "origin"]
+      tagOpt = --no-tags
+  #+end_src
 
 *** Filter
 
@@ -647,6 +654,7 @@ Shell and CLI Tooling configuration
       smudge = git-lfs smudge %f
       required = true
   #+end_src
+
 
 ** .gitignore
    :PROPERTIES:
