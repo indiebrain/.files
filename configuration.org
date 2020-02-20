@@ -411,17 +411,6 @@ Shell and CLI Tooling configuration
      DISABLE_SPRING=1
    #+end_src
 
-*** Bundler
-   Sometimes bundler installs and pins gems to palatform specific
-   versions - IE gems which would only be valid on macOS hosts. To
-   prevent this, the bundler documentation suggests setting the
-   =BUNDLE_FORCE_RUBY_PLATFORM= variable to ignore the host's platform
-   when installing gems and compile native extensions on gem install
-   instead.
-
-   #+begin_src sh
-     BUNDLE_FORCE_RUBY_PLATFORM=1
-   #+end_src
 ** exercism
 
    Load the exercism bash completions if they exits
@@ -494,6 +483,24 @@ Shell and CLI Tooling configuration
     then source ~/.bashrc
     fi
   #+end_src
+
+* bundler
+  :PROPERTIES:
+  :header-args: :mkdirp yes :tangle ~/.bundle/config
+  :END:
+
+   Sometimes bundler installs and pins gems to palatform specific
+   versions - IE gems which would only be valid on macOS hosts. To
+   prevent this, the bundler documentation suggests setting the
+   =BUNDLE_FORCE_RUBY_PLATFORM= variable to ignore the host's platform
+   when installing gems and compile native extensions on gem install
+   instead.
+
+   #+begin_src sh
+     ---
+     BUNDLE_FORCE_RUBY_PLATFORM: "true"
+     BUNDLE_BUILD__MYSQL2: "--with-ldflags=-L/usr/local/opt/openssl/lib"
+   #+end_src
 
 * ASDF Version manager
 
