@@ -498,7 +498,6 @@ Shell and CLI Tooling configuration
 
    #+begin_src sh
      ---
-     BUNDLE_FORCE_RUBY_PLATFORM: "true"
      BUNDLE_BUILD__MYSQL2: "--with-ldflags=-L/usr/local/opt/openssl/lib"
    #+end_src
 
