@@ -60,18 +60,9 @@ function tangle_files() {
                      (kill-buffer)) '($FILES)))"
 }
 
-function run_setup() {
-    if [ -e $DOTFILES_HOME/setup.sh ]
-    then
-        chmod u+x $DOTFILES_HOME/setup.sh
-        $DOTFILES_HOME/setup.sh
-    fi
-}
-
 ensure_package_manager
 ensure_dependencies
 ensure_latest_dotfiles
 tangle_files
-run_setup
 
 exit 0
