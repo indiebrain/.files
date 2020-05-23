@@ -60,9 +60,16 @@ function tangle_files() {
                      (kill-buffer)) '($FILES)))"
 }
 
+function make_setup_executable() {
+    local setup_script_path="$DOTFILES_HOME/setup.sh"
+
+    chmod u+x $setup_script_path
+}
+
 ensure_package_manager
 ensure_dependencies
 ensure_latest_dotfiles
 tangle_files
+make_setup_executable
 
 exit 0
