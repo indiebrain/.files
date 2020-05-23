@@ -913,12 +913,10 @@ Shell and CLI Tooling configuration
    shell.
 
    #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
-     then
-         sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
-     fi
-
-     chsh -s /usr/local/bin/bash
+      if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
+      then
+          sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
+      fi
    #+end_src
 
   Change the shell to bash for the rest of the setup script.  This
@@ -926,8 +924,13 @@ Shell and CLI Tooling configuration
   configuration which makes installing things like ASDF a bit easier.
 
   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-    /usr/local/bin/bash
-    source $HOME/.bashrc
+    if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
+    then
+        echo "Bash is not the current shell, changing shell..."
+        chsh -s /usr/local/bin/bash 2>/dev/null
+        /usr/local/bin/bash
+        source $HOME/.bashrc
+    fi
   #+end_src
 
 ** GNU/Linux Packages
@@ -995,6 +998,14 @@ Shell and CLI Tooling configuration
          asdf plugin-add $plugin
        fi
      done
+   #+end_src
+
+   Post install, the [[https://github.com/asdf-vm/asdf-nodejs][asdf-nodejs]] plugin requires manually importing
+   the team's nodejs team's keyring. Manual installation is for
+   suckers.
+
+   #+begin_src sh :tangle "~/.files/setup.sh"
+     bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
    #+end_src
 
 ** Install Docker
