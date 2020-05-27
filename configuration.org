@@ -814,6 +814,86 @@ Shell and CLI Tooling configuration
 
      emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
    #+end_src
+** Power HRG Kubernets Cluster Helpers
+
+   Scripts to  help deal with kubernets across multiple clusters
+
+*** =kubectl= Helpers
+**** Usage
+
+    =akh= - run kubectl against the HQ cluster:
+
+    #+begin_src sh
+      $ akh -n nitro-web-prXXXX get pods
+    #+end_src
+
+**** Source
+
+   #+begin_src sh :tangle ~/bin/akh :shebang "#!/bin/bash"
+     # Purpose:
+     #   Run Kubectl against the Power HRG HQ Kubernets cluster
+     # Usage:
+     #  $ akh -n nitro-web-prXXXX get pods
+
+     app kubectl --context APP-HQ "$@"
+   #+end_src
+
+**** Usage
+
+    =akg= - run kubectl against the Gotham cluster:
+
+    #+begin_src sh
+      $ akg -n nitro-web-prXXXX get pods
+    #+end_src
+
+**** Source
+
+   #+begin_src sh :tangle ~/bin/akg :shebang "#!/bin/bash"
+     # Purpose:
+     #   Run Kubectl against the Power HRG Gotham Kubernets cluster
+     # Usage:
+     #  $ akg -n nitro-web-prXXXX get pods
+
+     app kubectl --context APP-Gotham "$@"
+   #+end_src
+
+*** =helm= helpers
+**** Usage
+
+    =ahh= - run Helm (v3) against the HQ cluster:
+
+    #+begin_src sh
+      $ ahh -n nitro-web-prXXXX list
+    #+end_src
+
+**** Source
+
+   #+begin_src sh :tangle ~/bin/ahh :shebang "#!/bin/bash"
+     # Purpose:
+     #   Run Helm (v3) against the Power HRG HQ Kubernets cluster
+     # Usage:
+     #  $ ahh -n nitro-web-prXXXX list
+
+     app helm3 --kube-context APP-HQ "$@"
+   #+end_src
+**** Usage
+
+    =ahg= - run Helm (v3) against the Gotham cluster:
+
+    #+begin_src sh
+      $ ahg -n nitro-web-prXXXX list
+    #+end_src
+
+**** Source
+
+   #+begin_src sh :tangle ~/bin/ahg :shebang "#!/bin/bash"
+     # Purpose:
+     #   Run Helm (v3) against the Power HRG Gotham Kubernets cluster
+     # Usage:
+     #  $ ahg -n nitro-web-prXXXX list
+
+     app helm3 --kube-context APP-Gotham "$@"
+   #+end_src
 * ssh
   :PROPERTIES:
   :header-args: :mkdirp yes
