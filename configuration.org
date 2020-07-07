@@ -824,6 +824,28 @@ Shell and CLI Tooling configuration
 
      emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
    #+end_src
+** inode consumption
+
+   Find locations of dense inode consumption on disk
+
+*** Usage
+
+    #+begin_src sh
+      $ inode-consumption
+    #+end_src
+
+*** Source
+
+   #+begin_src sh :tangle ~/bin/inode-consumption :shebang "#!/bin/bash"
+     # Purpose:
+     #   List locations on disk ranked by their inode consumption
+     # Usage:
+     #  $ inode-consumption
+
+     find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
+   #+end_src
+
+
 ** Power HRG Kubernets Cluster Helpers
 
    Scripts to  help deal with kubernets across multiple clusters
