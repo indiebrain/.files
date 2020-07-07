@@ -436,6 +436,16 @@ Shell and CLI Tooling configuration
      export DISABLE_DEPARTURE=1
    #+end_src
 
+** Overcommit
+
+   Some teams I work with use [[https://github.com/sds/overcommit][overcommit]] to run pre-commit git
+   hooks. Overcommit seems to be incompatible with magit so I disable
+   overcommit.
+
+   #+begin_src sh
+     export OVERCOMMIT_DISABLE=1
+   #+end_src
+
 ** Power
 
    Source in the power user credentials/secrets
