@@ -541,6 +541,23 @@ Shell and CLI Tooling configuration
      legacy_version_file = yes
    #+end_src
 
+** .default-gems
+  :PROPERTIES:
+  :header-args: :tangle ~/.default-gems
+  :END:
+
+   When installing a ruby, ensure that the following gems are also
+   present.
+
+   #+begin_src text
+     bundler
+     gem-ctags
+     pry
+     rcodetools
+     solargraph
+   #+end_src
+
+
 * gnome-terminal
   :PROPERTIES:
   :header-args: :tangle ~/.gruvbox-profile.dconf
