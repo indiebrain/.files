@@ -333,16 +333,8 @@ Shell and CLI Tooling configuration
 ** History
 
    A ton of the following is ripped directly from the [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use Bash
-   History Commands and Expansions on a Linux VPS]] guide.
-
-*** Immediately store commands
-
-    To do this correctly, we need to do a bit of a hack. We need to
-    append to the history file immediately with =history -a=
-
-    #+begin_src sh
-      export PROMPT_COMMAND="history -a; $PROMPT_COMMAND"
-    #+end_src
+   History Commands and Expansions on a Linux VPS]] guide and
+   [[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge Your Bash History]].
 
 *** Append to the history logs
 
@@ -353,6 +345,16 @@ Shell and CLI Tooling configuration
 
     #+begin_src sh
       shopt -s histappend
+    #+end_src
+
+*** Append and reload history after each command
+
+    To do this correctly, we need to do a bit of a hack. We need to
+    append to the history file immediately with =history -a= and
+    reload new entries from the history file via =history -n=.
+
+    #+begin_src sh
+      export PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
     #+end_src
 
 *** Store Unique Commands
@@ -370,8 +372,19 @@ Shell and CLI Tooling configuration
     Set the number of commands which can be stored in the history.
 
     #+begin_src sh
-      export HISTSIZE=5000
-      export HISTFILESIZE=10000
+      export HISTSIZE=100000
+      export HISTFILESIZE=10000000
+    #+end_src
+
+*** Ignore low-value commands
+
+    Typically having history entries for the following commands in the
+    bash history history either accounts for clutter and removes or
+    obscures the more meaningful history entries. Therefore, we
+    prevent creating history entries for the following commands.
+
+    #+begin_src sh
+      export HISTIGNORE='exit:ls:ll:cd:pwd:bg:fg:history'
     #+end_src
 
 ** Bash Completion
