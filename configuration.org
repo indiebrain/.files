@@ -94,26 +94,38 @@ Shell and CLI Tooling configuration
     case "$TERM" in
         xterm*|rxvt*|screen*|eterm-color)
             ESC="\033"
-            RED="\[$ESC[01;31m\]"
-            LIGHT_RED="\[$ESC[1;31m\]"
-            GREEN="\[$ESC[01;32m\]"
-            LIGHT_GREEN="\[$ESC[1;32m\]"
-            GREY="\[$ESC[0;37m\]"
-            CYAN="\[$ESC[01;36m\]"
-            YELLOW="\[$ESC[0;33m\]"
-            LIGHT_VIOLET="\[$ESC[1;35m\]"
+            RED="\[$ESC[31;1m\]"
+            GREEN="\[$ESC[32;1m\]"
+            YELLOW="\[$ESC[33;1m\]"
+            BLUE="\[$ESC[34;1m\]"
+            MAGENTA="\[$ESC[35;1m\]"
+            CYAN="\[$ESC[36;1m\]"
+            GREY="\[$ESC[37;1m\]"
+            LIGHT_RED="\[$ESC[31;2m\]"
+            LIGHT_GREEN="\[$ESC[32;2m\]"
+            LIGHT_YELLOW="\[$ESC[33;2m\]"
+            LIGHT_BLUE="\[$ESC[34;2m\]"
+            LIGHT_MAGENTA="\[$ESC[35;2m\]"
+            LIGHT_CYAN="\[$ESC[36;2m\]"
+            LIGHT_GREY="\[$ESC[37;2m\]"
             RESET="\[$ESC[0m\]"
         ;;
         ,*)
             ESC=""
             RED=""
-            LIGHT_RED=""
             GREEN=""
-            LIGHT_GREEN=""
-            GREY=""
-            CYAN=""
             YELLOW=""
-            LIGHT_VIOLET=""
+            BLUE=""
+            MAGENTA=""
+            CYAN=""
+            GREY=""
+            LIGHT_RED=""
+            LIGHT_GREEN=""
+            LIGHT_YELLOW=""
+            LIGHT_BLUE=""
+            LIGHT_MAGENTA=""
+            LIGHT_CYAN=""
+            LIGHT_GREY=""
             RESET=""
         ;;
     esac
@@ -250,7 +262,7 @@ Shell and CLI Tooling configuration
         local behind_count="$(__git_commit_diff_count HEAD $parent)"
 
         if [ 0 -lt "$ahead_count" ]; then
-            str="${GREEN}+${ahead_count}${RESET}"
+            str="${LIGHT_GREEN}+${ahead_count}${RESET}"
         fi
 
         if [ 0 -lt "$behind_count" ]; then
@@ -267,9 +279,9 @@ Shell and CLI Tooling configuration
         local last_exit="$?" # keep here.. so we get the last command
 
         # setup PS1
-        local host="${LIGHT_GREEN}\h:${RESET}"
-        local dir="${YELLOW}\W${RESET}"
-        PS1="[$host $dir]"
+        local host="${BLUE}\h:${RESET}"
+        local dir="${LIGHT_CYAN}\W${RESET}"
+        PS1="[ $host $dir ]"
 
         # when in git repository
         local gitdir="$(__git_dirname)"
@@ -299,14 +311,14 @@ Shell and CLI Tooling configuration
 
                     # extras (count strings, working dir symbols)
                     local countstr="$(__git_count_str)"
-                    local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
+                    local wd_syms="${LIGHT_MAGENTA}$(__git_working_dir_symbols)${RESET}"
                     extras="${countstr} ${wd_syms}"
                 ;;
             esac
-            branch="${GREY}${branch}${RESET}"
+            branch="${LIGHT_GREY}${branch}${RESET}"
 
             # update PS1
-            PS1="${PS1} ${branch}${extras}"
+            PS1="${PS1} ${branch} ${extras}"
         fi
 
         # setup marker that acts off of last exit code
@@ -492,6 +504,24 @@ Shell and CLI Tooling configuration
     export LDFLAGS="$LDFLAGS -L/usr/local/opt/readline/lib"
     export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/readline/include"
     export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/readline/lib/pkgconfig"
+  #+end_src
+
+** OpenSSL
+
+  #+begin_src bash
+    export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+  #+end_src
+
+** mysql-client
+
+  #+begin_src bash
+    export PATH="/usr/local/opt/mysql-client@5.7/bin:$PATH"
+  #+end_src
+
+** postgresql
+
+  #+begin_src bash
+    export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
   #+end_src
 
 * bash_profile
