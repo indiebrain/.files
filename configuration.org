@@ -789,6 +789,26 @@ Shell and CLI Tooling configuration
 
   Version controlled scripts used to automate various repetitive tasks
 
+** =bin/emacs=
+
+   A short hand for starting an emacs server/client. If the emacs
+   daemon is running, this script creates a new Graphical emacs client
+   and connects to the daemon. If the daemon is NOT running, this will
+   start the daemon, then create a new graphical client and connect to
+   the daemon.
+
+*** Usage
+
+  #+begin_src sh
+    bin/emacs [optional-file-paths]
+  #+end_src
+
+*** Source
+
+  #+begin_src sh :tangle ~/bin/emacs :shebang "#! /usr/bin/env bash"
+    emacsclient -n -c -a "" -- "$@"
+  #+end_src
+
 ** Flush DNS cache
 
    Invalidates the local DNS cache:
