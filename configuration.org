@@ -327,7 +327,7 @@ Shell and CLI Tooling configuration
    Use emacs as the default editor for the shell
 
    #+begin_src sh
-     export EDITOR=emacs
+     export EDITOR="emacsclient -nw -a \"\""
    #+end_src
 
 ** History
