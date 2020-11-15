@@ -627,7 +627,6 @@ Shell and CLI Tooling configuration
   #+begin_src conf
     [core]
       excludesfile = ~/.gitignore
-      editor = emacs -nw --eval '(global-git-commit-mode t)'
   #+end_src
 
 *** Colors
