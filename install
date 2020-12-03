@@ -1,6 +1,10 @@
-#! /bin/bash
-# Author: Aaron Kuehler
-# Purpose: Install the dotfiles
+#! /usr/bin/env bash
+# Author:
+#   Aaron Kuehler
+#
+# Purpose:
+#   Install the dotfiles
+#
 
 DOTFILES_HOME="$HOME/.files"
 PLATFORM="$(uname)"
@@ -11,7 +15,7 @@ function ensure_package_manager() {
         echo "Installing Homebrew..."
         /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
         brew update
-    elif [ "$PLATFORM" == "Linux" ]
+    elif [ "$PLATFORM" == "Linux" ] && [ -x "$(command -v apt)" ]
     then
         sudo apt update
     fi
@@ -27,7 +31,7 @@ function ensure_macos_package() {
     fi
 }
 
-function ensure_macos_package() {
+function ensure_apt_package() {
     local package
     package="$1"
 
@@ -37,31 +41,36 @@ function ensure_macos_package() {
     fi
 }
 
+function ensure_macos_dependencies() {
+    ensure_macos_package "emacs"
+    ensure_macos_package "stow"
+    ensure_macos_package "git"
+}
 
+function ensure_linux_dependencies() {
+    ensure_apt_package "emacs"
+    ensure_apt_package "stow"
+    ensure_apt_package "git"
+}
 
 function ensure_dependencies() {
     if [ "$PLATFORM" == "Darwin" ]
     then
-        ensure_macos_package "emacs"
-        ensure_macos_package "git"
+        ensure_macos_dependencies
     elif [ "$PLATFORM" == "Linux" ]
     then
-        ensure_apt_package "emacs"
-        ensure_apt_package "git"
+        ensure_linux_dependencies
     fi
 }
 
-function ensure_dotfiles() {
-    if [ ! -e "$DOTFILES_HOME" ]
+function ensure_local_dotfiles() {
+    if ! [ -d "$DOTFILES_HOME" ]
     then
-        echo "Installing dotfiles to: $DOTFILES_HOME"
-        git clone git@github.com:indiebrain/.files.git "$DOTFILES_HOME"
-        cd "$DOTFILES_HOME" || (echo "Failed to change directory to '$DOTFILES_HOME'" &&  exit 1)
+       git clone git@github.com:indiebrain/.files.git "$DOTFILES_HOME"
     fi
 }
 
-function tangle_files() {
-    cd "$DOTFILES_HOME" || (echo "Failed to change directory to '$DOTFILES_HOME'" &&  exit 1)
+function tangle_configuration() {
     FILES=""
 
     for file in $(ls -1 ./*.org)
@@ -80,17 +89,16 @@ function tangle_files() {
                      (kill-buffer)) '($FILES)))"
 }
 
-function make_setup_executable() {
-    local setup_script_path="$DOTFILES_HOME/setup.sh"
-    setup_script_path="$DOTFILES_HOME/setup.sh"
-
-    chmod u+x "$setup_script_path"
+function place_configuration() {
+    pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
+    tangle_configuration
+    stow --verbose bash ssh git emacs asdf ruby scripts
+    popd || return
 }
 
 ensure_package_manager
 ensure_dependencies
-ensure_dotfiles
-tangle_files
-make_setup_executable
+ensure_local_dotfiles
+place_configuration
 
 exit 0

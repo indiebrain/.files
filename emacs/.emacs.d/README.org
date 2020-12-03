@@ -1,0 +1,26 @@
+#+TITLE: .emacs.d
+#+DESCRIPTION: GNU Emacs, just the way I like it
+#+AUTHOR: Aaron Kuehler
+
+This repository holds my emacs configuration.
+
+* Installation
+
+1. Clone this repository
+  #+begin_src sh
+    git clone https://indiebrain@github.com/indiebrain/.emacs.d.git ~/.emacs.d/
+  #+end_src
+2. Run emacs. The =emacs-init.el= is automatically generated and loaded
+   from the =emacs-lisp= code blocks contained within =emacs-init.org=
+   =org-babel=.
+
+* Notes
+
+This configuration is compatible with Emacs 27+ and uses =org-babel=
+to maintain a Literate Style configuration in [[./emacs-init.org][emacs-init.org]].
+
+Initialization is performed in [[./early-init.el][early-init.el]] and [[./init.el][init.el]].
+
+Since version 24, Emacs has inforporated the ELPA package manager as
+core functionality. The configuration makes heavy use of the =package=
+and =use-package=.
