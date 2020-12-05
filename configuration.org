@@ -2,1253 +2,1202 @@
 
 Shell and CLI Tooling configuration
 
-* bashrc
-  :PROPERTIES:
-  :header-args: :tangle ~/.bashrc
-  :END:
+* GNU Stow Packages
 
-** CLI Colors
+The following sections generate the contents of a collection of GNU Stow
+packages. GNU Stow then places the packages onto the host file system
+using symlinks. The goal is to keep the configuration relatively
+isolated form the rest of the file system and provide a simple mechanism
+for (de)activating particular parts of the configuration.
 
-   For commands that support colors, enable the use of colors to
-   better visually understand the output of commands.
+** The Bourne Again Shell (Bash)
 
-   #+begin_src sh
-     export CLICOLOR=1
-   #+end_src
+There are many shells; some considered more fashionable. However, the
+=bash= shell is ubiquitous, mature, and simple enough to be productive in
+most contexts.
 
-** $PATH
+A [[https://devhints.io/bash][quick reference]] should be enough for most to get started with Bash
+scripting, but for a more in depth look at Bash see the [[https://www.gnu.org/software/bash/manual/][GNU reference
+manuals]].
 
-*** /usr/local/bin
+This section contains [[https://www.gnu.org/software/bash/manual/bash.html#Bash-Startup-Files][startup file configuration]] for Bash. The
+configuration loaded by Bash depends on the type of shell requested.
 
-   Binaries stored in the =/usr/local/bin= directory take precedence
-   over their counterparts stored elsewhere on the =PATH=
+*** Interactive Shells
 
-   #+begin_src sh
-     export PATH=/usr/local/bin:/usr/local/sbin:$PATH
-   #+end_src
+An interactive shell is one in which a user is expected to provide input
+commands sequentially - a terminal session, for example.
 
-*** ~/bin
+#+begin_quote
+An interactive shell is one started without non-option arguments, unless
+-s is specified, without specifying the -c option, and whose input and
+error output are both connected to terminals (as determined by
+isatty(3)), or one started with the -i option.
 
-   I keep personal scripts in =~/bin=. Ensure that scripts found in
-   =~/bin= are available on the =PATH= so they can be executed
-   without providing full paths:
+An interactive shell generally reads from and writes to a user’s terminal.
 
-   For example, instead of typing =~/bin/script-name= simply type
-   =script-name=.
+The -s invocation option may be used to set the positional parameters
+when an interactive shell is started.
+#+end_quote
 
-   #+begin_src sh
-     export PATH=$PATH:$HOME/bin
-   #+end_src
+#+begin_quote
+When Bash is invoked as an interactive login shell, or as a
+non-interactive shell with the --login option, it first reads and
+executes commands from the file /etc/profile, if that file exists. After
+reading that file, it looks for ~/.bash_profile, ~/.bash_login, and
+~/.profile, in that order, and reads and executes commands from the
+first one that exists and is readable. The --noprofile option may be
+used when the shell is started to inhibit this behavior.
 
-** Aliases
+When an interactive login shell exits, or a non-interactive login shell
+executes the exit builtin command, Bash reads and executes commands from
+the file ~/.bash_logout, if it exists.
+#+end_quote
 
-*** *nix aliases
+*** Non-interactive Shells
 
-**** ls
+A non-interactive shell might be launched by another program - a shell
+script with a =#!/usr/bin/env bash= SHEBANG line, for example.
 
-  Make =ls= output more information about files and directories in a
-  human readable format.
+*** Configuration for non-login shells
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./bash/.bashrc
+:END:
 
-  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
-    alias ls='ls --color'
-  #+end_src
+When a Bash shell is started as a non-login shell, it reads and executes
+the =.bashrc= located in the user's =$HOME= directory.
 
-**** grep
+#+begin_quote
+When an interactive shell that is not a login shell is started, Bash
+reads and executes commands from ~/.bashrc, if that file exists. This
+may be inhibited by using the --norc option. The --rcfile file option
+will force Bash to read and execute commands from file instead of
+~/.bashrc.
+#+end_quote
 
-  Make =grep= highlight matches.
+Typically one might find configuration which affects the function of
+Bash here - modifications to the file system paths on which Bash looks
+for programs, libraries, etc.
 
-  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
-    alias grep='grep --color'
-  #+end_src
+**** $PATH
 
-**** pbcopy
+This section configures the lookup =$PATH=. This is =:= separated list of
+paths on the file system in which Bash will lookup commands and
+libraries. This configuration changes the default lookup path of a
+system in the following ways:
 
-  Add a shorthand to copy data to the system clipboard on the cli
+- items stored in the =$HOME/bin= are appended to the path. This gives the
+  user a place to put scripts and libraries they with to use in their
+  home directory and they'll be available for lookup in the path. This
+  path is appended to avoid shadowing system binaries and libraries.
+- items stored in =/usr/local/bin= and =/usr/local/sbin= are given
+  precedence over those stored elsewhere on the file system. For
+  example, if a program =wumpus= were present in both =/bin= and
+  =/usr/local/bin=, the latter version would be invoked when =wumpus= is
+  invoked.
 
-  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
-    alias pbcopy='xclip -selection clipboard'
-  #+end_src
+#+begin_src sh
+export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
+export PATH="$HOME/bin:$PATH"
+#+end_src
 
-*** Git aliases
+**** Initialize the asdf runtime version manager
 
-   =gs= is shorthand for the status of a git repository.
+asdf is a CLI tool that can manage multiple language runtime version on a
+per-project bases. It's like =gvm=, =nvm=, =rbenv=, =pyenv=, et al. all rolled
+into one simple user interface. It is extendable via plugins and can
+managed a wide variety of runtimes and tools.
 
-   #+begin_src sh
-     alias gs="git status"
-   #+end_src
+This section runs the asdf system initialization, and adds bash
+completions into the shell.
 
-   =gl= shows the railroad tracks of the current head ref
+#+begin_src sh
+[ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+[ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
+#+end_src
 
-   #+begin_src sh
-     alias gl='git log --graph --oneline --decorate --max-count 10'
-   #+end_src
+**** Globally disable the spring application prelaoder
 
-** Prompt
+The =spring= ruby gem is an application preloader. It aims to increase
+developer productivity by reducing the amount of time spent waiting for
+a Rails application to boot. However, in my experience its shortcomings
+with regard to handling code reloading leads to tricky-to-debug
+situations where the version of the application running in memory might
+not necessarily represent the application described by the code-on-disk.
 
-  Configure the shell prompt. This happens to check if we're in a git
-  managed directory and adds some status info to the command line.
+This setting attempts to avoid tricky head-scratching sessions by
+disabling =spring= globally.
 
-  #+begin_src sh
-    # Get a graphical representation of the clean/dirty state of a git repository
-    # colors
-    case "$TERM" in
-        xterm*|rxvt*|screen*|eterm-color)
-            ESC="\033"
-            RED="\[$ESC[01;31m\]"
-            LIGHT_RED="\[$ESC[1;31m\]"
-            GREEN="\[$ESC[01;32m\]"
-            LIGHT_GREEN="\[$ESC[1;32m\]"
-            GREY="\[$ESC[0;37m\]"
-            CYAN="\[$ESC[01;36m\]"
-            YELLOW="\[$ESC[0;33m\]"
-            LIGHT_VIOLET="\[$ESC[1;35m\]"
-            RESET="\[$ESC[0m\]"
+#+begin_src sh
+DISABLE_SPRING=1
+#+end_src
+
+**** Departure
+
+The =departure= ruby gem wraps the Percona Toolkit Online Schema Change
+(pt-osc). Since MySQL does not apply Data Description Language
+statements - IE schema migrations - within the scope of a transaction,
+it's entirely possible that adding or removing a column irrevocably
+corrupts a database. The departure gem tends to get in the way when
+working locally, so this configuration disables it, skipping protections
+from broken schema migrations locally.
+
+#+begin_src sh
+export DISABLE_DEPARTURE=1
+#+end_src
+
+**** Overcommit
+
+The overcommit ruby gem installs and runs git pre-commit hooks which
+check thing like:
+
+1. are the application dependnecies up to date?
+2. are there any database migrations which aren't present in the schema
+   definition?
+
+These hooks are run on every commit. This sounds like a wonderfully
+useful tool, however in practice this make the process of creating a git
+commit take at least 10 seconds while ruby loads and executes the hooks.
+This is untenable and discourages frequent commits. What's more the
+overcommit gem does not play well with non-cli git tools - such as the
+Magit emacs package. This configuration globally disables the overcommit
+gem.
+
+#+begin_src sh
+export OVERCOMMIT_DISABLE=1
+#+end_src
+
+**** Change the home directory of golang code
+
+I prefer to keep my source code isolated in the =$HOME/Developer=
+directory. By default golang will install source code in =$HOME/go=. This
+configuration instructs =go= that its new home is =$HOME/Developer=.
+
+#+begin_src sh
+export GOPATH=$HOME/Developer/go
+export PATH=$PATH:$GOPATH/bin
+#+end_src
+**** Ensure Power HRG application dependencies take precedence on the =$PATH=
+
+This section configures specific versions libraries to be found on the
+path before others. This is primarily present in this configuration to
+assist with the development setup of my current employer.
+
+#+begin_src sh
+export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+export PATH="/usr/local/opt/mysql-client@5.7/bin:$PATH"
+export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
+#+end_src
+
+**** Disable Homebrew telemetry tracking
+
+Homebrew client captures metrics about its host and usage. No, sir; do not want.
+
+#+begin_src sh
+export HOMEBREW_NO_ANALYTICS=1
+#+end_src
+
+*** Configuration for login shells
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./bash/.bash_profile
+:END:
+
+The =.bash_profile= is loaded when Bash starts an login shell - typically
+via a terminal, or Secure Shell (SSH) connection.
+
+#+begin_quote
+When Bash is invoked as an interactive login shell, or as a
+non-interactive shell with the --login option, it first reads and
+executes commands from the file /etc/profile, if that file exists. After
+reading that file, it looks for ~/.bash_profile, ~/.bash_login, and
+~/.profile, in that order, and reads and executes commands from the
+first one that exists and is readable. The --noprofile option may be
+used when the shell is started to inhibit this behavior.
+
+When an interactive login shell exits, or a non-interactive login shell
+executes the exit builtin command, Bash reads and executes commands from
+the file ~/.bash_logout, if it exists.
+#+end_quote
+
+First, this ensures that any configuration for the Bourne Shell is
+loaded. Then we load the non-login shell configuration for Bash. Finally
+we run any login-specific tasks before we finally start to load the Bash
+login configuration. If any of the above configuration files are not
+present or cannot be read, they are skipped. This is an attempt to offer
+the most backward compatibility while not sacrificing portability.
+
+#+begin_src sh
+[ -r ~/.profile ] && . ~/.profile || true              # If a Bourne shell configuration exists, load it
+if [ -n "$PS1" ]                                         # Is this REALLY an interactive shell?
+then
+    [ -r ~/.bashrc ] && . ~/.bashrc || true            # tty/prompt/function setup for interactive shells
+    [ -r ~/.bash_login ] && . ~/.bash_login || true    # any at-login tasks for login shell only
+fi
+#+end_src
+
+**** Command output colors
+
+***** MacOS
+
+Some UNIX-like operating systems support a global configuration option
+which instructs commands to use ANSI Color control sequences in their
+output. On such systems this is done by setting the =CLICOLOR= environment
+variable. MacOS is one such UNIX-like operating system which supports
+this global colorizing configuration.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
+export CLICOLOR=1
+#+end_src
+
+***** Debian GNU/Linux
+
+Some systems which do NOT honor this global switch for output coloring
+DO tend to provide command level flags to colorize their output. These
+next bits provide aliases of standard commands to their colorized
+counterparts.
+
+This configuration has the following effects:
+
+- =ls= will make different inode types visually distinct from one another.
+  Directories, files, symlinks, etc will visually distinguish themselves
+  from one another.
+- =grep= will highlight matches in its output.
+
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+alias ls='ls --color'
+alias grep='grep --color'
+#+end_src
+
+**** Aliases
+
+In Bash, aliases allow a string to be substituted for a word when it is
+used as the first work of a simple command. There are many rules
+concerning the definition and use of aliases, [[https://www.gnu.org/software/bash/manual/bash.html#Aliases][please see the Bash
+reference manual's topic on Aliases for more details]]. The aliases
+defined herein are meant to provide shorthand notation to frequently run
+or often forgotten, but useful, commands.
+
+#+begin_src sh
+alias gs="git status"
+alias gl='git log --graph --oneline --decorate --max-count 10'
+#+end_src
+
+On Debian GNU/Linux hosts, adds a shorthand to copy data to the system
+clipboard from the terminal.
+
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+alias pbcopy='xclip -selection clipboard'
+#+end_src
+
+**** Bash Completion
+
+The Bash Completion extension will show a list of possible completions
+when a candidate is typed into the terminal followed by the <TAB> key
+twice. This is helpful in narrowing down potential commands. For example
+=ls<TAB><TAB>= may expand and show the following commands as potential
+completions:
+
+#+begin_example
+root@3acfddd4f63d:/# ls
+ls
+lsattr
+lsblk
+lscpu
+lsipc
+lslocks
+lslogins
+lsmem
+lsnsls
+lsattr
+lsblk
+lscpu
+lsipc
+lslocks
+lslogins
+lsmem
+lsns
+#+end_example
+
+On macOS hosts bash-completion will be installed via Homebrew and we'll
+load completions according to its conventions - see =brew info
+bash-completion= for more details.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && \
+    source "/usr/local/etc/profile.d/bash_completion.sh"
+#+end_src
+
+However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official
+means of loading bash-completion completions]].
+
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+    source /usr/share/bash-completion/bash_completion
+#+end_src
+
+**** Editor
+
+Some commands will open a text editor to complete their action - =git
+commit=, for example. Bash will execute the command stored in the =EDITOR=
+environment variable to launch a text editor in these cases. This makes
+sure that =emacs= is used as the preferred text editor.
+
+#+begin_src sh
+export EDITOR="emacs"
+#+end_src
+**** History
+
+Bash has the capabilities keep track of the commands entered into
+interactive shells. This history can be searched, and recalled for
+future use. The following is borrowed directly from the [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use Bash
+History Commands and Expansions on a Linux VPS]] guide and [[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge
+Your Bash History]] articles. This configuration achieves the following goals:
+
+- History is appended after each command is entered. By default, bash
+  writes its history at the end of each session, overwriting the
+  existing file with an updated version. This means that if you are
+  logged in with multiple bash sessions, only the last one to exit will
+  have its history saved.
+- History is appended and reloaded after each command. To do this
+  correctly, we need to do a bit of a hack. We need to append to the
+  history file immediately with =history -a= and reload new entries from
+  the history file via =history -n=.
+- Store only unique commands in bash history. Don't store multiple
+  instances of =ls= for example. This is controlled by the =HISTCONTROL=
+  =erasedups= configuration value.
+- Commands can be excluded from the history by prefixing the command
+  with a whitespace character. This is controlled by the =HISTCONTROL=
+  =ignoreboth= configuration value
+- The Bash defaults on the number of items and size of the history are
+  quite limited - they harken back to days when storage was more
+  expensive. This sets a reasonably large cap on the number of items to
+  keep in history via the =HISTSIZE= and =HISTFILESIZE= environment
+  variables.
+- Provides a blacklist of commands which should never be recorded to the
+  history via =HISTIGNORE=. Typically having history entries for the
+  following commands in the bash history history either accounts for
+  clutter and removes or obscures the more meaningful history entries.
+  Therefore, we prevent creating history entries for the following
+  commands.
+
+#+begin_src sh
+shopt -s histappend
+export PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
+export HISTCONTROL=ignoreboth:erasedups
+export HISTSIZE=100000
+export HISTFILESIZE=10000000
+export HISTIGNORE='exit:ls:ll:cd:pwd:bg:fg:history'
+#+end_src
+
+**** Prompt
+
+This section configures the shape and coloring of the Bash prompt. Below
+is an example of what this prompt looks like:
+
+#+begin_example
+[maximilian: .files] organize-configuration-for-gnu-stow-management(+1) *+ →
+$ ls
+#+end_example
+
+Some notable features:
+
+- The prompt will colorize its components when the terminal supports
+  colors.
+- When the terminal supports colors, the =$= character will indicate the
+  =exit= code status of the last run command - green for =exit 0= (success),
+  and red for a non zero exit code.
+- When the current working directory is a git directory
+  - the current git branch will be dispalyed.
+  - a count of the number of commits deviation from the base and/or
+    remote branch is indicated directly after the branch name.
+  - status indicators are printed to the right of the commit deviation
+    metrics. =*= indicates there are unstaged changes in the working
+    directory. =+= indicates that there are stages, but uncommitted
+    changes in the index. =^= indicates that there are stashed items in
+    the stash queue.
+
+#+begin_src sh
+# Get a graphical representation of the clean/dirty state of a git repository
+# colors
+case "$TERM" in
+    xterm*|rxvt*|screen*|eterm-color)
+        ESC="\033"
+        RED="\[$ESC[01;31m\]"
+        LIGHT_RED="\[$ESC[1;31m\]"
+        GREEN="\[$ESC[01;32m\]"
+        LIGHT_GREEN="\[$ESC[1;32m\]"
+        GREY="\[$ESC[0;37m\]"
+        CYAN="\[$ESC[01;36m\]"
+        YELLOW="\[$ESC[0;33m\]"
+        LIGHT_VIOLET="\[$ESC[1;35m\]"
+        RESET="\[$ESC[0m\]"
         ;;
-        ,*)
-            ESC=""
-            RED=""
-            LIGHT_RED=""
-            GREEN=""
-            LIGHT_GREEN=""
-            GREY=""
-            CYAN=""
-            YELLOW=""
-            LIGHT_VIOLET=""
-            RESET=""
+    ,*)
+        ESC=""
+        RED=""
+        LIGHT_RED=""
+        GREEN=""
+        LIGHT_GREEN=""
+        GREY=""
+        CYAN=""
+        YELLOW=""
+        LIGHT_VIOLET=""
+        RESET=""
         ;;
-    esac
+esac
 
-    # prints path to git directory
-    __git_dirname() {
-        local dirname
-        if [ -d .git ]; then
-            dirname=".git"
-        else
-            dirname="$(git rev-parse --git-dir 2>/dev/null)"
-        fi
-        echo "$dirname"
-    }
+# prints path to git directory
+__git_dirname() {
+    local dirname
+    if [ -d .git ]; then
+        dirname=".git"
+    else
+        dirname="$(git rev-parse --git-dir 2>/dev/null)"
+    fi
+    echo "$dirname"
+}
 
-    # gets the branching state of the repository
-    # optional arg: path to git directory
-    __git_branching_state() {
-        local gitdir="$1" || "$(__git_dirname)"
-        local state
+# gets the branching state of the repository
+# optional arg: path to git directory
+__git_branching_state() {
+    local gitdir="$1" || "$(__git_dirname)"
+    local state
 
-        if [ -f "$gitdir/rebase-merge/interactive" ]; then
-            state="rebase-i"
-        elif [ -d "$gitdir/rebase-merge" ]; then
-            state="rebase-m"
-        else
-            if [ -d "$gitdir/rebase-apply" ]; then
-                if [ -f "$gitdir/rebase-apply/rebasing" ]; then
-                    state="rebase"
-                elif [ -f "$gitdir/rebase-apply/applying" ]; then
-                    state="am"
-                else
-                    state="am/r"
-                fi
-            elif [ -f "$gitdir/MERGE_HEAD" ]; then
-                state="merge" # merging
-            elif [ -f "$gitdir/BISECT_LOG" ]; then
-                state="bisect" # bisecting
-            fi
-        fi
-        echo "$state"
-    }
-
-    # prints the working directory state of the repository using symbols
-    # these could be expensive.. would make sense to have configs to turn off
-    # * - modified / + - staged / ^ - stashed / % - untracked
-    __git_working_dir_symbols() {
-        local symbols
-
-        # in working dir
-        if [ true = "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then
-            git diff --no-ext-diff --quiet --exit-code || symbols="*"
-            if git rev-parse --quiet --verify HEAD >/dev/null; then
-                git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
-            fi
-        fi
-
-        # stashed
-        git rev-parse --verify refs/stash >/dev/null 2>&1 && symbols="${symbols}^"
-
-        # untracked files
-        if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-            symbols="${symbols}%"
-        fi
-        echo "$symbols"
-    }
-
-    # prints current / parent branch name
-    # optional arg: 'parent' -- returns a limited guess of the parent
-    # optional arg: path to git directory
-    __git_branch_name() {
-        # current branch name
-        local branch
-        local gitdir="$2" || "$(__git_dirname)"
-        branch="$(git symbolic-ref HEAD 2>/dev/null)" || {
-            branch="$(git describe --contains --all HEAD 2>/dev/null)" ||
-                branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
-                    branch="unknown"
-
-            branch="${branch##remotes/}"
-            branch="($branch)"
-        }
-        branch="${branch##refs/heads/}"
-
-        # parent branch name
-        if [ parent = "$1" ]; then
-            if [ master = "$branch" ]; then
-                local refs="$(git for-each-ref --format="%(refname:short)")"
-                case "$refs" in
-                    ,*git-svn*) # git-svn repo
-                        branch='git-svn' ;;
-                    ,*origin*) # remote clone
-                        branch='origin' ;;
-                    ,*)
-                        branch='HEAD' ;; # same repo
-                esac
+    if [ -f "$gitdir/rebase-merge/interactive" ]; then
+        state="rebase-i"
+    elif [ -d "$gitdir/rebase-merge" ]; then
+        state="rebase-m"
+    else
+        if [ -d "$gitdir/rebase-apply" ]; then
+            if [ -f "$gitdir/rebase-apply/rebasing" ]; then
+                state="rebase"
+            elif [ -f "$gitdir/rebase-apply/applying" ]; then
+                state="am"
             else
-                # TODO.. would be nice to improve this to determine the actual
-                # merge base (git merge-base) and compare against that instead of
-                # always assuming master. In this way a 'topic/feature' branch
-                # would show the diff counts for its parent 'next/develop' branch
-                # rather than those plus those on the 'next/develop' branch.
-                # I don't think we want to loop over the refs comparing ... that's
-                # fuzzy.
-                branch='master' # on a branch
+                state="am/r"
             fi
+        elif [ -f "$gitdir/MERGE_HEAD" ]; then
+            state="merge" # merging
+        elif [ -f "$gitdir/BISECT_LOG" ]; then
+            state="bisect" # bisecting
         fi
-        echo "$branch"
-    }
+    fi
+    echo "$state"
+}
 
-    # prints if inside git directory or bare git repository
-    __git_in_gitdir() {
-        if [ true = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
-            if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
-                echo 'bare'
-            else
-                echo 'gitdir'
-            fi
+# prints the working directory state of the repository using symbols
+# these could be expensive.. would make sense to have configs to turn off
+# * - modified / + - staged / ^ - stashed / % - untracked
+__git_working_dir_symbols() {
+    local symbols
+
+    # in working dir
+    if [ true = "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then
+        git diff --no-ext-diff --quiet --exit-code || symbols="*"
+        if git rev-parse --quiet --verify HEAD >/dev/null; then
+            git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
         fi
+    fi
+
+    # stashed
+    git rev-parse --verify refs/stash >/dev/null 2>&1 && symbols="${symbols}^"
+
+    # untracked files
+    if [ -n "$(git ls-files --others --exclude-standard)" ]; then
+        symbols="${symbols}%"
+    fi
+    echo "$symbols"
+}
+
+# prints current / parent branch name
+# optional arg: 'parent' -- returns a limited guess of the parent
+# optional arg: path to git directory
+__git_branch_name() {
+    # current branch name
+    local branch
+    local gitdir="$2" || "$(__git_dirname)"
+    branch="$(git symbolic-ref HEAD 2>/dev/null)" || {
+        branch="$(git describe --contains --all HEAD 2>/dev/null)" ||
+            branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
+            branch="unknown"
+
+        branch="${branch##remotes/}"
+        branch="($branch)"
     }
+    branch="${branch##refs/heads/}"
 
-    # prints number of commits that are available on ref B but not ref A
-    # arg1: reference A
-    # arg2: reference B
-    __git_commit_diff_count() {
-        echo "$(git rev-list $1..$2 2>/dev/null | awk 'END {print NR}')"
-    }
-
-    # build combined (+/-) counts for related commits
-    __git_count_str() {
-        local str
-        local parent="$(__git_branch_name parent)"
-        local ahead_count="$(__git_commit_diff_count $parent HEAD)"
-        local behind_count="$(__git_commit_diff_count HEAD $parent)"
-
-        if [ 0 -lt "$ahead_count" ]; then
-            str="${GREEN}+${ahead_count}${RESET}"
-        fi
-
-        if [ 0 -lt "$behind_count" ]; then
-            [ -n "$str" ] && str="$str/"
-            str="${str}${LIGHT_RED}-${behind_count}${RESET}"
-        fi
-
-        [ -n "$str" ] && str="($str)"
-        echo "$str"
-    }
-
-    # install git integration into PS1
-    __git_prompt() {
-        local last_exit="$?" # keep here.. so we get the last command
-
-        # setup PS1
-        local host="${LIGHT_GREEN}\h:${RESET}"
-        local dir="${YELLOW}\W${RESET}"
-        PS1="[$host $dir]"
-
-        # when in git repository
-        local gitdir="$(__git_dirname)"
-        if [ -n "$gitdir" ]; then
-            local branch
-            local extras
-
-            local in_gitdir="$(__git_in_gitdir)"
-            case "$in_gitdir" in
-                gitdir|bare)
-                    branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
-                    extras=""
-                ;;
+    # parent branch name
+    if [ parent = "$1" ]; then
+        if [ master = "$branch" ]; then
+            local refs="$(git for-each-ref --format="%(refname:short)")"
+            case "$refs" in
+                ,*git-svn*) # git-svn repo
+                    branch='git-svn' ;;
+                ,*origin*) # remote clone
+                    branch='origin' ;;
                 ,*)
-                    local branch="$(__git_branch_name current ${gitdir})"
-                    local br_state="$(__git_branching_state $gitdir)"
-
-                    # rebasing..use merge head for branch name
-                    case "$br_state" in
-                        rebase-*)
-                            # get the ref head during rebase
-                            branch="$(cat "$gitdir/rebase-merge/head-name")"
-                            branch="${branch##refs/heads/}"
-                            branch="${branch##remotes/}"
-                        ;;
-                    esac
-
-                    # extras (count strings, working dir symbols)
-                    local countstr="$(__git_count_str)"
-                    local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
-                    extras="${countstr} ${wd_syms}"
-                ;;
+                    branch='HEAD' ;; # same repo
             esac
-            branch="${GREY}${branch}${RESET}"
-
-            # update PS1
-            PS1="${PS1} ${branch}${extras}"
-        fi
-
-        # setup marker that acts off of last exit code
-        local marker
-        if [ 0 -eq "$last_exit" ]; then
-            marker="$GREEN"
         else
-            marker="$RED"
+            # TODO.. would be nice to improve this to determine the actual
+            # merge base (git merge-base) and compare against that instead of
+            # always assuming master. In this way a 'topic/feature' branch
+            # would show the diff counts for its parent 'next/develop' branch
+            # rather than those plus those on the 'next/develop' branch.
+            # I don't think we want to loop over the refs comparing ... that's
+            # fuzzy.
+            branch='master' # on a branch
         fi
-        marker="${marker}\$${RESET}"
-        PS1="\n${PS1} →\n${marker} "
-    }
-    PROMPT_COMMAND=__git_prompt
-  #+end_src
-
-** Editors
-
-   Use emacs as the default editor for the shell
-
-   #+begin_src sh
-     export EDITOR="emacsclient -nw -a \"\""
-   #+end_src
-
-** History
-
-   A ton of the following is ripped directly from the [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use Bash
-   History Commands and Expansions on a Linux VPS]] guide and
-   [[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge Your Bash History]].
-
-*** Append to the history logs
-
-    By default, bash writes its history at the end of each session,
-    overwriting the existing file with an updated version. This means
-    that if you are logged in with multiple bash sessions, only the
-    last one to exit will have its history saved.
-
-    #+begin_src sh
-      shopt -s histappend
-    #+end_src
-
-*** Append and reload history after each command
-
-    To do this correctly, we need to do a bit of a hack. We need to
-    append to the history file immediately with =history -a= and
-    reload new entries from the history file via =history -n=.
-
-    #+begin_src sh
-      export PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
-    #+end_src
-
-*** Store Unique Commands
-
-    Store only unique commands in bash history. Also provide a way to
-    manually exclude commands from being recorded in the history. To do
-    this, prefix the command with whitespace.
-
-     #+begin_src sh
-       export HISTCONTROL=ignoreboth:erasedups
-     #+end_src
-
-*** Number of History Entries
-
-    Set the number of commands which can be stored in the history.
-
-    #+begin_src sh
-      export HISTSIZE=100000
-      export HISTFILESIZE=10000000
-    #+end_src
-
-*** Ignore low-value commands
-
-    Typically having history entries for the following commands in the
-    bash history history either accounts for clutter and removes or
-    obscures the more meaningful history entries. Therefore, we
-    prevent creating history entries for the following commands.
-
-    #+begin_src sh
-      export HISTIGNORE='exit:ls:ll:cd:pwd:bg:fg:history'
-    #+end_src
-
-** Bash Completion
-
-   On macOS hosts bash-completion will be installed via Homebrew and
-   we'll load completions according to its conventions - see =brew info bash-completion=.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")
-       [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
-   #+end_src
-
-   However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official means of loading bash-completion completions]].
-
-   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.bashrc")
-     # Use bash-completion, if available
-     [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
-         source /usr/share/bash-completion/bash_completion
-   #+end_src
-
-** ASDF Version Manager
-
-   I've used disparate version managers for ruby, elixir, node, etc
-   for years. [[https://github.com/asdf-vm/asdf][ASDF]] promises to unify the interface across all of these
-   version managers - so I'm going to give it a shot.
-
-   #+begin_src sh
-     [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
-     [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
-   #+end_src
-
-** ruby
-
-*** Spring
-   Too many times have I been bitten by the [[https://github.com/rails/spring][spring]] gem. Kill it with fire.
-
-   #+begin_src sh
-     DISABLE_SPRING=1
-   #+end_src
-
-** exercism
-
-   Load the exercism bash completions if they exits
-
-   #+begin_src sh
-     if [ -f ~/.config/exercism/exercism_completion.bash ]; then
-         source ~/.config/exercism/exercism_completion.bash
-     fi
-   #+end_src
-
-** go
-
-   #+begin_src sh
-     export GOPATH=$HOME/Developer/go
-     export PATH=$PATH:$GOPATH/bin
-   #+end_src
-** Departure
-
-   We use departure at work with MySQL. It makes stuff break all the
-   time. Here I globally disable it.
-
-   #+begin_src sh
-     export DISABLE_DEPARTURE=1
-   #+end_src
-
-** Overcommit
-
-   Some teams I work with use [[https://github.com/sds/overcommit][overcommit]] to run pre-commit git
-   hooks. Overcommit seems to be incompatible with magit so I disable
-   overcommit.
-
-   #+begin_src sh
-     export OVERCOMMIT_DISABLE=1
-   #+end_src
-
-** Power
-
-   Source in the power user credentials/secrets
-   #+begin_src sh
-     if [ -f ~/credentials/.power ]
-     then source ~/credentials/.power
-     fi
-   #+end_src
-
-** Homebrew
-*** Disable tracking
-
-   Homebrew client captures metrics about its host and usage. No, sir; do not want.
-
-   #+begin_src sh
-     export HOMEBREW_NO_ANALYTICS=1
-   #+end_src
-** libffi
-
-   When on macOS hosts, it is necessary to provide compiler flags for
-   =libffi= in order to build some packages - like GNU Guile.
-
-  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")"
-    export LDFLAGS="$LDFLAGS -L/usr/local/opt/libffi/lib"
-    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/libffi/lib/pkgconfig"
-  #+end_src
-
-** readline
-
-  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.bashrc")
-    export LDFLAGS="$LDFLAGS -L/usr/local/opt/readline/lib"
-    export CPPFLAGS="$CPPFLAGS -I/usr/local/opt/readline/include"
-    export PKG_CONFIG_PATH="$PKG_CONFIG_PATH:/usr/local/opt/readline/lib/pkgconfig"
-  #+end_src
-
-* bash_profile
-  :PROPERTIES:
-  :header-args: :tangle ~/.bash_profile
-  :END:
-
-  Use the same configuration for =.bash_profile= as the =.bashrc=
-
-  #+begin_src sh
-    if [ -f ~/.bashrc ];
-    then source ~/.bashrc
     fi
-  #+end_src
+    echo "$branch"
+}
 
-* bundler
-  :PROPERTIES:
-  :header-args: :mkdirp yes :tangle ~/.bundle/config
-  :END:
-
-   Sometimes bundler installs and pins gems to palatform specific
-   versions - IE gems which would only be valid on macOS hosts. To
-   prevent this, the bundler documentation suggests setting the
-   =BUNDLE_FORCE_RUBY_PLATFORM= variable to ignore the host's platform
-   when installing gems and compile native extensions on gem install
-   instead.
-
-   #+begin_src sh
-     ---
-     BUNDLE_BUILD__MYSQL2: "--with-ldflags=-L/usr/local/opt/openssl/lib"
-   #+end_src
-
-* ASDF Version manager
-
-** .asdfrc
-  :PROPERTIES:
-  :header-args: :tangle ~/.asdfrc
-  :END:
-
-   Each language's version manager communities seem to have come to
-   different conclusions on how to represent "required versions". This
-   setting tells asdf to allow the language specific plugin to attempt
-   to use the language's version manager community's default file for
-   specifying a version.
-
-   #+begin_src conf
-     legacy_version_file = yes
-   #+end_src
-
-** .default-gems
-  :PROPERTIES:
-  :header-args: :tangle ~/.default-gems
-  :END:
-
-   When installing a ruby, ensure that the following gems are also
-   present.
-
-   #+begin_src text
-     bundler
-     gem-ctags
-     pry
-     rcodetools
-     solargraph
-   #+end_src
-
-
-* gnome-terminal
-  :PROPERTIES:
-  :header-args: :tangle ~/.gruvbox-profile.dconf
-  :END:
-
-  This is my gnome-terminal configuration. This configuration will be
-  tangled to ~/.gruvbox-profile.dconf. At some point I'll automate the
-  installation, but for now to import the profile:
-
-  1. Open gnome-terminal
-  2. Create a new profile
-  3. Take node of the UUID of the Profile
-  4. Import the profile settings into the new profile
-     =cat ~/.gruvbox-profile.dconf | dconf load /org/gnome/terminal/legacy/profiles:/:<profile-uuid-here>/=
-
-  #+begin_src text
-    [/]
-    foreground-color='rgb(235,219,178)'
-    visible-name='Gruvbox'
-    palette=['rgb(40,40,40)', 'rgb(204,36,29)', 'rgb(152,151,26)', 'rgb(184,187,38)', 'rgb(69,133,136)', 'rgb(177,98,134)', 'rgb(104,157,106)', 'rgb(168,153,132)', 'rgb(146,131,116)', 'rgb(251,73,52)', 'rgb(184,187,38)', 'rgb(250,189,47)', 'rgb(131,165,152)', 'rgb(211,134,155)', 'rgb(142,192,124)', 'rgb(235,219,178)']
-    scroll-on-output=true
-    use-system-font=true
-    use-theme-colors=false
-    scrollback-unlimited=false
-    background-color='rgb(40,40,40)'
-    audible-bell=false
-  #+end_src
-
-* git
-
-  Git Configuration
-
-** .gitconfig
-   :PROPERTIES:
-   :header-args: :tangle ~/.gitconfig
-   :END:
-
-*** Author
-
-  Configure information used by git to determine how to write the
-  author information for commits
-
-  #+begin_src conf
-    [user]
-      name = Aaron Kuehler
-      email = aaron.kuehler@gmail.com
-      signingkey = 9E3E4C59E2694215
-  #+end_src
-
-*** Github Credentials
-
-    Include credentials for CLI authentication with the github gist
-    API
-
-    #+begin_src conf
-      [include]
-        path = ~/credentials/.github
-    #+end_src
-
-*** Core configuration
-
-  In addition to any files included in a project's =.gitignore= file,
-  also include those listed in the =~/.gitconfig.=
-
-  Use Emacs as the commit editor
-
-  #+begin_src conf
-    [core]
-      excludesfile = ~/.gitignore
-  #+end_src
-
-*** Colors
-
-  Enable coloring of git output
-
-  #+begin_src conf
-    [color]
-      ui = true
-  #+end_src
-
-*** Aliases
-
-  Set aliases for frequently used git incantations.
-
-  #+begin_src conf
-    [alias]
-      co  = checkout
-      cb  = checkout -b
-      db  = branch -d
-      rclone = clone --recursive
-  #+end_src
-
-*** Commit
-
-  GPG Sign commits
-
-  #+begin_src conf
-    [commit]
-      gpgsign = true
-  #+end_src
-
-*** Clean
-
-  Disable the safeguard flag when running =git clean=
-
-  #+begin_src conf
-    [clean]
-      requireForce = false
-  #+end_src
-
-*** Push
-
-  Only push the current branch, rather than all
-  branches, when =git push= is invoked.
-
-  #+begin_src conf
-    [push]
-      default = simple
-  #+end_src
-
-*** Fetch
-
-  Don't fetch remote tags. I work on some projects which automatically
-  tag every commit. Not only does this makes tags useless, but it also
-  causes a degradation of git operations locally. Here I tell =git
-  fetch= to ignore tags on the =origin= remote. I'll fetch them myself
-  later if I want them.
-
-  #+begin_src conf
-    [remote "origin"]
-      tagOpt = --no-tags
-      prune = true
-  #+end_src
-
-*** Filter
-
-  #+begin_src conf
-    [filter "lfs"]
-      clean = git-lfs clean %f
-      smudge = git-lfs smudge %f
-      required = true
-  #+end_src
-
-
-** .gitignore
-   :PROPERTIES:
-   :header-args: :tangle ~/.gitignore
-   :END:
-
-*** Mac OS Finder cache
-
-  Never ever store Mac OS Finder metadata in a git repository.
-
-  #+begin_src text
-    .DS_Store
-  #+end_src
-
-
-*** Emacs temp files
-
-  Never store Emacs autosave and backup files in a git repository.
-
-  #+begin_src text
-    ,*~
-    .#*
-    ,*#
-  #+end_src
-
-** tab completion
-
-  Enable tab completion for the git.
-
-  #+begin_src sh
-    GIT_TAB_COMPLETION_FILE=/usr/local/etc/bash_completion.d/git-completion.bash
-    if [ -f $GIT_TAB_COMPLETION_FILE ];
-       then source $GIT_TAB_COMPLETION_FILE
+# prints if inside git directory or bare git repository
+__git_in_gitdir() {
+    if [ true = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
+        if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
+            echo 'bare'
+        else
+            echo 'gitdir'
+        fi
     fi
-  #+end_src
-
-* gem
-
-  Ruby gems configuration
-
-** Documentation
-
-  When a gem is installed forego the generation of its documentation.
-
-  #+begin_src text :tangle ~/.gemrc
-    gem: --no-document
-  #+end_src
-
-* Rspec
-  :PROPERTIES:
-  :header-args: :tangle ~/.rspec
-  :END:
-
-  rspec CLI configuration
-
-** Color
-
-  Enable colorized output
-
-  #+begin_src text
-    --color
-  #+end_src
-
-** Output format
-
-  Output from spec runs should look like a progress bar
-
-  #+begin_src text
-    --format progress
-  #+end_src
-
-** Ordering
-
-  Always run specs in a random order to ensure that examples are
-  independent of one another.
-
-  #+begin_src text
-    --order random
-  #+end_src
-
-* Scripts
-  :PROPERTIES:
-  :header-args: :mkdirp yes
-  :END:
-
-  Version controlled scripts used to automate various repetitive tasks
-
-** =bin/emacs=
-
-   A short hand for starting an emacs server/client. If the emacs
-   daemon is running, this script creates a new Graphical emacs client
-   and connects to the daemon. If the daemon is NOT running, this will
-   start the daemon, then create a new graphical client and connect to
-   the daemon.
-
-*** Usage
-
-  #+begin_src sh
-    bin/emacs [optional-file-paths]
-  #+end_src
-
-*** Source
-
-  #+begin_src sh :tangle ~/bin/emacs :shebang "#! /usr/bin/env bash"
-    emacsclient -n -c -a "" -- "$@"
-  #+end_src
-
-** Flush DNS cache
-
-   Invalidates the local DNS cache:
-
-*** Usage
-
-   #+begin_src sh
-     $ flush_dns
-   #+end_src
-
-*** Source
-
-    #+begin_src sh :tangle ~/bin/flush_dns :shebang "#!/bin/bash"
-      # Purpose:
-      #   Flush the local DNS cache
-      # Usage:
-      #   $ flush_dns_cache
-
-      if [[ `uname` == "Darwin" ]]; then
-          sudo killall -HUP mDNSResponder
-      fi
-    #+end_src
-
-** Refresh local git tags
-
-   Ensures that a local git repository's tags are in sync with the
-   remote origin
-
-*** Usage
-
-   #+begin_src sh
-     $ refresh_tags
-   #+end_src
-
-*** Source
-
-   #+begin_src sh :tangle ~/bin/refresh_tags :shebang "#!/bin/bash"
-     # Purpose:
-     #   Delete all local tags and refresh from origin
-     # Usage:
-     #   $ refresh_tags
-
-     git tag -l | xargs git tag -d && git fetch
-   #+end_src
-
-** Emacs Lisp Testing
-
-   Runs an elisp test
-
-*** Usage
-
-    #+begin_src sh
-      $ ert-run <path-to-test>.el
-    #+end_src
-
-*** Source
-
-   #+begin_src sh :tangle ~/bin/ert-run :shebang "#!/bin/bash"
-     # Purpose:
-     #   Runs an elisp test
-     # Usage:
-     #  $ ert-run <path-to-test>.el
-
-     emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
-   #+end_src
-** inode consumption
-
-   Find locations of dense inode consumption on disk
-
-*** Usage
-
-    #+begin_src sh
-      $ inode-consumption
-    #+end_src
-
-*** Source
-
-   #+begin_src sh :tangle ~/bin/inode-consumption :shebang "#!/bin/bash"
-     # Purpose:
-     #   List locations on disk ranked by their inode consumption
-     # Usage:
-     #  $ inode-consumption
-
-     find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
-   #+end_src
-
-
-** Power HRG Kubernets Cluster Helpers
-
-   Scripts to  help deal with kubernets across multiple clusters
-
-*** =kubectl= Helpers
-**** Usage
-
-    =akh= - run kubectl against the HQ cluster:
-
-    #+begin_src sh
-      $ akh -n nitro-web-prXXXX get pods
-    #+end_src
-
-**** Source
-
-   #+begin_src sh :tangle ~/bin/akh :shebang "#!/bin/bash"
-     # Purpose:
-     #   Run Kubectl against the Power HRG HQ Kubernets cluster
-     # Usage:
-     #  $ akh -n nitro-web-prXXXX get pods
-
-     app kubectl --context APP-HQ "$@"
-   #+end_src
-
-**** Usage
-
-    =akg= - run kubectl against the Gotham cluster:
-
-    #+begin_src sh
-      $ akg -n nitro-web-prXXXX get pods
-    #+end_src
-
-**** Source
-
-   #+begin_src sh :tangle ~/bin/akg :shebang "#!/bin/bash"
-     # Purpose:
-     #   Run Kubectl against the Power HRG Gotham Kubernets cluster
-     # Usage:
-     #  $ akg -n nitro-web-prXXXX get pods
-
-     app kubectl --context APP-Gotham "$@"
-   #+end_src
-
-*** =helm= helpers
-**** Usage
-
-    =ahh= - run Helm (v3) against the HQ cluster:
-
-    #+begin_src sh
-      $ ahh -n nitro-web-prXXXX list
-    #+end_src
-
-**** Source
-
-   #+begin_src sh :tangle ~/bin/ahh :shebang "#!/bin/bash"
-     # Purpose:
-     #   Run Helm (v3) against the Power HRG HQ Kubernets cluster
-     # Usage:
-     #  $ ahh -n nitro-web-prXXXX list
-
-     app helm3 --kube-context APP-HQ "$@"
-   #+end_src
-**** Usage
-
-    =ahg= - run Helm (v3) against the Gotham cluster:
-
-    #+begin_src sh
-      $ ahg -n nitro-web-prXXXX list
-    #+end_src
-
-**** Source
-
-   #+begin_src sh :tangle ~/bin/ahg :shebang "#!/bin/bash"
-     # Purpose:
-     #   Run Helm (v3) against the Power HRG Gotham Kubernets cluster
-     # Usage:
-     #  $ ahg -n nitro-web-prXXXX list
-
-     app helm3 --kube-context APP-Gotham "$@"
-   #+end_src
-* ssh
-  :PROPERTIES:
-  :header-args: :mkdirp yes
-  :END:
-
-  Automatically load the private key into the ssh-agent and store
-  passwords in the keychain on OS X hosts.
-
-  #+begin_src text :tangle (when (eq system-type 'darwin) "~/.ssh/config")
-    Host *
-     AddKeysToAgent yes
-     UseKeychain yes
-  #+end_src
-
-* setup
-
-   Generates the =.files/setup.sh= script used to bootstrap new system
-   with the tools and configuration I use across hosts. Though this
-   script is generated by the tangling =.files/install.sh=, it is NOT
-   run automatically. This allows me to
-
-** Common Packages
-
-   Define and install basic packages required to build and install software
-
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
-   #+end_src
-
-** macOS Packages
-
-*** Add "Package Manager"
-
-   macOS has a surprising lack of "package management
-   system". Homebrew is the closest thing, but has a few functional
-   deficiencies. Nonetheless, in most cases it's better than nothing
-   so we ensure that it exists on macOS hosts here.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     if ! [ -x "$(command -v brew)" ]; then
-       ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-     fi
-     brew update
-     brew tap homebrew/cask-versions
-   #+end_src
-*** Additional macOS Packages
-
-   On macOS, ensure that these programs are present. Generally they're
-   required to build or support the tools I use to produce software.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     PACKAGES="$PACKAGES ncurses openssl readline the_silver_searcher"
-   #+end_src
-
-*** macOS Binary Packages
-
-    On macOS clients, also ensure that the following binary
-    applications are available for use.
-
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     BINARY_PACKAGES="emacs firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
-   #+end_src
-
-*** Install Packages
-
-   And now we're ready to ensure that each of the packages are
-   installed. On macOS hosts, we use Homebrew to install packages.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     for package in $PACKAGES; do
-         if [ "$( brew list -1 | grep $package )" == "" ]; then
-           echo "installing $package"
-           brew install $package
-         else
-             echo "$package installed"
-         fi
-     done
-
-     for package in $BINARY_PACKAGES; do
-         if [ "$( brew cask list -1 | grep $package )" == "" ]; then
-           echo "installing $package"
-           brew cask install $package
-         else
-             echo "$package installed"
-         fi
-     done
-   #+end_src
-
-*** macOS update =GNU bash=
-
-   Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to
-   update the =bash= shell in macOS for quite some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact
-   they've gone so far as switching the user's default shell to zsh,
-   and added an annoying depreciation warning when using bash in their
-   latest OS update]]... LOLWAT? Here we'll use Homebrew to install a
-   recent version of =GNU bash= and make sure it's our user's default
-   shell.
-
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-      if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
-      then
-          sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
-      fi
-   #+end_src
-
-  Change the shell to bash for the rest of the setup script.  This
-  also has the affect of loading the newly generated bash
-  configuration which makes installing things like ASDF a bit easier.
-
-  #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-    if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
-    then
-        echo "Bash is not the current shell, changing shell..."
-        chsh -s /usr/local/bin/bash 2>/dev/null
-        /usr/local/bin/bash
-        source $HOME/.bashrc
+}
+
+# prints number of commits that are available on ref B but not ref A
+# arg1: reference A
+# arg2: reference B
+__git_commit_diff_count() {
+    echo "$(git rev-list $1..$2 2>/dev/null | awk 'END {print NR}')"
+}
+
+# build combined (+/-) counts for related commits
+__git_count_str() {
+    local str
+    local parent="$(__git_branch_name parent)"
+    local ahead_count="$(__git_commit_diff_count $parent HEAD)"
+    local behind_count="$(__git_commit_diff_count HEAD $parent)"
+
+    if [ 0 -lt "$ahead_count" ]; then
+        str="${GREEN}+${ahead_count}${RESET}"
     fi
-  #+end_src
 
-** GNU/Linux Packages
+    if [ 0 -lt "$behind_count" ]; then
+        [ -n "$str" ] && str="$str/"
+        str="${str}${LIGHT_RED}-${behind_count}${RESET}"
+    fi
 
-   On GNU/Linux hosts, ensure that the following packages are present.
+    [ -n "$str" ] && str="($str)"
+    echo "$str"
+}
 
-   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
-     PACKAGES="$PACKAGES aspell git silversearcher-ag"
-   #+end_src
+# install git integration into PS1
+__git_prompt() {
+    local last_exit="$?" # keep here.. so we get the last command
 
-*** Install Packages
-   On GNU/Linux hosts - for which I always use Debian GNU/Linux -
-   we'll use the Aptitude Package Manager.
+    # setup PS1
+    local host="${LIGHT_GREEN}\h:${RESET}"
+    local dir="${YELLOW}\W${RESET}"
+    PS1="[$host $dir]"
 
-   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
-     for package in $PACKAGES; do
-         if [ "$(sudo apt-cache policy $package | grep 'Installed: (none)')" ]
-         then
-             sudo apt install -y $package
-         else
-             echo "$package is already installed";
-         fi
-     done
-   #+end_src
+    # when in git repository
+    local gitdir="$(__git_dirname)"
+    if [ -n "$gitdir" ]; then
+        local branch
+        local extras
 
-*** Load the bash config
+        local in_gitdir="$(__git_in_gitdir)"
+        case "$in_gitdir" in
+            gitdir|bare)
+                branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
+                extras=""
+                ;;
+            ,*)
+                local branch="$(__git_branch_name current ${gitdir})"
+                local br_state="$(__git_branching_state $gitdir)"
 
-  Load the newly generated bash configuration which makes installing
-  things like ASDF a bit easier.
+                # rebasing..use merge head for branch name
+                case "$br_state" in
+                    rebase-*)
+                        # get the ref head during rebase
+                        branch="$(cat "$gitdir/rebase-merge/head-name")"
+                        branch="${branch##refs/heads/}"
+                        branch="${branch##remotes/}"
+                        ;;
+                esac
 
-  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
+                # extras (count strings, working dir symbols)
+                local countstr="$(__git_count_str)"
+                local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
+                extras="${countstr} ${wd_syms}"
+                ;;
+        esac
+        branch="${GREY}${branch}${RESET}"
+
+        # update PS1
+        PS1="${PS1} ${branch}${extras}"
+    fi
+
+    # setup marker that acts off of last exit code
+    local marker
+    if [ 0 -eq "$last_exit" ]; then
+        marker="$GREEN"
+    else
+        marker="$RED"
+    fi
+    marker="${marker}\$${RESET}"
+    PS1="\n${PS1} →\n${marker} "
+}
+PROMPT_COMMAND=__git_prompt
+#+end_src
+** ASDF Version manager
+
+*** Global configuration
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./asdf/.asdfrc
+:END:
+
+This file will be read during =asdf='s initialization it provides instance
+wide configuration for the =asdf= program itself.
+
+Each language's version manager communities seem to have come to
+different conclusions on how to represent "required versions". The
+=legacy_version_file= setting here tells =asdf= to allow the language
+specific plugin to attempt to use the language's version manager
+community's default file for specifying a version - for example the =asdf=
+Ruby plugin will look in =.ruby_version= first for Ruby version
+declarations as well as =.tool-versions=.
+
+#+begin_src conf
+legacy_version_file = yes
+#+end_src
+
+*** Plugin specific configuration
+
+ASDF manages a number of different language and library tools.
+Functionality for managing these are provided in "plugins". This section
+contains configurations for specific plugins.
+
+**** Ruby
+
+***** Default gems
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./asdf/.default-gems
+:END:
+
+When the ASDF Ruby plugin can be configured such that when it completes
+installing a Ruby, a list of gems is also installed. This is
+accomplished by listing the names of the gems in a file in the user's
+=$HOME= directory called =.default-gems=. The following list describes the
+contents of this file.
+
+#+begin_src text
+bundler
+pry
+rcodetools
+#+end_src
+
+** Gnome terminal
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./terminal/.gruvbox-profile.dconf
+:END:
+
+This is my gnome-terminal configuration. This configuration will be
+tangled to ~/.gruvbox-profile.dconf. At some point I'll automate the
+installation, but for now to import the profile:
+
+   1. Open gnome-terminal
+   2. Create a new profile
+   3. Take node of the UUID of the Profile
+   4. Import the profile settings into the new profile
+      =cat ~/.gruvbox-profile.dconf | dconf load /org/gnome/terminal/legacy/profiles:/:<profile-uuid-here>/=
+
+      #+begin_src text
+[/]
+foreground-color='rgb(235,219,178)'
+visible-name='Gruvbox'
+palette=['rgb(40,40,40)', 'rgb(204,36,29)', 'rgb(152,151,26)', 'rgb(184,187,38)', 'rgb(69,133,136)', 'rgb(177,98,134)', 'rgb(104,157,106)', 'rgb(168,153,132)', 'rgb(146,131,116)', 'rgb(251,73,52)', 'rgb(184,187,38)', 'rgb(250,189,47)', 'rgb(131,165,152)', 'rgb(211,134,155)', 'rgb(142,192,124)', 'rgb(235,219,178)']
+scroll-on-output=true
+use-system-font=true
+use-theme-colors=false
+scrollback-unlimited=false
+background-color='rgb(40,40,40)'
+audible-bell=false
+      #+end_src
+
+** Git version control system
+
+This section configures the =git= version control system.
+
+*** Basic configuration
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./git/.gitconfig
+:END:
+
+This section provides the core configuration of the =git= version control
+system. The following contains configuration which:
+
+- instructs git how to write the author information for commits.
+- references to the global list of files from the host which should be
+  ignored in a git repository.
+- prints colorized output for git commands like =status=, and =diff=.
+- defines aliases, or shorthand, for frequently used, or often forgotten
+  git incantations.
+- signs every commit with my GnuPG key to verify the authenticity of
+  such commits to other parties.
+- configures the =git clean= command to be less intrusive - IE drop the
+  "Are you sure?" charade.
+- only pushes the current branch when =git push= is invoked rather than
+  attempting to push all refs in the local repository.
+- prevents =git= from eagerly fetching the tags from the =origin= remote.
+  This is useful for improving the responsiveness of large repositories
+  with lots of tags, and the user may manually download them later if
+  they so choose.
+- performs a =--prune= operation on each fetch from the =origin= remote.
+  Again, this is useful for large repositories where the =origin= may
+  contain many refs which I'll never need to reference. When these are
+  removed from the remote, they'll automatically be removed from the
+  local object database as well.
+
+#+begin_src conf
+[user]
+name = Aaron Kuehler
+email = aaron.kuehler@gmail.com
+signingkey = 9E3E4C59E2694215
+
+[core]
+excludesfile = ~/.gitignore_global
+
+[color]
+ui = true
+
+[alias]
+co  = checkout
+cb  = checkout -b
+db  = branch -d
+rclone = clone --recursive
+
+[commit]
+gpgsign = true
+
+[clean]
+requireForce = false
+
+[push]
+default = simple
+
+[remote "origin"]
+tagOpt = --no-tags
+prune = true
+#+end_src
+
+*** Global ignore file
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./git/.gitignore_global
+:END:
+
+This configures the global list of files and patterns that git should
+ignore. This typically contains items which are specific to the local
+environment or workflow which should never be committed to a git
+repository, but would be inappropriate to include in the project's
+=.gitignore=. Example include, artifacts left behind by local text
+editors, tools, operating system file managers, etc. which may not be
+shared across contributors.
+
+The following ignores:
+
+- artifacts left behind by the MacOS Finder
+- Emacs autosave and backup files
+
+#+begin_src text
+.DS_Store
+
+,*~
+.#*
+,*#
+#+end_src
+
+** Ruby Programming Languae
+*** Rspec
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./ruby/.rspec
+:END:
+
+This section specifies system-wide configuration for RSpec - The Ruby Behavior
+Driven Development tool. This ensures that:
+
+- example and specification output should use the terminal control
+  characters to colorize output. This provides rich visual feedback of
+  the success, failure, or omitted status of examples in the RSpec
+  suite.
+- RSpec should use the "progress" output format. This displays a series
+  of =.=, =F=, and =S= characters to indicate the output status of individual
+  examples. These characters indicate a success, failure, or "skip"
+  respectively.
+- examples are run in order according to the =--seed= of the runner. By
+  default a random seed is generated for each run, but the order of a
+  specific run can be reproduced by passing its =--seed= to the =rspec=
+  command. This is helpful for surfacing dependencies between example,
+  leaked / persistent state, etc between sequential runs of
+  specifications.
+
+
+#+begin_src text
+--color
+--format progress
+--order random
+#+end_src
+
+** Secure Shell (SSH)
+
+Automatically load the private key into the ssh-agent and store
+passwords in the keychain on OS X hosts.
+
+#+begin_src text :mkdirp yes :tangle (when (eq system-type 'darwin) "./ssh/.ssh/config")
+Host *
+AddKeysToAgent yes
+UseKeychain yes
+#+end_src
+
+** Utility Scripts
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash"
+:END:
+
+Version controlled scripts used to automate various repetitive tasks.
+
+*** Flush DNS cache
+
+Invalidates the local DNS cache:
+
+**** Usage
+
+#+begin_src sh
+$ flush_dns
+#+end_src
+
+**** Source
+
+#+begin_src sh :tangle ./scripts/bin/flush_dns
+# Purpose:
+#   Flush the local DNS cache
+# Usage:
+#   $ flush_dns_cache
+
+if [[ `uname` == "Darwin" ]]; then
+    sudo killall -HUP mDNSResponder
+fi
+#+end_src
+
+*** Refresh local git tags
+
+Ensures that a local git repository's tags are in sync with the
+remote origin
+
+**** Usage
+
+#+begin_src sh
+$ refresh_tags
+#+end_src
+
+**** Source
+
+#+begin_src sh :tangle ./scripts/bin/refresh_tags
+# Purpose:
+#   Delete all local tags and refresh from origin
+# Usage:
+#   $ refresh_tags
+
+git tag -l | xargs git tag -d && git fetch
+#+end_src
+
+*** Emacs Lisp Testing
+
+Runs an elisp test
+
+**** Usage
+
+#+begin_src sh
+$ ert-run <path-to-test>.el
+#+end_src
+
+**** Source
+
+#+begin_src sh ./scripts/bin/ert-run
+# Purpose:
+#   Runs an elisp test
+# Usage:
+#  $ ert-run <path-to-test>.el
+
+emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
+#+end_src
+*** inode consumption
+
+Find locations of dense inode consumption on disk
+
+**** Usage
+
+#+begin_src sh
+$ inode-consumption
+#+end_src
+
+**** Source
+
+#+begin_src sh :tangle ./scripts/bin/inode-consumption
+# Purpose:
+#   List locations on disk ranked by their inode consumption
+# Usage:
+#  $ inode-consumption
+
+find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
+#+end_src
+
+*** Initial host setup script
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash" :tangle "./scripts/bin/initial-host-setup"
+:END:
+
+This section generates a script used to bootstrap new system with the
+tools and configuration I use across hosts. Though this script is
+generated by running =.files/install=, it is NOT run automatically. This
+allows me to better control how and when the host system is altered
+during initial setup.
+
+The setup script is placed in the =$HOME/bin= directory, which means it
+should be executable on the user's =$PATH=. To start the initial host
+setup process run =initial-host-setup=.
+
+***** Common Packages
+
+Define and install basic packages required to build and install software
+
+#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
+PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
+#+end_src
+
+***** macOS Packages
+
+****** Add "Package Manager"
+
+macOS has a surprising lack of "package management
+system". Homebrew is the closest thing, but has a few functional
+deficiencies. Nonetheless, in most cases it's better than nothing
+so we ensure that it exists on macOS hosts here.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+if ! [ -x "$(command -v brew)" ]; then
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+fi
+brew update
+brew tap homebrew/cask-versions
+#+end_src
+****** Additional macOS Packages
+
+On macOS, ensure that these programs are present. Generally they're
+required to build or support the tools I use to produce software.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+PACKAGES="$PACKAGES ncurses openssl readline the_silver_searcher"
+#+end_src
+
+****** macOS Binary Packages
+
+On macOS clients, also ensure that the following binary
+applications are available for use.
+
+#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
+BINARY_PACKAGES="emacs firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
+#+end_src
+
+****** Install Packages
+
+And now we're ready to ensure that each of the packages are
+installed. On macOS hosts, we use Homebrew to install packages.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+for package in $PACKAGES; do
+    if [ "$( brew list -1 | grep $package )" == "" ]; then
+        echo "installing $package"
+        brew install $package
+    else
+        echo "$package installed"
+    fi
+done
+
+for package in $BINARY_PACKAGES; do
+    if [ "$( brew cask list -1 | grep $package )" == "" ]; then
+        echo "installing $package"
+        brew cask install $package
+    else
+        echo "$package installed"
+    fi
+done
+#+end_src
+
+****** macOS update =GNU bash=
+
+Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to
+update the =bash= shell in macOS for quite some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact
+they've gone so far as switching the user's default shell to zsh,
+and added an annoying depreciation warning when using bash in their
+latest OS update]]... LOLWAT? Here we'll use Homebrew to install a
+recent version of =GNU bash= and make sure it's our user's default
+shell.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
+then
+    sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
+fi
+#+end_src
+
+Change the shell to bash for the rest of the setup script.  This
+also has the affect of loading the newly generated bash
+configuration which makes installing things like ASDF a bit easier.
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
+then
+    echo "Bash is not the current shell, changing shell..."
+    chsh -s /usr/local/bin/bash 2>/dev/null
+    /usr/local/bin/bash
     source $HOME/.bashrc
-  #+end_src
+fi
+#+end_src
 
-** Install asdf
+***** GNU/Linux Packages
 
-   I use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manage the tooling
-   and runtimes in which I typically write software.
+On GNU/Linux hosts, ensure that the following packages are present.
 
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     ASDF_DIR=$HOME/.asdf
-     if [ -e $ASDF_DIR ]; then
-       echo "Updating $ASDF_DIR"
-       asdf update
-     else
-       echo "Installing ASDF"
-       git clone https://github.com/asdf-vm/asdf.git $ASDF_DIR
-       cd $ASDF_DIR
-       git checkout "$(git describe --abbrev=0 --tags)"
-     fi
-     [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
-     [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
-   #+end_src
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+PACKAGES="$PACKAGES aspell git silversearcher-ag"
+#+end_src
 
-   Now that asdf-vm is in place, install the language specific plugins I typically use.
+****** Install Packages
+On GNU/Linux hosts - for which I always use Debian GNU/Linux -
+we'll use the Aptitude Package Manager.
 
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     ASDF_PLUGINS='ruby nodejs'
-     for plugin in $ASDF_PLUGINS; do
-       if [ -e $ASDF_DIR/plugins/$plugin ]; then
-         echo "asdf $plugin plugin already installed"
-         asdf plugin-update $plugin
-       else
-         echo "installing asdf $plugin plugin"
-         asdf plugin-add $plugin
-       fi
-     done
-   #+end_src
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+for package in $PACKAGES; do
+    if [ "$(sudo apt-cache policy $package | grep 'Installed: (none)')" ]
+    then
+        sudo apt install -y $package
+    else
+        echo "$package is already installed";
+    fi
+done
+#+end_src
 
-   Post install, the [[https://github.com/asdf-vm/asdf-nodejs][asdf-nodejs]] plugin requires manually importing
-   the team's nodejs team's keyring. Manual installation is for
-   suckers.
+****** Load the bash config
 
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
-   #+end_src
+Load the newly generated bash configuration which makes installing
+things like ASDF a bit easier.
 
-** Install Docker
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+source $HOME/.bashrc
+#+end_src
 
-   Ensures that docker is installed. On Mac OS X hosts, we use
-   [[https://brew.sh/][Homebrew]] to install Docker:
+***** Install asdf
 
-   #+begin_src sh :tangle (when (eq system-type 'darwin) "~/.files/setup.sh")
-     if [ $(which docker) ]; then
-       echo "docker is already installed"
-     else
-       brew cask install docker
-     fi
-   #+end_src
+I use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manage the tooling
+and runtimes in which I typically write software.
 
-   While on GNU/Linux hosts, we assume we're using my favorite distro -
-   Debian - and use the [[https://wiki.debian.org/Aptitude][Aptitude Package Manager]] to install Docker.
+#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
+ASDF_DIR=$HOME/.asdf
+if [ -e $ASDF_DIR ]; then
+    echo "Updating $ASDF_DIR"
+    asdf update
+else
+    echo "Installing ASDF"
+    git clone https://github.com/asdf-vm/asdf.git $ASDF_DIR
+    cd $ASDF_DIR
+    git checkout "$(git describe --abbrev=0 --tags)"
+fi
+[ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+[ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
+#+end_src
 
-   #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
-     if [ $(which docker) ]
-     then
-         echo "docker is already installed"
-     else
-         echo "installing docker"
-         sudo apt-get remove docker docker-engine docker.io containerd runc
-         sudo apt-get update
-         sudo apt-get install \
-              apt-transport-https \
-              ca-certificates \
-              curl \
-              gnupg2 \
-              software-properties-common
+Now that asdf-vm is in place, install the language specific plugins I typically use.
 
-         curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-         sudo add-apt-repository \
-              "deb [arch=amd64] https://download.docker.com/linux/debian \
+#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
+ASDF_PLUGINS='ruby nodejs'
+for plugin in $ASDF_PLUGINS; do
+    if [ -e $ASDF_DIR/plugins/$plugin ]; then
+        echo "asdf $plugin plugin already installed"
+        asdf plugin-update $plugin
+    else
+        echo "installing asdf $plugin plugin"
+        asdf plugin-add $plugin
+    fi
+done
+#+end_src
+
+Post install, the [[https://github.com/asdf-vm/asdf-nodejs][asdf-nodejs]] plugin requires manually importing
+the team's nodejs team's keyring. Manual installation is for
+suckers.
+
+#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
+bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+#+end_src
+
+***** Install Docker
+
+Ensures that docker is installed. On Mac OS X hosts, we use
+[[https://brew.sh/][Homebrew]] to install Docker:
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+if [ $(which docker) ]; then
+    echo "docker is already installed"
+else
+    brew cask install docker
+fi
+#+end_src
+
+While on GNU/Linux hosts, we assume we're using my favorite distro -
+Debian - and use the [[https://wiki.debian.org/Aptitude][Aptitude Package Manager]] to install Docker.
+
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+if [ $(which docker) ]
+then
+    echo "docker is already installed"
+else
+    echo "installing docker"
+    sudo apt-get remove docker docker-engine docker.io containerd runc
+    sudo apt-get update
+    sudo apt-get install \
+         apt-transport-https \
+         ca-certificates \
+         curl \
+         gnupg2 \
+         software-properties-common
+
+    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    sudo add-apt-repository \
+         "deb [arch=amd64] https://download.docker.com/linux/debian \
                  $(lsb_release -cs) \
                  stable"
-         sudo apt-get update
-         sudo apt install -y docker-ce docker-ce-cli containerd.io
-         sudo groupadd docker
-         sudo usermod -aG docker $USER
-         newgrp docker
-     fi
-   #+end_src
+    sudo apt-get update
+    sudo apt install -y docker-ce docker-ce-cli containerd.io
+    sudo groupadd docker
+    sudo usermod -aG docker $USER
+    newgrp docker
+fi
+#+end_src
 
-** Install docker-compose
+***** Install docker-compose
 
-  Ensures that docker-compose is installed and ready to use. On Mac OS
-  X this comes bundled in the Homebrew cask version of Docker, so
-  there's nothing for us to do. However on GNU/Linux hosts we need to
-  do some additional steps to get everything up and running.
+Ensures that docker-compose is installed and ready to use. On Mac OS
+X this comes bundled in the Homebrew cask version of Docker, so
+there's nothing for us to do. However on GNU/Linux hosts we need to
+do some additional steps to get everything up and running.
 
-  #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "~/.files/setup.sh")
-    if [ $(which docker-compose) ]
-    then
-        echo "Installing docker-compose..."
-        sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-        sudo chmod +x /usr/local/bin/docker-compose
-        sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
-    else
-        echo "docker-compose already installed. Skipping..."
-    fi
-  #+end_src
-
-** Install Emacs configuration
-
-   #+begin_src sh :tangle "~/.files/setup.sh"
-     EMACS_CONFIG_DIR=$HOME/.emacs.d
-     if ! [ -d $EMACS_CONFIG_DIR ]
-     then
-         echo "Cloning emacs configuration"
-         git clone git@github.com:indiebrain/.emacs.d.git $HOME/.emacs.d
-     elif [ -d $EMACS_CONFIG_DIR/.git ]
-     then
-          echo "Attempting to update the emacs configuration"
-          pushd $EMACS_CONFIG_DIR
-          git pull --rebase
-          popd
-     else
-         echo "Emacs configuration is not yet managed by this script. Skipping for now."
-         echo "If you want the .files installation to place the emacs configuration,"
-         echo "and re run the setup script."
-     fi
-   #+end_src
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+if [ $(which docker-compose) ]
+then
+    echo "Installing docker-compose..."
+    sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    sudo chmod +x /usr/local/bin/docker-compose
+    sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+else
+    echo "docker-compose already installed. Skipping..."
+fi
+#+end_src
