@@ -1,0 +1,20 @@
+#! /usr/bin/env bash
+# Author:
+#   Aaron Kuehler
+#
+# Purpose:
+#   Uninstall the dotfiles
+#
+
+DOTFILES_HOME="$HOME/.files"
+
+function remove_configuration() {
+    pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
+    stow --delete bash ssh git emacs asdf ruby scripts terminal
+    popd || return
+}
+
+remove_configuration
+
+
+exit 0
