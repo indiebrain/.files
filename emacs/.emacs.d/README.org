@@ -6,13 +6,9 @@ This repository holds my emacs configuration.
 
 * Installation
 
-1. Clone this repository
-  #+begin_src sh
-    git clone https://indiebrain@github.com/indiebrain/.emacs.d.git ~/.emacs.d/
-  #+end_src
-2. Run emacs. The =emacs-init.el= is automatically generated and loaded
-   from the =emacs-lisp= code blocks contained within =emacs-init.org=
-   =org-babel=.
+This configuration is maintained as a GNU Stow package as part of my
+dotfiles. Please refer to [[https://github.com/indiebrain/.files#installing][the installation documentation of my dotfiles
+repository]] for details.
 
 * Notes
 
