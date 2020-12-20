@@ -4861,6 +4861,39 @@ Use `flyspell-region' on the active region, else invoke
                            (flyspell-mode))))
 #+end_src
 
+** Grammar checking (artbollocks)
+
+[[https://github.com/sachac/artbollocks-mode/blob/master/artbollocks-mode.el][artbollocks-mode]] helps avoid cliches and poor grammar when writing
+prose. It does NOT employ any fancy Natural Language processing expert
+systems and requires no external libraries. Its internals are a set of
+regular expressions designed to detect:
+
+- Lexical Illustions :: When a word appears next to itself, but the
+  human brain omits it from the read content. Example: Paris in the *the*
+  spring.
+- Passive voice :: When the object of a sentence acts on the sentence's
+  subject. Example: The road was crossed by the chicken.
+- Weasel Words / Phrases :: Filler words or expressions. The tend to
+  sound technically relevant, but convey nothing to the reader.
+  Examples: very, remarkably, few, there are a number of.
+- Jargon :: Obscure and often pretentious language marked by
+  circumlocutions and long words.
+
+=artbollocks-mode= intends to help improve writing about art, yet it is
+generally useful enough for most types of writing. Jargon tends to be
+topical; this make the jargon check a bit odd at times. One may consider
+customizing the =artbollocks-mode= package to better suit the type of
+writing performed - overriding the regular expression
+=artbollocks-jargon-regex= or event disabling the jargon checker via
+=artbollocks-jargon=.
+
+#+begin_src emacs-lisp
+(use-package artbollocks-mode
+  :ensure
+  :hook (text-mode-hook . (lambda ()
+                           (artbollocks-mode))))
+#+end_src
+
 ** Linters
 :PROPERTIES:
 :CUSTOM_ID: h:42BE413C-9A59-4ED2-A614-D3F3E500CF05
