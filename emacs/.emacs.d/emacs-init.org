@@ -1940,9 +1940,7 @@ Additional notes on less obvious settings:
     (setq org-modules '(ol-gnus ol-info ol-eww))
     :bind (:map org-mode-map
     ("<C-return>" . nil)
-    ("<C-S-return>" . nil))
-    :hook (org-mode-hook . (lambda ()
-                             (flyspell-mode))))
+    ("<C-S-return>" . nil)))
 #+end_src
 
 *** Links
@@ -4817,7 +4815,9 @@ complete whatever you have typed in.
 
 The =flyspell= package enables in-buffer spell checking and correction. It
 relies on the external GNU =aspell= program to perform the spell checking
-and provide correction support.
+and provide correction support. The below configuration sets up the
+default dictionary to use "American English" and enables automatic spell
+checking when editing prose.
 
 #+begin_src emacs-lisp
 (use-package flyspell
@@ -4856,7 +4856,9 @@ Use `flyspell-region' on the active region, else invoke
   :bind (("M-$" . indibrain/flyspell-dwim)
          ("C-M-$" . indibrain/ispell-dictionaries-complete)
          :map flyspell-mode-map
-         ("C-;" . nil)))
+         ("C-;" . nil))
+  :hook (text-mode-hook . (lambda ()
+                           (flyspell-mode))))
 #+end_src
 
 ** Linters
