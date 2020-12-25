@@ -236,12 +236,12 @@ fi
 
 **** Command output colors
 
-***** MacOS
+***** macOS
 
 Some UNIX-like operating systems support a global configuration option
 which instructs commands to use ANSI Color control sequences in their
 output. Setting the =CLICOLOR= environment variable enables this on such
-systems. MacOS is one such UNIX-like operating system which supports
+systems. macOS is one such UNIX-like operating system which supports
 this global colorizing configuration.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
@@ -801,7 +801,7 @@ contributors.
 
 The following ignores:
 
-- artifacts left behind by the MacOS Finder
+- artifacts left behind by the macOS Finder
 - Emacs autosave and backup files
 
 #+begin_src text
@@ -976,7 +976,7 @@ PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-comple
 
 macOS has a surprising lack of "package management system". Homebrew is
 the closest thing, but has functional deficiencies. Nonetheless, in most
-cases it's better than nothing so we ensure that it exists on MacOS
+cases it's better than nothing so we ensure that it exists on macOS
 hosts here.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
