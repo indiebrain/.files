@@ -6,15 +6,14 @@ Shell and CLI Tooling configuration
 
 The following sections generate the contents of a collection of GNU Stow
 packages. GNU Stow then places the packages onto the host file system
-using symlinks. The goal is to keep the configuration relatively
-isolated form the rest of the file system and provide a simple mechanism
-for (de)activating particular parts of the configuration.
+using symlinks. The goal is to keep the configuration isolated from the
+rest of the file system and provide a simple mechanism for
+(de)activating particular parts of the configuration.
 
 ** The Bourne Again Shell (Bash)
 
-There are many shells; some considered more fashionable. However, the
-=bash= shell is ubiquitous, mature, and simple enough to be productive in
-most contexts.
+Some shells are considered more modern, or fashionable, but the =bash=
+shell is ubiquitous, mature, simple enough, and powerful.
 
 A [[https://devhints.io/bash][quick reference]] should be enough for most to get started with Bash
 scripting, but for a more in depth look at Bash see the [[https://www.gnu.org/software/bash/manual/][GNU reference
@@ -202,8 +201,8 @@ export HOMEBREW_NO_ANALYTICS=1
 :header-args: :mkdirp yes :tangle ./bash/.bash_profile
 :END:
 
-The =.bash_profile= is loaded when Bash starts an login shell - typically
-via a terminal, or Secure Shell (SSH) connection.
+Login shells loads the =.bash_profile= when created; typically via a
+terminal, or Secure Shell (SSH) connection.
 
 #+begin_quote
 When Bash is invoked as an interactive login shell, or as a
@@ -219,11 +218,11 @@ executes the exit builtin command, Bash reads and executes commands from
 the file ~/.bash_logout, if it exists.
 #+end_quote
 
-First, this ensures that any configuration for the Bourne Shell is
-loaded. Then we load the non-login shell configuration for Bash. Finally
+First, we load any configuration for the Bash's predecesor; the Bourne
+Shell. Then we load the non-login shell configuration for Bash. Finally
 we run any login-specific tasks before we finally start to load the Bash
 login configuration. If any of the above configuration files are not
-present or cannot be read, they are skipped. This is an attempt to offer
+present or not readable they're skipped. This is an attempt to offer
 the most backward compatibility while not sacrificing portability.
 
 #+begin_src sh
@@ -241,8 +240,8 @@ fi
 
 Some UNIX-like operating systems support a global configuration option
 which instructs commands to use ANSI Color control sequences in their
-output. On such systems this is done by setting the =CLICOLOR= environment
-variable. MacOS is one such UNIX-like operating system which supports
+output. Setting the =CLICOLOR= environment variable enables this on such
+systems. MacOS is one such UNIX-like operating system which supports
 this global colorizing configuration.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
@@ -270,12 +269,12 @@ alias grep='grep --color'
 
 **** Aliases
 
-In Bash, aliases allow a string to be substituted for a word when it is
-used as the first work of a simple command. There are many rules
-concerning the definition and use of aliases, [[https://www.gnu.org/software/bash/manual/bash.html#Aliases][please see the Bash
-reference manual's topic on Aliases for more details]]. The aliases
-defined herein are meant to provide shorthand notation to frequently run
-or often forgotten, but useful, commands.
+Bash supports creating a custom alias to a command string. When used as
+the first word of a simple command an alias expands to its command
+string. There are rules concerning the definition and use of aliases,
+[[https://www.gnu.org/software/bash/manual/bash.html#Aliases][please see the Bash reference manual's topic on Aliases for more
+details]]. The aliases defined herein provide shorthand notation to
+frequently run or often forgotten, but useful, commands.
 
 #+begin_src sh
 alias gs="git status"
@@ -291,11 +290,11 @@ alias pbcopy='xclip -selection clipboard'
 
 **** Bash Completion
 
-The Bash Completion extension will show a list of possible completions
-when a candidate is typed into the terminal followed by the <TAB> key
-twice. This is helpful in narrowing down potential commands. For example
-=ls<TAB><TAB>= may expand and show the following commands as potential
-completions:
+The Bash Completion extension shows a list of possible completions when
+the user types a partial completion candidate followed by the <TAB> key
+twice. This is helpful in narrowing down potential commands and
+arguments. For example =ls<TAB><TAB>= may expand and show the following
+commands as potential completions:
 
 #+begin_example
 root@3acfddd4f63d:/# ls
@@ -318,8 +317,8 @@ lsmem
 lsns
 #+end_example
 
-On macOS hosts bash-completion will be installed via Homebrew and we'll
-load completions according to its conventions - see =brew info
+On macOS hosts, Homebrew may provide the bash-completion package and
+we'll load completions according to its conventions - see =brew info
 bash-completion= for more details.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
@@ -340,7 +339,7 @@ means of loading bash-completion completions]].
 Some commands will open a text editor to complete their action - =git
 commit=, for example. Bash will execute the command stored in the =EDITOR=
 environment variable to launch a text editor in these cases. This makes
-sure that =emacs= is used as the preferred text editor.
+sure that =emacs= is the preferred text editor.
 
 #+begin_src sh
 export EDITOR="emacs"
@@ -348,37 +347,36 @@ export EDITOR="emacs"
 **** History
 
 Bash has the capabilities keep track of the commands entered into
-interactive shells. This history can be searched, and recalled for
-future use. The following is borrowed directly from the [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use Bash
-History Commands and Expansions on a Linux VPS]] guide and [[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge
-Your Bash History]] articles. This configuration achieves the following goals:
+interactive shells. History is searchable and executable. The [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use
+Bash History Commands and Expansions on a Linux VPS]] guide and
+[[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge Your Bash History]] articles are primary sources for the
+following configuration. The configuration below achieves the following
+goals:
 
-- History is appended after each command is entered. By default, bash
+- Each command appends itself to the history on entry. By default, bash
   writes its history at the end of each session, overwriting the
-  existing file with an updated version. This means that if you are
-  logged in with multiple bash sessions, only the last one to exit will
-  have its history saved.
-- History is appended and reloaded after each command. To do this
-  correctly, we need to do a bit of a hack. We need to append to the
-  history file immediately with =history -a= and reload new entries from
-  the history file via =history -n=.
+  existing file with an updated version. This means that if there are
+  multiple bash sessions only the last one to exit will have its history
+  saved.
+- Entering a command will automatically append itself and reload the
+  history. To do this correctly, we need to do a bit of a hack. We need
+  to append to the history file immediately with =history -a= and reload
+  new entries from the history file via =history -n=.
 - Store only unique commands in bash history. Don't store multiple
-  instances of =ls= for example. This is controlled by the =HISTCONTROL=
-  =erasedups= configuration value.
-- Commands can be excluded from the history by prefixing the command
-  with a whitespace character. This is controlled by the =HISTCONTROL=
-  =ignoreboth= configuration value
+  instances of =ls= for example. The =HISTCONTROL=
+  =erasedups= configuration value controls this.
+- Prefixing a command with a white space character excludes it from the
+  history. The =HISTCONTROL= =ignoreboth= configuration value controls this.
 - The Bash defaults on the number of items and size of the history are
-  quite limited - they harken back to days when storage was more
+  limited - they harken back to days when storage was more
   expensive. This sets a reasonably large cap on the number of items to
   keep in history via the =HISTSIZE= and =HISTFILESIZE= environment
   variables.
-- Provides a blacklist of commands which should never be recorded to the
+- Provides a blacklist of commands which should never appear in the
   history via =HISTIGNORE=. Typically having history entries for the
-  following commands in the bash history history either accounts for
-  clutter and removes or obscures the more meaningful history entries.
-  Therefore, we prevent creating history entries for the following
-  commands.
+  following commands in the bash history either accounts for clutter and
+  removes or obscures the more meaningful history entries. Therefore, we
+  prevent creating history entries for the following commands.
 
 #+begin_src sh
 shopt -s histappend
@@ -386,7 +384,7 @@ export PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=100000
 export HISTFILESIZE=10000000
-export HISTIGNORE='exit:ls:ll:cd:pwd:bg:fg:history'
+export HISTIGNORE='bg:cd:clear:exit:fg:ll:ls:pwd:history'
 #+end_src
 
 **** Prompt
@@ -407,14 +405,13 @@ Some notable features:
   =exit= code status of the last run command - green for =exit 0= (success),
   and red for a non zero exit code.
 - When the current working directory is a git directory
-  - the current git branch will be dispalyed.
-  - a count of the number of commits deviation from the base and/or
-    remote branch is indicated directly after the branch name.
-  - status indicators are printed to the right of the commit deviation
-    metrics. =*= indicates there are unstaged changes in the working
-    directory. =+= indicates that there are stages, but uncommitted
-    changes in the index. =^= indicates that there are stashed items in
-    the stash queue.
+  - show the current git branch.
+  - show a count of the number of commits deviation from the base and/or
+    remote branch directly after the branch name.
+  - show status indicators to the right of the commit deviation metrics.
+    =*= indicates un-staged changes in the working directory exist. =+= indicates
+    staged, but uncommitted changes exist in the index. =^=
+    indicates the stash queue is not empty.
 
 #+begin_src sh
 # Get a graphical representation of the clean/dirty state of a git repository
@@ -656,7 +653,7 @@ PROMPT_COMMAND=__git_prompt
 :header-args: :mkdirp yes :tangle ./asdf/.asdfrc
 :END:
 
-This file will be read during =asdf='s initialization it provides instance
+This file is ready during =asdf='s initialization it provides instance
 wide configuration for the =asdf= program itself.
 
 Each language's version manager communities seem to have come to
@@ -673,9 +670,10 @@ legacy_version_file = yes
 
 *** Plugin specific configuration
 
-ASDF manages a number of different language and library tools.
-Functionality for managing these are provided in "plugins". This section
-contains configurations for specific plugins.
+ASDF is a framework for managing multiple runtime version through a
+single CLI tool. ASDF Plugins provide functionality for managing
+specific runtimes. This section contains configurations for specific
+plugins.
 
 **** Ruby
 
@@ -684,11 +682,10 @@ contains configurations for specific plugins.
 :header-args: :mkdirp yes :tangle ./asdf/.default-gems
 :END:
 
-When the ASDF Ruby plugin can be configured such that when it completes
-installing a Ruby, a list of gems is also installed. This is
-accomplished by listing the names of the gems in a file in the user's
-=$HOME= directory called =.default-gems=. The following list describes the
-contents of this file.
+The Ruby plugin provides a way to ensure that a baseline set of gems
+exists after installing a new Ruby. Listing the names of the gems in a
+file in the user's =$HOME/.default-gems= makes this possible. The
+following list describes this file's contents.
 
 #+begin_src text
 bundler
@@ -701,9 +698,9 @@ rcodetools
 :header-args: :mkdirp yes :tangle ./terminal/.gruvbox-profile.dconf
 :END:
 
-This is my gnome-terminal configuration. This configuration will be
-tangled to ~/.gruvbox-profile.dconf. At some point I'll automate the
-installation, but for now to import the profile:
+This is my gnome-terminal configuration. This configuration generates
+=~/.gruvbox-profile.dconf=. At some point I'll automate the installation,
+but for now to import the profile:
 
    1. Open gnome-terminal
    2. Create a new profile
@@ -737,8 +734,7 @@ This section provides the core configuration of the =git= version control
 system. The following contains configuration which:
 
 - instructs git how to write the author information for commits.
-- references to the global list of files from the host which should be
-  ignored in a git repository.
+- references a global / host gitignore file.
 - prints colorized output for git commands like =status=, and =diff=.
 - defines aliases, or shorthand, for frequently used, or often forgotten
   git incantations.
@@ -746,16 +742,16 @@ system. The following contains configuration which:
   such commits to other parties.
 - configures the =git clean= command to be less intrusive - IE drop the
   "Are you sure?" charade.
-- only pushes the current branch when =git push= is invoked rather than
-  attempting to push all refs in the local repository.
+- only pushe the current branch when running =git push=;rather than
+  pushing all refs in the local repository.
 - prevents =git= from eagerly fetching the tags from the =origin= remote.
   This is useful for improving the responsiveness of large repositories
   with lots of tags, and the user may manually download them later if
   they so choose.
 - performs a =--prune= operation on each fetch from the =origin= remote.
   Again, this is useful for large repositories where the =origin= may
-  contain many refs which I'll never need to reference. When these are
-  removed from the remote, they'll automatically be removed from the
+  contain refs which I'll never need to reference. When removed
+  from the remote, these branches are automatically removed from the
   local object database as well.
 
 #+begin_src conf
@@ -797,11 +793,11 @@ prune = true
 
 This configures the global list of files and patterns that git should
 ignore. This typically contains items which are specific to the local
-environment or workflow which should never be committed to a git
-repository, but would be inappropriate to include in the project's
-=.gitignore=. Example include, artifacts left behind by local text
-editors, tools, operating system file managers, etc. which may not be
-shared across contributors.
+environment or workflow which should never exist in a git repository,
+but would be inappropriate to include in the project's =.gitignore=.
+Example include, artifacts left behind by local editors, tools,
+operating system file managers, etc. which may not be common across
+contributors.
 
 The following ignores:
 
@@ -833,9 +829,9 @@ Driven Development tool. This ensures that:
   of =.=, =F=, and =S= characters to indicate the output status of individual
   examples. These characters indicate a success, failure, or "skip"
   respectively.
-- examples are run in order according to the =--seed= of the runner. By
-  default a random seed is generated for each run, but the order of a
-  specific run can be reproduced by passing its =--seed= to the =rspec=
+- examples run in order according to the =--seed= of the runner. By
+  default, rspec uses a random seed for each run, but the order of a
+  specific run is reproducable by passing its =--seed= to the =rspec=
   command. This is helpful for surfacing dependencies between example,
   leaked / persistent state, etc between sequential runs of
   specifications.
@@ -863,7 +859,7 @@ UseKeychain yes
 :header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash"
 :END:
 
-Version controlled scripts used to automate various repetitive tasks.
+Version controlled scripts used to automate repetitive tasks.
 
 *** Flush DNS cache
 
@@ -957,12 +953,12 @@ find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
 :END:
 
 This section generates a script used to bootstrap new system with the
-tools and configuration I use across hosts. Though this script is
-generated by running =.files/install=, it is NOT run automatically. This
-allows me to better control how and when the host system is altered
-during initial setup.
+tools and configuration I use across hosts. Though running
+=.files/install= generates this file, it is NOT run automatically. This
+allows me to better control how and when the setup script runs during
+initial setup.
 
-The setup script is placed in the =$HOME/bin= directory, which means it
+The setup script resides in the =$HOME/bin= directory, which means it
 should be executable on the user's =$PATH=. To start the initial host
 setup process run =initial-host-setup=.
 
@@ -978,10 +974,10 @@ PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-comple
 
 ****** Add "Package Manager"
 
-macOS has a surprising lack of "package management
-system". Homebrew is the closest thing, but has a few functional
-deficiencies. Nonetheless, in most cases it's better than nothing
-so we ensure that it exists on macOS hosts here.
+macOS has a surprising lack of "package management system". Homebrew is
+the closest thing, but has functional deficiencies. Nonetheless, in most
+cases it's better than nothing so we ensure that it exists on MacOS
+hosts here.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
 if ! [ -x "$(command -v brew)" ]; then
@@ -1035,13 +1031,12 @@ done
 
 ****** macOS update =GNU bash=
 
-Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to
-update the =bash= shell in macOS for quite some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact
-they've gone so far as switching the user's default shell to zsh,
-and added an annoying depreciation warning when using bash in their
-latest OS update]]... LOLWAT? Here we'll use Homebrew to install a
-recent version of =GNU bash= and make sure it's our user's default
-shell.
+Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to update
+the =bash= shell in macOS for some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact they've gone so far as
+switching the user's default shell to zsh, and added an annoying
+depreciation warning when using bash in their latest OS update]]...
+LOLWAT? Here we'll use Homebrew to install a recent version of =GNU bash=
+and make sure it's our user's default shell.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
 if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
@@ -1185,10 +1180,10 @@ fi
 
 ***** Install docker-compose
 
-Ensures that docker-compose is installed and ready to use. On Mac OS
-X this comes bundled in the Homebrew cask version of Docker, so
-there's nothing for us to do. However on GNU/Linux hosts we need to
-do some additional steps to get everything up and running.
+Ensures that docker-compose is present and ready to use. On Mac OS X
+this comes bundled in the Homebrew cask version of Docker, so there's
+nothing for us to do. However on GNU/Linux hosts we need to do some
+additional steps to get everything up and running.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
 if [ $(which docker-compose) ]
