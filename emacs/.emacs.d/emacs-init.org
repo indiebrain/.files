@@ -4891,7 +4891,9 @@ writing performed - overriding the regular expression
 (use-package artbollocks-mode
   :ensure
   :hook (text-mode-hook . (lambda ()
-                           (artbollocks-mode))))
+                            (artbollocks-mode)))
+  :config
+  (setq artbollocks-jargon nil))
 #+end_src
 
 ** Linters
