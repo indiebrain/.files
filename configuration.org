@@ -3,6 +3,9 @@
 Shell and CLI Tooling configuration
 
 * GNU Stow Packages
+:PROPERTIES:
+:CUSTOM_ID: h:97de8a8b-b016-4dc9-8b6d-d9666ce3781c
+:END:
 
 The following sections generate the contents of a collection of GNU Stow
 packages. GNU Stow then places the packages onto the host file system
@@ -11,6 +14,9 @@ rest of the file system and provide a simple mechanism for
 (de)activating particular parts of the configuration.
 
 ** The Bourne Again Shell (Bash)
+:PROPERTIES:
+:CUSTOM_ID: h:aa649677-0762-4c6c-8d54-02b19fdbd982
+:END:
 
 Some shells are considered more modern, or fashionable, but the =bash=
 shell is ubiquitous, mature, simple enough, and powerful.
@@ -23,6 +29,9 @@ This section contains [[https://www.gnu.org/software/bash/manual/bash.html#Bash-
 configuration loaded by Bash depends on the type of shell requested.
 
 *** Interactive Shells
+:PROPERTIES:
+:CUSTOM_ID: h:76713425-b32e-437e-8030-341b23427f93
+:END:
 
 An interactive shell is one in which a user is expected to provide input
 commands sequentially - a terminal session, for example.
@@ -54,6 +63,9 @@ the file ~/.bash_logout, if it exists.
 #+end_quote
 
 *** Non-interactive Shells
+:PROPERTIES:
+:CUSTOM_ID: h:636baa6c-2968-41fc-b85b-41f411c46435
+:END:
 
 A non-interactive shell might be launched by another program - a shell
 script with a =#!/usr/bin/env bash= SHEBANG line, for example.
@@ -61,6 +73,7 @@ script with a =#!/usr/bin/env bash= SHEBANG line, for example.
 *** Configuration for non-login shells
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./bash/.bashrc
+:CUSTOM_ID: h:d460ad42-3cd5-497c-a1af-465a8bbea92c
 :END:
 
 When a Bash shell is started as a non-login shell, it reads and executes
@@ -79,6 +92,9 @@ Bash here - modifications to the file system paths on which Bash looks
 for programs, libraries, etc.
 
 **** $PATH
+:PROPERTIES:
+:CUSTOM_ID: h:6239ffa0-12f5-40a4-8985-dcba74e6eb2f
+:END:
 
 This section configures the lookup =$PATH=. This is =:= separated list of
 paths on the file system in which Bash will lookup commands and
@@ -101,6 +117,9 @@ export PATH="$HOME/bin:$PATH"
 #+end_src
 
 **** Prompt
+:PROPERTIES:
+:CUSTOM_ID: h:a3276615-99d2-4259-acbe-87c88e698ef7
+:END:
 
 This section configures the shape and coloring of the Bash prompt. Below
 is an example of what this prompt looks like:
@@ -360,6 +379,9 @@ __git_prompt() {
 PROMPT_COMMAND=__git_prompt
 #+end_src
 **** Initialize the asdf runtime version manager
+:PROPERTIES:
+:CUSTOM_ID: h:422d73f5-f683-424e-b209-e2869bbe43ff
+:END:
 
 asdf is a CLI tool that can manage multiple language runtime version on a
 per-project bases. It's like =gvm=, =nvm=, =rbenv=, =pyenv=, et al. all rolled
@@ -375,6 +397,9 @@ completions into the shell.
 #+end_src
 
 **** Globally disable the spring application prelaoder
+:PROPERTIES:
+:CUSTOM_ID: h:38009432-321f-4864-a816-672fbc0fa0e6
+:END:
 
 The =spring= ruby gem is an application preloader. It aims to increase
 developer productivity by reducing the amount of time spent waiting for
@@ -391,6 +416,9 @@ DISABLE_SPRING=1
 #+end_src
 
 **** Departure
+:PROPERTIES:
+:CUSTOM_ID: h:9fb8284d-b1dc-4ce1-8f88-bd9531652fe1
+:END:
 
 The =departure= ruby gem wraps the Percona Toolkit Online Schema Change
 (pt-osc). Since MySQL does not apply Data Description Language
@@ -405,6 +433,9 @@ export DISABLE_DEPARTURE=1
 #+end_src
 
 **** Overcommit
+:PROPERTIES:
+:CUSTOM_ID: h:02f87061-1ddb-4400-a7f4-98c9d732bf07
+:END:
 
 The overcommit ruby gem installs and runs git pre-commit hooks which
 check thing like:
@@ -426,6 +457,9 @@ export OVERCOMMIT_DISABLE=1
 #+end_src
 
 **** Change the home directory of golang code
+:PROPERTIES:
+:CUSTOM_ID: h:0c66473f-3ddd-4e02-8c90-a02bd762d7a7
+:END:
 
 I prefer to keep my source code isolated in the =$HOME/Developer=
 directory. By default golang will install source code in =$HOME/go=. This
@@ -436,6 +470,9 @@ export GOPATH=$HOME/Developer/go
 export PATH=$PATH:$GOPATH/bin
 #+end_src
 **** Ensure Power HRG application dependencies take precedence on the =$PATH=
+:PROPERTIES:
+:CUSTOM_ID: h:57d608ee-4e5f-465e-b95f-d3268badd87f
+:END:
 
 This section configures specific versions libraries to be found on the
 path before others. This is primarily present in this configuration to
@@ -448,6 +485,9 @@ export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 #+end_src
 
 **** Disable Homebrew telemetry tracking
+:PROPERTIES:
+:CUSTOM_ID: h:d29b130f-47f9-420f-8f86-dbd57cc2f466
+:END:
 
 Homebrew client captures metrics about its host and usage. No, sir; do not want.
 
@@ -458,6 +498,7 @@ export HOMEBREW_NO_ANALYTICS=1
 *** Configuration for login shells
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./bash/.bash_profile
+:CUSTOM_ID: h:b0fe5738-92dd-4451-8922-50c3a80d9015
 :END:
 
 Login shells loads the =.bash_profile= when created; typically via a
@@ -494,8 +535,14 @@ fi
 #+end_src
 
 **** Command output colors
+:PROPERTIES:
+:CUSTOM_ID: h:6f44f58a-a7f6-487c-8cbe-0d5929a82eff
+:END:
 
 ***** macOS
+:PROPERTIES:
+:CUSTOM_ID: h:1973e5c1-b989-4465-998d-303da9c3acea
+:END:
 
 Some UNIX-like operating systems support a global configuration option
 which instructs commands to use ANSI Color control sequences in their
@@ -508,6 +555,9 @@ export CLICOLOR=1
 #+end_src
 
 ***** Debian GNU/Linux
+:PROPERTIES:
+:CUSTOM_ID: h:a0264de3-1526-429a-a109-bec531465e36
+:END:
 
 Some systems which do NOT honor this global switch for output coloring
 DO tend to provide command level flags to colorize their output. These
@@ -527,6 +577,9 @@ alias grep='grep --color'
 #+end_src
 
 **** Aliases
+:PROPERTIES:
+:CUSTOM_ID: h:cef90d04-82ab-4cda-b086-9fe82a8173e3
+:END:
 
 Bash supports creating a custom alias to a command string. When used as
 the first word of a simple command an alias expands to its command
@@ -548,6 +601,9 @@ alias pbcopy='xclip -selection clipboard'
 #+end_src
 
 **** Bash Completion
+:PROPERTIES:
+:CUSTOM_ID: h:8bf842c8-3698-427b-923a-eb6aebdac2cd
+:END:
 
 The Bash Completion extension shows a list of possible completions when
 the user types a partial completion candidate followed by the <TAB> key
@@ -594,6 +650,9 @@ means of loading bash-completion completions]].
 #+end_src
 
 **** Editor
+:PROPERTIES:
+:CUSTOM_ID: h:06a31de9-9870-420e-81cc-0e838ea1289b
+:END:
 
 Some commands will open a text editor to complete their action - =git
 commit=, for example. Bash will execute the command stored in the =EDITOR=
@@ -604,6 +663,9 @@ sure that =emacs= is the preferred text editor.
 export EDITOR="emacsclient -nw"
 #+end_src
 **** History
+:PROPERTIES:
+:CUSTOM_ID: h:e5fd5623-9c78-4490-9b89-a73b048b51e3
+:END:
 
 Bash has the capabilities keep track of the commands entered into
 interactive shells. History is searchable and executable. The [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use
@@ -647,10 +709,14 @@ export HISTIGNORE='bg:cd:clear:exit:fg:ll:ls:pwd:history'
 #+end_src
 
 ** ASDF Version manager
+:PROPERTIES:
+:CUSTOM_ID: h:4bbe11ff-56d2-477e-a7b9-ded04597fba3
+:END:
 
 *** Global configuration
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./asdf/.asdfrc
+:CUSTOM_ID: h:b47cc4a7-dceb-4e99-a951-2ee022cfd95a
 :END:
 
 This file is ready during =asdf='s initialization it provides instance
@@ -669,6 +735,9 @@ legacy_version_file = yes
 #+end_src
 
 *** Plugin specific configuration
+:PROPERTIES:
+:CUSTOM_ID: h:ff216564-6227-4c77-82eb-ffcfc2a6cf33
+:END:
 
 ASDF is a framework for managing multiple runtime version through a
 single CLI tool. ASDF Plugins provide functionality for managing
@@ -676,10 +745,14 @@ specific runtimes. This section contains configurations for specific
 plugins.
 
 **** Ruby
+:PROPERTIES:
+:CUSTOM_ID: h:b5cfadf5-a346-4493-9a38-8ef34eb96002
+:END:
 
 ***** Default gems
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./asdf/.default-gems
+:CUSTOM_ID: h:24883de3-a1c7-46f8-be6f-0521551da86a
 :END:
 
 The Ruby plugin provides a way to ensure that a baseline set of gems
@@ -695,20 +768,15 @@ rcodetools
 
 ** Gnome terminal
 :PROPERTIES:
-:header-args: :mkdirp yes :tangle ./gnome-terminal/.gnome-terminal-profiles.dconf
+:header-args: :mkdirp yes :tangle (when (eq system-type 'gnu/linux) "./gnome-terminal/.gnome-terminal-profiles.dconf")
+:CUSTOM_ID: h:1733b4d1-8b92-4cbe-b5c2-e8885b0bd785
 :END:
 
-This is my gnome-terminal configuration. This configuration generates
-=~/.gruvbox-profile.dconf=. At some point I'll automate the installation,
-but for now to import the profile:
+This is my gnome-terminal configuration. This generates the
+=~/.gnome-terminal-profiles.dconf= configuration used by the
+[[#h:b369ad04-95d2-47cb-9fcd-c066b7a05c0f][initial-host-setup]] later on.
 
-   1. Open gnome-terminal
-   2. Create a new profile
-   3. Take node of the UUID of the Profile
-   4. Import the profile settings into the new profile
-      =dconf load /org/gnome/terminal/legacy/profiles:/ < ~/.gnome-terminal-profiles.dconf=
-
-      #+begin_src text
+#+begin_src text
 [:b1dcc9dd-5262-4d8d-a863-c897e6d979b9]
 audible-bell=false
 background-color='rgb(40,40,40)'
@@ -719,47 +787,51 @@ scroll-on-output=true
 scrollback-unlimited=false
 use-system-font=true
 use-theme-colors=false
-visible-name='Gruvbox'
-      #+end_src
+visible-name='gruvbox'
+#+end_src
 
-** Git version control system
-
-This section configures the =git= version control system.
-
-*** Basic configuration
+** git version control system
 :PROPERTIES:
-:header-args: :mkdirp yes :tangle ./git/.gitconfig
+:CUSTOM_ID: h:38371bf6-102f-4c9f-b8ed-53af070674d8
 :END:
 
-This section provides the core configuration of the =git= version control
-system. The following contains configuration which:
+this section configures the =git= version control system.
+
+*** basic configuration
+:properties:
+:header-args: :mkdirp yes :tangle ./git/.gitconfig
+:CUSTOM_ID: h:4bf2329d-a16a-4a78-b813-b2540a2b4268
+:end:
+
+this section provides the core configuration of the =git= version control
+system. the following contains configuration which:
 
 - instructs git how to write the author information for commits.
 - references a global / host gitignore file.
 - prints colorized output for git commands like =status=, and =diff=.
 - defines aliases, or shorthand, for frequently used, or often forgotten
   git incantations.
-- signs every commit with my GnuPG key to verify the authenticity of
+- signs every commit with my gnupg key to verify the authenticity of
   such commits to other parties.
-- configures the =git clean= command to be less intrusive - IE drop the
-  "Are you sure?" charade.
+- configures the =git clean= command to be less intrusive - ie drop the
+  "are you sure?" charade.
 - only pushe the current branch when running =git push=;rather than
   pushing all refs in the local repository.
 - prevents =git= from eagerly fetching the tags from the =origin= remote.
-  This is useful for improving the responsiveness of large repositories
+  this is useful for improving the responsiveness of large repositories
   with lots of tags, and the user may manually download them later if
   they so choose.
 - performs a =--prune= operation on each fetch from the =origin= remote.
-  Again, this is useful for large repositories where the =origin= may
-  contain refs which I'll never need to reference. When removed
+  again, this is useful for large repositories where the =origin= may
+  contain refs which i'll never need to reference. when removed
   from the remote, these branches are automatically removed from the
   local object database as well.
 
 #+begin_src conf
 [user]
-name = Aaron Kuehler
+name = aaron kuehler
 email = aaron.kuehler@gmail.com
-signingkey = 9E3E4C59E2694215
+signingkey = 9e3e4c59e2694215
 
 [core]
 excludesfile = ~/.gitignore_global
@@ -777,63 +849,68 @@ rclone = clone --recursive
 gpgsign = true
 
 [clean]
-requireForce = false
+requireforce = false
 
 [push]
 default = simple
 
 [remote "origin"]
-tagOpt = --no-tags
+tagopt = --no-tags
 prune = true
 #+end_src
 
-*** Global ignore file
-:PROPERTIES:
+*** global ignore file
+:properties:
 :header-args: :mkdirp yes :tangle ./git/.gitignore_global
-:END:
+:CUSTOM_ID: h:5e5976b1-c40d-4462-ab93-bf6ee19d4156
+:end:
 
-This configures the global list of files and patterns that git should
-ignore. This typically contains items which are specific to the local
+this configures the global list of files and patterns that git should
+ignore. this typically contains items which are specific to the local
 environment or workflow which should never exist in a git repository,
 but would be inappropriate to include in the project's =.gitignore=.
-Example include, artifacts left behind by local editors, tools,
+example include, artifacts left behind by local editors, tools,
 operating system file managers, etc. which may not be common across
 contributors.
 
-The following ignores:
+the following ignores:
 
-- artifacts left behind by the macOS Finder
-- Emacs autosave and backup files
+- artifacts left behind by the macos finder
+- emacs autosave and backup files
 
 #+begin_src text
-.DS_Store
+.ds_store
 
 ,*~
 .#*
 ,*#
 #+end_src
 
-** Ruby Programming Languae
-*** Rspec
+** ruby programming languae
 :PROPERTIES:
-:header-args: :mkdirp yes :tangle ./ruby/.rspec
+:CUSTOM_ID: h:31fb3eef-7494-4347-9419-5a770a84bebb
 :END:
+*** rspec
+:properties:
+:header-args: :mkdirp yes :tangle ./ruby/.rspec
+:CUSTOM_ID: h:466d4e53-4de3-48e5-ade6-2846e3e49c50
+:end:
 
-This section specifies system-wide configuration for RSpec - The Ruby Behavior
-Driven Development tool. This ensures that:
+this section specifies system-wide configuration for rspec - the ruby behavior
+driven development tool. this ensures that:
 
 - example and specification output should use the terminal control
-  characters to colorize output. This provides rich visual feedback of
-  the success, failure, or omitted status of examples in the RSpec
+  characters to colorize output. this provides rich visual feedback of
+  the success, failure, or omitted status of examples in the rspec
   suite.
-- RSpec should use the "progress" output format. This displays a series
-  of =.=, =F=, and =S= characters to indicate the output status of individual
-  examples. These characters indicate a success, failure, or "skip"
+- rspec should use the "progress" output format. this displays a series
+  of =.=, =f=, and =s= characters to indicate the output status of individual
+  examples. these characters indicate a success, failure, or "skip"
   respectively.
-- examples run in order according to the =--seed= of the runner. By
+- examples run in order according to the =--seed= of the runner. by
   default, rspec uses a random seed for each run, but the order of a
   specific run is reproducable by passing its =--seed= to the =rspec=
-  command. This is helpful for surfacing dependencies between example,
+  command. this is helpful for surfacing dependencies between example,
   leaked / persistent state, etc between sequential runs of
   specifications.
 
@@ -844,174 +921,233 @@ Driven Development tool. This ensures that:
 --order random
 #+end_src
 
-** Secure Shell (SSH)
-
-Automatically load the private key into the ssh-agent and store
-passwords in the keychain on OS X hosts.
-
-#+begin_src text :mkdirp yes :tangle (when (eq system-type 'darwin) "./ssh/.ssh/config")
-Host *
-AddKeysToAgent yes
-UseKeychain yes
-#+end_src
-
-** Utility Scripts
+** secure shell (ssh)
 :PROPERTIES:
-:header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash"
+:CUSTOM_ID: h:40c07ea5-b693-4491-9278-1540b7848b07
 :END:
 
-Version controlled scripts used to automate repetitive tasks.
+automatically load the private key into the ssh-agent and store
+passwords in the keychain on os x hosts.
 
-*** Flush DNS cache
+#+begin_src text :mkdirp yes :tangle (when (eq system-type 'darwin) "./ssh/.ssh/config")
+host *
+addkeystoagent yes
+usekeychain yes
+#+end_src
 
-Invalidates the local DNS cache:
+** utility scripts
+:properties:
+:header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash"
+:CUSTOM_ID: h:a0170869-b85b-400e-adf0-74185cfe0798
+:end:
 
-**** Usage
+version controlled scripts used to automate repetitive tasks.
+
+*** flush dns cache
+:PROPERTIES:
+:CUSTOM_ID: h:c8119ac2-9b73-4450-9994-fe9d951e0ed3
+:END:
+
+invalidates the local dns cache:
+
+**** usage
+:PROPERTIES:
+:CUSTOM_ID: h:aa4be568-7b63-4452-a18f-00bf804b3504
+:END:
 
 #+begin_src sh
 $ flush_dns
 #+end_src
 
-**** Source
+**** source
+:PROPERTIES:
+:CUSTOM_ID: h:9b48eb1e-1275-4f0b-9808-5a7be5f4c989
+:END:
 
 #+begin_src sh :tangle ./scripts/bin/flush_dns
-# Purpose:
-#   Flush the local DNS cache
-# Usage:
+# purpose:
+#   flush the local dns cache
+# usage:
 #   $ flush_dns_cache
 
-if [[ `uname` == "Darwin" ]]; then
-    sudo killall -HUP mDNSResponder
+if [[ `uname` == "darwin" ]]; then
+    sudo killall -hup mdnsresponder
 fi
 #+end_src
 
-*** Refresh local git tags
+*** refresh local git tags
+:PROPERTIES:
+:CUSTOM_ID: h:1c5882fa-23be-4daf-a632-797f27ee3d99
+:END:
 
-Ensures that a local git repository's tags are in sync with the
+ensures that a local git repository's tags are in sync with the
 remote origin
 
-**** Usage
+**** usage
+:PROPERTIES:
+:CUSTOM_ID: h:c3eb01fe-1c25-4aa2-ace1-59401b521c39
+:END:
 
 #+begin_src sh
 $ refresh_tags
 #+end_src
 
-**** Source
+**** source
+:PROPERTIES:
+:CUSTOM_ID: h:64cd4a0f-7ffb-4444-9b42-f85d3d71ff11
+:END:
 
 #+begin_src sh :tangle ./scripts/bin/refresh_tags
-# Purpose:
-#   Delete all local tags and refresh from origin
-# Usage:
+# purpose:
+#   delete all local tags and refresh from origin
+# usage:
 #   $ refresh_tags
 
 git tag -l | xargs git tag -d && git fetch
 #+end_src
 
-*** Emacs Lisp Testing
+*** emacs lisp testing
+:PROPERTIES:
+:CUSTOM_ID: h:b07f3a84-5c3b-4a89-9c4f-09307b272826
+:END:
 
-Runs an elisp test
+runs an elisp test
 
-**** Usage
+**** usage
+:PROPERTIES:
+:CUSTOM_ID: h:d7826d4a-2293-4873-a4c9-6286155d3fe0
+:END:
 
 #+begin_src sh
 $ ert-run <path-to-test>.el
 #+end_src
 
-**** Source
+**** source
+:PROPERTIES:
+:CUSTOM_ID: h:b548e25f-f044-43df-a23f-7d0b8af1849c
+:END:
 
 #+begin_src sh ./scripts/bin/ert-run
-# Purpose:
-#   Runs an elisp test
-# Usage:
+# purpose:
+#   runs an elisp test
+# usage:
 #  $ ert-run <path-to-test>.el
 
 emacs -batch -l ert -l $1 -f ert-run-tests-batch-and-exit
 #+end_src
 *** inode consumption
+:PROPERTIES:
+:CUSTOM_ID: h:3aa0ac0f-cc1f-4c5a-b40e-23df2c13cc56
+:END:
 
-Find locations of dense inode consumption on disk
+find locations of dense inode consumption on disk
 
-**** Usage
+**** usage
+:PROPERTIES:
+:CUSTOM_ID: h:39c62cb9-89be-4723-aadb-76a94755c4f6
+:END:
 
 #+begin_src sh
 $ inode-consumption
 #+end_src
 
-**** Source
+**** source
+:PROPERTIES:
+:CUSTOM_ID: h:18c7a3f2-f141-4bd6-a1c8-1656f57aebda
+:END:
 
 #+begin_src sh :tangle ./scripts/bin/inode-consumption
-# Purpose:
-#   List locations on disk ranked by their inode consumption
-# Usage:
+# purpose:
+#   list locations on disk ranked by their inode consumption
+# usage:
 #  $ inode-consumption
 
 find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
 #+end_src
 
-*** Initial host setup script
-:PROPERTIES:
+*** initial host setup script
+:properties:
 :header-args: :mkdirp yes :tangle-mode (identity #o755) :shebang "#!/usr/bin/env bash" :tangle "./scripts/bin/initial-host-setup"
-:END:
+:CUSTOM_ID: h:00c8edf9-05e9-49ec-ade2-d49bc605dd1c
+:end:
 
-This section generates a script used to bootstrap new system with the
-tools and configuration I use across hosts. Though running
-=.files/install= generates this file, it is NOT run automatically. This
+this section generates a script used to bootstrap new system with the
+tools and configuration i use across hosts. though running
+=.files/install= generates this file, it is not run automatically. this
 allows me to better control how and when the setup script runs during
 initial setup.
 
-The setup script resides in the =$HOME/bin= directory, which means it
-should be executable on the user's =$PATH=. To start the initial host
+the setup script resides in the =$home/bin= directory, which means it
+should be executable on the user's =$path=. to start the initial host
 setup process run =initial-host-setup=.
 
-***** Common Packages
+***** common packages
+:PROPERTIES:
+:CUSTOM_ID: h:ec014db4-41e7-42e0-96d3-a3a7054a1f1c
+:END:
 
-Define and install basic packages required to build and install software
+define and install basic packages required to build and install software
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-PACKAGES="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
+packages="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
 #+end_src
 
-***** macOS Packages
+***** macos packages
+:PROPERTIES:
+:CUSTOM_ID: h:05003d26-c8e7-4fda-8424-47c47cd83b11
+:END:
 
-****** Add "Package Manager"
+****** add "package manager"
+:PROPERTIES:
+:CUSTOM_ID: h:1408deae-995a-4870-8f5c-2c4d46ab0a08
+:END:
 
-macOS has a surprising lack of "package management system". Homebrew is
-the closest thing, but has functional deficiencies. Nonetheless, in most
-cases it's better than nothing so we ensure that it exists on macOS
+macos has a surprising lack of "package management system". homebrew is
+the closest thing, but has functional deficiencies. nonetheless, in most
+cases it's better than nothing so we ensure that it exists on macos
 hosts here.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
 if ! [ -x "$(command -v brew)" ]; then
-    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    ruby -e "$(curl -fssl https://raw.githubusercontent.com/homebrew/install/master/install)"
 fi
 brew update
 brew tap homebrew/cask-versions
 #+end_src
-****** Additional macOS Packages
+****** additional macos packages
+:PROPERTIES:
+:CUSTOM_ID: h:eaa487e5-fb97-4bc6-ab0c-405e1b865dac
+:END:
 
-On macOS, ensure that these programs are present. Generally they're
-required to build or support the tools I use to produce software.
+on macos, ensure that these programs are present. generally they're
+required to build or support the tools i use to produce software.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
-PACKAGES="$PACKAGES ncurses openssl readline the_silver_searcher"
+packages="$packages ncurses openssl readline the_silver_searcher"
 #+end_src
 
-****** macOS Binary Packages
+****** macos binary packages
+:PROPERTIES:
+:CUSTOM_ID: h:acae154a-6014-4a0b-9b9a-285a9a711e49
+:END:
 
-On macOS clients, also ensure that the following binary
+on macos clients, also ensure that the following binary
 applications are available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-BINARY_PACKAGES="emacs firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
+binary_packages="emacs firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
 #+end_src
 
-****** Install Packages
+****** install packages
+:PROPERTIES:
+:CUSTOM_ID: h:9046e0a5-f6c7-4a5a-8912-25f4b8dd10c2
+:END:
 
-And now we're ready to ensure that each of the packages are
-installed. On macOS hosts, we use Homebrew to install packages.
+and now we're ready to ensure that each of the packages are
+installed. on macos hosts, we use homebrew to install packages.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
-for package in $PACKAGES; do
+for package in $packages; do
     if [ "$( brew list -1 | grep $package )" == "" ]; then
 	echo "installing $package"
 	brew install $package
@@ -1020,7 +1156,7 @@ for package in $PACKAGES; do
     fi
 done
 
-for package in $BINARY_PACKAGES; do
+for package in $binary_packages; do
     if [ "$( brew cask list -1 | grep $package )" == "" ]; then
 	echo "installing $package"
 	brew cask install $package
@@ -1030,13 +1166,16 @@ for package in $BINARY_PACKAGES; do
 done
 #+end_src
 
-****** macOS update =GNU bash=
+****** macos update =gnu bash=
+:PROPERTIES:
+:CUSTOM_ID: h:d05ada82-6452-4cdf-bd60-232ece3d30dc
+:END:
 
-Apple seems to hate the idea of [[https://www.fsf.org/][Free Software]] and has refused to update
-the =bash= shell in macOS for some time - [[https://support.apple.com/en-ca/HT208050?fbclid=IwAR0Z1-TK9h3oInv_byv9fDa9EbxxxZoqSaI4Osfq5_fxDi7jXvKjS3YAKvk][in fact they've gone so far as
+apple seems to hate the idea of [[https://www.fsf.org/][free software]] and has refused to update
+the =bash= shell in macos for some time - [[https://support.apple.com/en-ca/ht208050?fbclid=iwar0z1-tk9h3oinv_byv9fda9ebxxxzoqsai4osfq5_fxdi7jxvkjs3yakvk][in fact they've gone so far as
 switching the user's default shell to zsh, and added an annoying
-depreciation warning when using bash in their latest OS update]]...
-LOLWAT? Here we'll use Homebrew to install a recent version of =GNU bash=
+depreciation warning when using bash in their latest os update]]...
+lolwat? here we'll use homebrew to install a recent version of =gnu bash=
 and make sure it's our user's default shell.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
@@ -1046,35 +1185,41 @@ then
 fi
 #+end_src
 
-Change the shell to bash for the rest of the setup script.  This
+change the shell to bash for the rest of the setup script.  this
 also has the affect of loading the newly generated bash
-configuration which makes installing things like ASDF a bit easier.
+configuration which makes installing things like asdf a bit easier.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
-if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
+if [[ "$(echo $shell)" != "/usr/local/bin/bash" ]]
 then
-    echo "Bash is not the current shell, changing shell..."
+    echo "bash is not the current shell, changing shell..."
     chsh -s /usr/local/bin/bash 2>/dev/null
     /usr/local/bin/bash
-    source $HOME/.bashrc
+    source $home/.bashrc
 fi
 #+end_src
 
-***** GNU/Linux Packages
+***** gnu/linux packages
+:PROPERTIES:
+:CUSTOM_ID: h:b4895a80-4b0c-4bc6-adb7-5ca42aceabc2
+:END:
 
-On GNU/Linux hosts, ensure that the following packages are present.
+on gnu/linux hosts, ensure that the following packages are present.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
-PACKAGES="$PACKAGES aspell git silversearcher-ag"
+packages="$packages aspell git silversearcher-ag"
 #+end_src
 
-****** Install Packages
-On GNU/Linux hosts - for which I always use Debian GNU/Linux -
-we'll use the Aptitude Package Manager.
+****** install packages
+:PROPERTIES:
+:CUSTOM_ID: h:66f398cd-18f6-4452-935d-1b2042fde030
+:END:
+on gnu/linux hosts - for which i always use debian gnu/linux -
+we'll use the aptitude package manager.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
-for package in $PACKAGES; do
-    if [ "$(sudo apt-cache policy $package | grep 'Installed: (none)')" ]
+for package in $packages; do
+    if [ "$(sudo apt-cache policy $package | grep 'installed: (none)')" ]
     then
 	sudo apt install -y $package
     else
@@ -1083,41 +1228,47 @@ for package in $PACKAGES; do
 done
 #+end_src
 
-****** Load the bash config
+****** load the bash config
+:PROPERTIES:
+:CUSTOM_ID: h:3142d027-a6e4-44f1-85b3-c8ab5ac38eaf
+:END:
 
-Load the newly generated bash configuration which makes installing
-things like ASDF a bit easier.
+load the newly generated bash configuration which makes installing
+things like asdf a bit easier.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
-source $HOME/.bashrc
+source $home/.bashrc
 #+end_src
 
-***** Install asdf
+***** install asdf
+:PROPERTIES:
+:CUSTOM_ID: h:24adef21-a048-491c-a238-0563d2b8ecac
+:END:
 
-I use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manage the tooling
-and runtimes in which I typically write software.
+i use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manage the tooling
+and runtimes in which i typically write software.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-ASDF_DIR=$HOME/.asdf
-if [ -e $ASDF_DIR ]; then
-    echo "Updating $ASDF_DIR"
+asdf_dir=$home/.asdf
+if [ -e $asdf_dir ]; then
+    echo "updating $asdf_dir"
     asdf update
 else
-    echo "Installing ASDF"
-    git clone https://github.com/asdf-vm/asdf.git $ASDF_DIR
-    cd $ASDF_DIR
+    echo "installing asdf"
+    git clone https://github.com/asdf-vm/asdf.git $asdf_dir
+    cd $asdf_dir
     git checkout "$(git describe --abbrev=0 --tags)"
 fi
-[ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
-[ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
+[ -f $home/.asdf/asdf.sh ] && source $home/.asdf/asdf.sh
+[ -f $home/.asdf/completions/asdf.bash ] && source $home/.asdf/completions/asdf.bash
 #+end_src
 
-Now that asdf-vm is in place, install the language specific plugins I typically use.
+now that asdf-vm is in place, install the language specific plugins i typically use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-ASDF_PLUGINS='ruby nodejs'
-for plugin in $ASDF_PLUGINS; do
-    if [ -e $ASDF_DIR/plugins/$plugin ]; then
+asdf_plugins='ruby nodejs'
+for plugin in $asdf_plugins; do
+    if [ -e $asdf_dir/plugins/$plugin ]; then
 	echo "asdf $plugin plugin already installed"
 	asdf plugin-update $plugin
     else
@@ -1127,18 +1278,21 @@ for plugin in $ASDF_PLUGINS; do
 done
 #+end_src
 
-Post install, the [[https://github.com/asdf-vm/asdf-nodejs][asdf-nodejs]] plugin requires manually importing
-the team's nodejs team's keyring. Manual installation is for
+post install, the [[https://github.com/asdf-vm/asdf-nodejs][asdf-nodejs]] plugin requires manually importing
+the team's nodejs team's keyring. manual installation is for
 suckers.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
 bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
 #+end_src
 
-***** Install Docker
+***** install docker
+:PROPERTIES:
+:CUSTOM_ID: h:7a582257-aa77-436f-a282-71502853fdcd
+:END:
 
-Ensures that docker is installed. On Mac OS X hosts, we use
-[[https://brew.sh/][Homebrew]] to install Docker:
+ensures that docker is installed. on mac os x hosts, we use
+[[https://brew.sh/][homebrew]] to install docker:
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
 if [ $(which docker) ]; then
@@ -1148,8 +1302,8 @@ else
 fi
 #+end_src
 
-While on GNU/Linux hosts, we assume we're using my favorite distro -
-Debian - and use the [[https://wiki.debian.org/Aptitude][Aptitude Package Manager]] to install Docker.
+while on gnu/linux hosts, we assume we're using my favorite distro -
+debian - and use the [[https://wiki.debian.org/aptitude][aptitude package manager]] to install docker.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
 if [ $(which docker) ]
@@ -1166,7 +1320,7 @@ else
 	 gnupg2 \
 	 software-properties-common
 
-    curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -
+    curl -fssl https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     sudo add-apt-repository \
 	 "deb [arch=amd64] https://download.docker.com/linux/debian \
 		 $(lsb_release -cs) \
@@ -1174,26 +1328,70 @@ else
     sudo apt-get update
     sudo apt install -y docker-ce docker-ce-cli containerd.io
     sudo groupadd docker
-    sudo usermod -aG docker $USER
+    sudo usermod -ag docker $user
     newgrp docker
 fi
 #+end_src
 
-***** Install docker-compose
+***** install docker-compose
+:PROPERTIES:
+:CUSTOM_ID: h:4593f03e-2c1b-47d0-9a1d-ab429f199e8b
+:END:
 
-Ensures that docker-compose is present and ready to use. On Mac OS X
-this comes bundled in the Homebrew cask version of Docker, so there's
-nothing for us to do. However on GNU/Linux hosts we need to do some
+ensures that docker-compose is present and ready to use. on mac os x
+this comes bundled in the homebrew cask version of docker, so there's
+nothing for us to do. however on gnu/linux hosts we need to do some
 additional steps to get everything up and running.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
 if [ $(which docker-compose) ]
 then
-    echo "Installing docker-compose..."
-    sudo curl -L "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+    echo "installing docker-compose..."
+    sudo curl -l "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
     sudo chmod +x /usr/local/bin/docker-compose
-    sudo curl -L https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+    sudo curl -l https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
 else
-    echo "docker-compose already installed. Skipping..."
+    echo "docker-compose already installed. skipping..."
 fi
+#+end_src
+
+***** configure packages
+:PROPERTIES:
+:CUSTOM_ID: h:a9272aad-db95-48ef-bf73-eee01c54ee72
+:END:
+
+now that the packages are installed, we /may/ want to do some inital
+configuration of them - setting up custom terminal profiles for
+example. this next section allows for automated, post-installation
+configuration of these packages.
+
+****** macos
+:PROPERTIES:
+:CUSTOM_ID: h:9fa88a95-1448-4cca-b10c-1bd18305cc36
+:END:
+******* iterm2
+:PROPERTIES:
+:CUSTOM_ID: h:a2ae5fda-3333-46fe-911e-628f00bc71fd
+:END:
+
+install the custom profile themes packaged by these =.files.=
+
+#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+open ~/*.itermcolors
+#+end_src
+
+****** gnu/linux
+:PROPERTIES:
+:CUSTOM_ID: h:153d5343-166e-4dd0-bda2-9cba688370c7
+:END:
+
+******* gnome-terminal
+:PROPERTIES:
+:CUSTOM_ID: h:b369ad04-95d2-47cb-9fcd-c066b7a05c0f
+:END:
+
+Install the custom profile themes packaged by these =.files.=
+
+#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+dconf load /org/gnome/terminal/legacy/profiles:/ < ~/.gnome-terminal-profiles.dconf
 #+end_src
