@@ -8,9 +8,32 @@
 
 DOTFILES_HOME="$HOME/.files"
 
+function remove_common_configuration() {
+    stow --delete bash git emacs asdf ruby scripts
+}
+
+function remove_macos_configuration() {
+    stow --delete ssh
+}
+
+function remove_gnu_linux_configuration() {
+    stow --delete gnome-terminal
+}
+
 function remove_configuration() {
     pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
-    stow --delete bash git emacs asdf ruby scripts terminal
+    remove_common_configuration
+
+    local system_type=
+    system_type="$(uname -s)"
+    if [[ "$system_type" == "Darwin" ]]
+    then
+	remove_macos_configuration
+    elif [[ "$system_type" == "Linux" ]]
+    then
+	remove_gnu_linux_configuration
+    fi
+
     popd || return
 }
 

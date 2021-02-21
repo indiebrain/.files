@@ -12,12 +12,12 @@ PLATFORM="$(uname)"
 function ensure_package_manager() {
     if [ "$PLATFORM" == "Darwin" ] && ! [ -x "$(command -v brew)" ]
     then
-        echo "Installing Homebrew..."
-        /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-        brew update
+	echo "Installing Homebrew..."
+	/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+	brew update
     elif [ "$PLATFORM" == "Linux" ] && [ -x "$(command -v apt)" ]
     then
-        sudo apt update
+	sudo apt update
     fi
 }
 
@@ -26,8 +26,8 @@ function ensure_macos_package() {
     package="$1"
 
     if ! command -v "$package" &> /dev/null
-        then
-            brew install "$package"
+	then
+	    brew install "$package"
     fi
 }
 
@@ -37,7 +37,7 @@ function ensure_apt_package() {
 
     if ! command -v "$package" &> /dev/null
     then
-        sudo apt install -y "$package"
+	sudo apt install -y "$package"
     fi
 }
 
@@ -56,10 +56,10 @@ function ensure_linux_dependencies() {
 function ensure_dependencies() {
     if [ "$PLATFORM" == "Darwin" ]
     then
-        ensure_macos_dependencies
+	ensure_macos_dependencies
     elif [ "$PLATFORM" == "Linux" ]
     then
-        ensure_linux_dependencies
+	ensure_linux_dependencies
     fi
 }
 
@@ -75,24 +75,47 @@ function tangle_configuration() {
 
     for file in $(ls -1 ./*.org)
     do
-        FILES="$FILES \"$file\""
+	FILES="$FILES \"$file\""
     done
 
     echo -e "Installing: \n$FILES"
     emacs -Q --batch \
-          --eval \
-          "(progn
-            (require 'org)(require 'ob)(require 'ob-tangle)
-             (mapc (lambda (file)
-                     (find-file (expand-file-name file \"$DOTFILES_HOME\"))
-                     (org-babel-tangle)
-                     (kill-buffer)) '($FILES)))"
+	  --eval \
+	  "(progn
+	    (require 'org)(require 'ob)(require 'ob-tangle)
+	     (mapc (lambda (file)
+		     (find-file (expand-file-name file \"$DOTFILES_HOME\"))
+		     (org-babel-tangle)
+		     (kill-buffer)) '($FILES)))"
+}
+
+function place_common_configuration() {
+    stow --verbose bash git emacs asdf ruby scripts
+}
+
+function place_macos_configuration() {
+    stow --verbose ssh
+}
+
+function place_gnu_linux_configuration() {
+    stow --verbose gnome-terminal
 }
 
 function place_configuration() {
     pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
     tangle_configuration
-    stow --verbose bash git emacs asdf ruby scripts
+    place_common_configuration
+
+    local system_type=
+    system_type="$(uname -s)"
+    if [[ "$system_type" == "Darwin" ]]
+    then
+	place_macos_configuration
+    elif [[ "$system_type" == "Linux" ]]
+    then
+	place_gnu_linux_configuration
+    fi
+
     popd || return
 }
 
