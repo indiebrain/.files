@@ -94,7 +94,7 @@ function place_common_configuration() {
 }
 
 function place_macos_configuration() {
-    stow --verbose ssh
+    stow --verbose ssh iterm2
 }
 
 function place_gnu_linux_configuration() {
