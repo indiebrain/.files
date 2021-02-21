@@ -92,7 +92,7 @@ function tangle_configuration() {
 function place_configuration() {
     pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
     tangle_configuration
-    stow --verbose bash ssh git emacs asdf ruby scripts
+    stow --verbose bash git emacs asdf ruby scripts
     popd || return
 }
 

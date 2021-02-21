@@ -90,9 +90,10 @@ To completely remove these dotfiles:
 2. remove the dotfiles repository from the local file sytem - via =rm -rf=
 * Optional packages
 
-The configuration will generate a number of optional GNU Stow packages.
-These are not "stowed" in the install script as they may not be required
-on the host. It is up to the user to determine if they should be placed.
+The configuration will generate a number of optional GNU Stow
+packages - for example: =ssh=, =gnome-terminal=, =iterm2=.  These are not
+"stowed" in the install script as they may not be required on the
+host. It is up to the user to determine if they should be placed.
 Placing an optional package can be done with the GNU Stow program from
 within the dofiles home directory:
 
