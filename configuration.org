@@ -930,9 +930,9 @@ automatically load the private key into the ssh-agent and store
 passwords in the keychain on os x hosts.
 
 #+begin_src text :mkdirp yes :tangle (when (eq system-type 'darwin) "./ssh/.ssh/config")
-host *
-addkeystoagent yes
-usekeychain yes
+Host *
+  AddKeysToAgent yes
+  UseKeychain yes
 #+end_src
 
 ** utility scripts
