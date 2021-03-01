@@ -4440,8 +4440,10 @@ This configuration uses the =yaml-mode= package for interacting with
 
 #+begin_src emacs-lisp
 (use-package yaml
-  :mode (("\\.yml.erb$" . yaml-mode))
+  :mode (("\\.yml.erb$" . yaml-mode)
          ("\\.yaml.erb$" . yaml-mode))
+  :hook (yaml-mode-hook . (lambda ()
+                            (turn-off-auto-fill))))
 #+end_src
 
 *** Rust
