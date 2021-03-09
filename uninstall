@@ -13,7 +13,7 @@ function remove_common_configuration() {
 }
 
 function remove_macos_configuration() {
-    stow --delete ssh
+    stow --delete ssh iterm2
 }
 
 function remove_gnu_linux_configuration() {
@@ -28,10 +28,10 @@ function remove_configuration() {
     system_type="$(uname -s)"
     if [[ "$system_type" == "Darwin" ]]
     then
-	remove_macos_configuration
+    remove_macos_configuration
     elif [[ "$system_type" == "Linux" ]]
     then
-	remove_gnu_linux_configuration
+    remove_gnu_linux_configuration
     fi
 
     popd || return
