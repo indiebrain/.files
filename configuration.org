@@ -480,7 +480,7 @@ assist with the development setup of my current employer.
 
 #+begin_src sh
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
-export PATH="/usr/local/opt/mysql-client@5.7/bin:$PATH"
+export PATH="/usr/local/opt/mysql-client/bin:$PATH"
 export PATH="/usr/local/opt/postgresql@11/bin:$PATH"
 #+end_src
 
