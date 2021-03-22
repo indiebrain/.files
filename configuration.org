@@ -633,12 +633,20 @@ lsns
 #+end_example
 
 On macOS hosts, Homebrew may provide the bash-completion package and
-we'll load completions according to its conventions - see =brew info
-bash-completion= for more details.
+we'll load completions according to its conventions - see the Homebrew
+documentation on [[https://docs.brew.sh/Shell-Completion][Shell-Completion]] for more.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
-[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && \
-    source "/usr/local/etc/profile.d/bash_completion.sh"
+if type brew &>/dev/null; then
+  HOMEBREW_PREFIX="$(brew --prefix)"
+  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+  else
+    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+      [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+    done
+  fi
+fi
 #+end_src
 
 However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official
@@ -1081,17 +1089,6 @@ the setup script resides in the =$home/bin= directory, which means it
 should be executable on the user's =$path=. to start the initial host
 setup process run =initial-host-setup=.
 
-***** common packages
-:PROPERTIES:
-:CUSTOM_ID: h:ec014db4-41e7-42e0-96d3-a3a7054a1f1c
-:END:
-
-define and install basic packages required to build and install software
-
-#+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-packages="aspell automake autoconf bash emacs git libtool unzip curl bash-completion"
-#+end_src
-
 ***** macos packages
 :PROPERTIES:
 :CUSTOM_ID: h:05003d26-c8e7-4fda-8424-47c47cd83b11
@@ -1123,7 +1120,7 @@ on macos, ensure that these programs are present. generally they're
 required to build or support the tools i use to produce software.
 
 #+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
-packages="$packages ncurses openssl readline the_silver_searcher"
+packages="aspell automake autoconf bash bash-completion@2 curl emacs git libtool ncurses openssl readline the_silver_searcher unzip"
 #+end_src
 
 ****** macos binary packages
@@ -1207,7 +1204,7 @@ fi
 on gnu/linux hosts, ensure that the following packages are present.
 
 #+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
-packages="$packages aspell git silversearcher-ag"
+packages="aspell automake autoconf bash curl emacs git libtool silversearcher-ag unzip"
 #+end_src
 
 ****** install packages
