@@ -549,58 +549,61 @@ the vivendi theme, and a slightly lighter than full-black background
 for the operandi theme.
 
 #+begin_src emacs-lisp
-(setq modus-vivendi-theme-override-colors-alist
-      '(("bg-main" . "#272727")
-        ("bg-alt"  . "#655b53")))
+(use-package modus-themes
+  :ensure
+  :config
+  (setq modus-vivendi-theme-override-colors-alist
+        '(("bg-main" . "#272727")
+          ("bg-alt"  . "#655b53")))
 
-(setq modus-operandi-theme-override-colors-alist
-      '(("bg-main" . "#eee8d5")
-        ("bg-alt"  . "#fdf6e3")))
+  (setq modus-operandi-theme-override-colors-alist
+        '(("bg-main" . "#eee8d5")
+          ("bg-alt"  . "#fdf6e3")))
 
-(defmacro modus-themes-format-sexp (sexp &rest objects)
-  `(eval (read (format ,(format "%S" sexp) ,@objects))))
+  (defmacro modus-themes-format-sexp (sexp &rest objects)
+    `(eval (read (format ,(format "%S" sexp) ,@objects))))
 
-(dolist (theme '("vivendi" "operandi"))
-  (modus-themes-format-sexp
-   (defun modus-%1$s-theme-load ()
-     (setq modus-%1$s-theme-slanted-constructs t
-           modus-%1$s-theme-bold-constructs t
-           modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
-           modus-%1$s-theme-mode-line 'moody ; {nil,'3d,'moody}
-           modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
-           modus-%1$s-theme-intense-hl-line t
-           modus-%1$s-theme-intense-paren-match t
-           modus-%1$s-theme-links 'faint ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
-           modus-%1$s-theme-no-mixed-fonts nil
-           modus-%1$s-theme-prompts nil ; {nil,'subtle,'intense}
-           modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
-           modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
-           modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-           modus-%1$s-theme-headings  ; Read further below in the manual for this one
-           '((1 . section)
-             (2 . line)
-             (t . rainbow-line-no-bold))
-           modus-%1$s-theme-variable-pitch-headings nil
-           modus-%1$s-theme-scale-headings t
-           modus-%1$s-theme-scale-1 1.1
-           modus-%1$s-theme-scale-2 1.15
-           modus-%1$s-theme-scale-3 1.21
-           modus-%1$s-theme-scale-4 1.27
-           modus-%1$s-theme-scale-5 1.33)
-     (load-theme 'modus-%1$s t))
-   theme))
+  (dolist (theme '("vivendi" "operandi"))
+    (modus-themes-format-sexp
+     (defun modus-%1$s-theme-load ()
+       (setq modus-%1$s-theme-slanted-constructs t
+             modus-%1$s-theme-bold-constructs t
+             modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
+             modus-%1$s-theme-mode-line 'moody ; {nil,'3d,'moody}
+             modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
+             modus-%1$s-theme-intense-hl-line t
+             modus-%1$s-theme-intense-paren-match t
+             modus-%1$s-theme-links 'faint ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
+             modus-%1$s-theme-no-mixed-fonts nil
+             modus-%1$s-theme-prompts nil ; {nil,'subtle,'intense}
+             modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
+             modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
+             modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+             modus-%1$s-theme-headings  ; Read further below in the manual for this one
+             '((1 . section)
+               (2 . line)
+               (t . rainbow-line-no-bold))
+             modus-%1$s-theme-variable-pitch-headings nil
+             modus-%1$s-theme-scale-headings t
+             modus-%1$s-theme-scale-1 1.1
+             modus-%1$s-theme-scale-2 1.15
+             modus-%1$s-theme-scale-3 1.21
+             modus-%1$s-theme-scale-4 1.27
+             modus-%1$s-theme-scale-5 1.33)
+       (load-theme 'modus-%1$s t))
+     theme))
 
-(defun modus-themes-toggle ()
-  "Toggle between `modus-operandi' and `modus-vivendi' themes."
-  (interactive)
-  (if (eq (car custom-enabled-themes) 'modus-operandi)
-      (progn
-        (disable-theme 'modus-operandi)
-        (modus-vivendi-theme-load))
-    (disable-theme 'modus-vivendi)
-    (modus-operandi-theme-load)))
+  (defun modus-themes-toggle ()
+    "Toggle between `modus-operandi' and `modus-vivendi' themes."
+    (interactive)
+    (if (eq (car custom-enabled-themes) 'modus-operandi)
+        (progn
+          (disable-theme 'modus-operandi)
+          (modus-vivendi-theme-load))
+      (disable-theme 'modus-vivendi)
+      (modus-operandi-theme-load)))
 
-(modus-vivendi-theme-load)
+  (modus-vivendi-theme-load))
 #+end_src
 
 ** Typeface configurations
