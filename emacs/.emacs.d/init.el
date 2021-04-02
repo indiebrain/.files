@@ -1,6 +1,6 @@
 (require 'package)
 
- (setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
+(setq gnutls-algorithm-priority "NORMAL:-VERS-TLS1.3")
 
 ;; In addition to the GNU repository look for external packages in
 ;; these repositories.
