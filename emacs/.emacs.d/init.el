@@ -38,7 +38,17 @@
 
 ;; Allow packages to declare dependencies on system programs.
 (use-package use-package-ensure-system-package
-  :ensure t)
+  :ensure t
+  :config
+  (cond
+   ((eq system-type 'darwin)
+    (progn
+    (setq system-packages-use-sudo nil)
+    (setq system-packages-package-manager 'brew)))
+   ((eq system-type 'gnu/linux)
+    (progn
+    (setq system-packages-use-sudo t)
+    (setq system-packages-package-manager 'apt)))))
 
 ;; I create an "el" version of my Org configuration file as a final step
 ;; before closing down Emacs.  This is done to load the latest version
