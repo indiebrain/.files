@@ -83,9 +83,13 @@ provided by this document.
 ;; In addition to the GNU repository look for external packages in
 ;; these repositories.
 (add-to-list 'package-archives
-     '("melpa" . "https://melpa.org/packages/"))
+             '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
-     '("org" . "http://orgmode.org/elpa/"))
+             '("non-gnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/"))
 
 ;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
@@ -4829,36 +4833,8 @@ checking when editing prose.
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
 
-  (defvar indibrain/ispell-dictionaries
-    '(("English" . "en"))
-    "Alist of dictionaries I may use.
-It is used by `indibrain/ispell-dictionaries-complete'.")
-
-  (defun indibrain/ispell-dictionaries-complete ()
-    "Select an item from `indibrain/ispell-dictionaries'."
-    (interactive)
-    (let* ((dicts (mapcar #'car indibrain/ispell-dictionaries))
-           (choice (completing-read "Select dictionary: " dicts nil t))
-           (key (cdr (assoc `,choice indibrain/ispell-dictionaries))))
-      (ispell-change-dictionary key)
-      (message "Switched to %s" key)))
-
-  (defun indibrain/flyspell-dwim ()
-    "Spell check region or select dictionary.
-
-Use `flyspell-region' on the active region, else invoke
-`indibrain/ispell-dictionaries-complete'."
-    (interactive)
-    (let ((beg (region-beginning))
-          (end (region-end)))
-      (if (use-region-p)
-          (flyspell-region beg end)
-        (indibrain/ispell-dictionaries-complete))))
-
-  :bind (("M-$" . indibrain/flyspell-dwim)
-         ("C-M-$" . indibrain/ispell-dictionaries-complete)
-         :map flyspell-mode-map
-         ("C-;" . nil))
+  :bind (:map flyspell-mode-map
+              ("C-;" . nil))
   :hook (text-mode-hook . (lambda ()
                             (flyspell-mode))))
 #+end_src
