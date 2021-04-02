@@ -1120,7 +1120,7 @@ on macos, ensure that these programs are present. generally they're
 required to build or support the tools i use to produce software.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-packages="aspell automake autoconf bash bash-completion@2 curl emacs git libtool ncurses openssl readline the_silver_searcher unzip"
+packages="aspell automake autoconf bash bash-completion@2 curl git libtool ncurses openssl readline the_silver_searcher unzip"
 #+end_src
 
 ****** macos binary packages
@@ -1132,7 +1132,7 @@ on macos clients, also ensure that the following binary
 applications are available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-binary_packages="emacs firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
+binary_packages="emacs-nightly firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
 #+end_src
 
 ****** install packages
@@ -1154,9 +1154,9 @@ for package in $packages; do
 done
 
 for package in $binary_packages; do
-    if [ "$( brew cask list -1 | grep $package )" == "" ]; then
+    if [ "$( brew list --cask -1 | grep $package )" == "" ]; then
     echo "installing $package"
-    brew cask install $package
+    brew install --cask $package
     else
     echo "$package installed"
     fi
@@ -1295,7 +1295,7 @@ ensures that docker is installed. on mac os x hosts, we use
 if [ $(which docker) ]; then
     echo "docker is already installed"
 else
-    brew cask install docker
+    brew install --cask docker
 fi
 #+end_src
 
