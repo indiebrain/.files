@@ -150,38 +150,38 @@ Some notable features:
 # colors
 case "$TERM" in
     xterm*|rxvt*|screen*|eterm-color)
-    ESC="\033"
-    RED="\[$ESC[01;31m\]"
-    LIGHT_RED="\[$ESC[1;31m\]"
-    GREEN="\[$ESC[01;32m\]"
-    LIGHT_GREEN="\[$ESC[1;32m\]"
-    GREY="\[$ESC[0;37m\]"
-    CYAN="\[$ESC[01;36m\]"
-    YELLOW="\[$ESC[0;33m\]"
-    LIGHT_VIOLET="\[$ESC[1;35m\]"
-    RESET="\[$ESC[0m\]"
-    ;;
+        ESC="\033"
+        RED="\[$ESC[01;31m\]"
+        LIGHT_RED="\[$ESC[1;31m\]"
+        GREEN="\[$ESC[01;32m\]"
+        LIGHT_GREEN="\[$ESC[1;32m\]"
+        GREY="\[$ESC[0;37m\]"
+        CYAN="\[$ESC[01;36m\]"
+        YELLOW="\[$ESC[0;33m\]"
+        LIGHT_VIOLET="\[$ESC[1;35m\]"
+        RESET="\[$ESC[0m\]"
+        ;;
     ,*)
-    ESC=""
-    RED=""
-    LIGHT_RED=""
-    GREEN=""
-    LIGHT_GREEN=""
-    GREY=""
-    CYAN=""
-    YELLOW=""
-    LIGHT_VIOLET=""
-    RESET=""
-    ;;
+        ESC=""
+        RED=""
+        LIGHT_RED=""
+        GREEN=""
+        LIGHT_GREEN=""
+        GREY=""
+        CYAN=""
+        YELLOW=""
+        LIGHT_VIOLET=""
+        RESET=""
+        ;;
 esac
 
 # prints path to git directory
 __git_dirname() {
     local dirname
     if [ -d .git ]; then
-    dirname=".git"
+        dirname=".git"
     else
-    dirname="$(git rev-parse --git-dir 2>/dev/null)"
+        dirname="$(git rev-parse --git-dir 2>/dev/null)"
     fi
     echo "$dirname"
 }
@@ -193,23 +193,23 @@ __git_branching_state() {
     local state
 
     if [ -f "$gitdir/rebase-merge/interactive" ]; then
-    state="rebase-i"
+        state="rebase-i"
     elif [ -d "$gitdir/rebase-merge" ]; then
-    state="rebase-m"
+        state="rebase-m"
     else
-    if [ -d "$gitdir/rebase-apply" ]; then
-	if [ -f "$gitdir/rebase-apply/rebasing" ]; then
-	state="rebase"
-	elif [ -f "$gitdir/rebase-apply/applying" ]; then
-	state="am"
-	else
-	state="am/r"
-	fi
-    elif [ -f "$gitdir/MERGE_HEAD" ]; then
-	state="merge" # merging
-    elif [ -f "$gitdir/BISECT_LOG" ]; then
-	state="bisect" # bisecting
-    fi
+        if [ -d "$gitdir/rebase-apply" ]; then
+            if [ -f "$gitdir/rebase-apply/rebasing" ]; then
+                state="rebase"
+            elif [ -f "$gitdir/rebase-apply/applying" ]; then
+                state="am"
+            else
+                state="am/r"
+            fi
+        elif [ -f "$gitdir/MERGE_HEAD" ]; then
+            state="merge" # merging
+        elif [ -f "$gitdir/BISECT_LOG" ]; then
+            state="bisect" # bisecting
+        fi
     fi
     echo "$state"
 }
@@ -222,10 +222,10 @@ __git_working_dir_symbols() {
 
     # in working dir
     if [ true = "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then
-    git diff --no-ext-diff --quiet --exit-code || symbols="*"
-    if git rev-parse --quiet --verify HEAD >/dev/null; then
-	git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
-    fi
+        git diff --no-ext-diff --quiet --exit-code || symbols="*"
+        if git rev-parse --quiet --verify HEAD >/dev/null; then
+            git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
+        fi
     fi
 
     # stashed
@@ -233,7 +233,7 @@ __git_working_dir_symbols() {
 
     # untracked files
     if [ -n "$(git ls-files --others --exclude-standard)" ]; then
-    symbols="${symbols}%"
+        symbols="${symbols}%"
     fi
     echo "$symbols"
 }
@@ -246,37 +246,37 @@ __git_branch_name() {
     local branch
     local gitdir="$2" || "$(__git_dirname)"
     branch="$(git symbolic-ref HEAD 2>/dev/null)" || {
-    branch="$(git describe --contains --all HEAD 2>/dev/null)" ||
-	branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
-	branch="unknown"
+        branch="$(git describe --contains --all HEAD 2>/dev/null)" ||
+            branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
+            branch="unknown"
 
-    branch="${branch##remotes/}"
-    branch="($branch)"
+        branch="${branch##remotes/}"
+        branch="($branch)"
     }
     branch="${branch##refs/heads/}"
 
     # parent branch name
     if [ parent = "$1" ]; then
-    if [ master = "$branch" ]; then
-	local refs="$(git for-each-ref --format="%(refname:short)")"
-	case "$refs" in
-	,*git-svn*) # git-svn repo
-	    branch='git-svn' ;;
-	,*origin*) # remote clone
-	    branch='origin' ;;
-	,*)
-	    branch='HEAD' ;; # same repo
-	esac
-    else
-	# TODO.. would be nice to improve this to determine the actual
-	# merge base (git merge-base) and compare against that instead of
-	# always assuming master. In this way a 'topic/feature' branch
-	# would show the diff counts for its parent 'next/develop' branch
-	# rather than those plus those on the 'next/develop' branch.
-	# I don't think we want to loop over the refs comparing ... that's
-	# fuzzy.
-	branch='master' # on a branch
-    fi
+        if [ master = "$branch" ]; then
+            local refs="$(git for-each-ref --format="%(refname:short)")"
+            case "$refs" in
+                ,*git-svn*) # git-svn repo
+                    branch='git-svn' ;;
+                ,*origin*) # remote clone
+                    branch='origin' ;;
+                ,*)
+                    branch='HEAD' ;; # same repo
+            esac
+        else
+            # TODO.. would be nice to improve this to determine the actual
+            # merge base (git merge-base) and compare against that instead of
+            # always assuming master. In this way a 'topic/feature' branch
+            # would show the diff counts for its parent 'next/develop' branch
+            # rather than those plus those on the 'next/develop' branch.
+            # I don't think we want to loop over the refs comparing ... that's
+            # fuzzy.
+            branch='master' # on a branch
+        fi
     fi
     echo "$branch"
 }
@@ -284,11 +284,11 @@ __git_branch_name() {
 # prints if inside git directory or bare git repository
 __git_in_gitdir() {
     if [ true = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
-    if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
-	echo 'bare'
-    else
-	echo 'gitdir'
-    fi
+        if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
+            echo 'bare'
+        else
+            echo 'gitdir'
+        fi
     fi
 }
 
@@ -307,12 +307,12 @@ __git_count_str() {
     local behind_count="$(__git_commit_diff_count HEAD $parent)"
 
     if [ 0 -lt "$ahead_count" ]; then
-    str="${GREEN}+${ahead_count}${RESET}"
+        str="${GREEN}+${ahead_count}${RESET}"
     fi
 
     if [ 0 -lt "$behind_count" ]; then
-    [ -n "$str" ] && str="$str/"
-    str="${str}${LIGHT_RED}-${behind_count}${RESET}"
+        [ -n "$str" ] && str="$str/"
+        str="${str}${LIGHT_RED}-${behind_count}${RESET}"
     fi
 
     [ -n "$str" ] && str="($str)"
@@ -331,47 +331,47 @@ __git_prompt() {
     # when in git repository
     local gitdir="$(__git_dirname)"
     if [ -n "$gitdir" ]; then
-    local branch
-    local extras
+        local branch
+        local extras
 
-    local in_gitdir="$(__git_in_gitdir)"
-    case "$in_gitdir" in
-	gitdir|bare)
-	branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
-	extras=""
-	;;
-	,*)
-	local branch="$(__git_branch_name current ${gitdir})"
-	local br_state="$(__git_branching_state $gitdir)"
+        local in_gitdir="$(__git_in_gitdir)"
+        case "$in_gitdir" in
+            gitdir|bare)
+                branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
+                extras=""
+                ;;
+            ,*)
+                local branch="$(__git_branch_name current ${gitdir})"
+                local br_state="$(__git_branching_state $gitdir)"
 
-	# rebasing..use merge head for branch name
-	case "$br_state" in
-	    rebase-*)
-	    # get the ref head during rebase
-	    branch="$(cat "$gitdir/rebase-merge/head-name")"
-	    branch="${branch##refs/heads/}"
-	    branch="${branch##remotes/}"
-	    ;;
-	esac
+                # rebasing..use merge head for branch name
+                case "$br_state" in
+                    rebase-*)
+                        # get the ref head during rebase
+                        branch="$(cat "$gitdir/rebase-merge/head-name")"
+                        branch="${branch##refs/heads/}"
+                        branch="${branch##remotes/}"
+                        ;;
+                esac
 
-	# extras (count strings, working dir symbols)
-	local countstr="$(__git_count_str)"
-	local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
-	extras="${countstr} ${wd_syms}"
-	;;
-    esac
-    branch="${GREY}${branch}${RESET}"
+                # extras (count strings, working dir symbols)
+                local countstr="$(__git_count_str)"
+                local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
+                extras="${countstr} ${wd_syms}"
+                ;;
+        esac
+        branch="${GREY}${branch}${RESET}"
 
-    # update PS1
-    PS1="${PS1} ${branch}${extras}"
+        # update PS1
+        PS1="${PS1} ${branch}${extras}"
     fi
 
     # setup marker that acts off of last exit code
     local marker
     if [ 0 -eq "$last_exit" ]; then
-    marker="$GREEN"
+        marker="$GREEN"
     else
-    marker="$RED"
+        marker="$RED"
     fi
     marker="${marker}\$${RESET}"
     PS1="\n${PS1} →\n${marker} "
@@ -638,14 +638,14 @@ documentation on [[https://docs.brew.sh/Shell-Completion][Shell-Completion]] for
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
 if type brew &>/dev/null; then
-  HOMEBREW_PREFIX="$(brew --prefix)"
-  if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-    source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
-  else
-    for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-      [[ -r "$COMPLETION" ]] && source "$COMPLETION"
-    done
-  fi
+    HOMEBREW_PREFIX="$(brew --prefix)"
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    else
+        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+        done
+    fi
 fi
 #+end_src
 
@@ -1146,19 +1146,19 @@ installed. on macos hosts, we use homebrew to install packages.
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 for package in $packages; do
     if [ "$( brew list -1 | grep $package )" == "" ]; then
-    echo "installing $package"
-    brew install $package
+        echo "installing $package"
+        brew install $package
     else
-    echo "$package installed"
+        echo "$package installed"
     fi
 done
 
 for package in $binary_packages; do
     if [ "$( brew list --cask -1 | grep $package )" == "" ]; then
-    echo "installing $package"
-    brew install --cask $package
+        echo "installing $package"
+        brew install --cask $package
     else
-    echo "$package installed"
+        echo "$package installed"
     fi
 done
 #+end_src
@@ -1218,9 +1218,9 @@ we'll use the aptitude package manager.
 for package in $packages; do
     if [ "$(sudo apt-cache policy $package | grep 'installed: (none)')" ]
     then
-    sudo apt install -y $package
+        sudo apt install -y $package
     else
-    echo "$package is already installed";
+        echo "$package is already installed";
     fi
 done
 #+end_src
@@ -1266,11 +1266,11 @@ now that asdf-vm is in place, install the language specific plugins i typically 
 asdf_plugins='ruby nodejs'
 for plugin in $asdf_plugins; do
     if [ -e $asdf_dir/plugins/$plugin ]; then
-    echo "asdf $plugin plugin already installed"
-    asdf plugin-update $plugin
+        echo "asdf $plugin plugin already installed"
+        asdf plugin-update $plugin
     else
-    echo "installing asdf $plugin plugin"
-    asdf plugin-add $plugin
+        echo "installing asdf $plugin plugin"
+        asdf plugin-add $plugin
     fi
 done
 #+end_src
@@ -1311,17 +1311,17 @@ else
     sudo apt-get remove docker docker-engine docker.io containerd runc
     sudo apt-get update
     sudo apt-get install \
-     apt-transport-https \
-     ca-certificates \
-     curl \
-     gnupg2 \
-     software-properties-common
+         apt-transport-https \
+         ca-certificates \
+         curl \
+         gnupg2 \
+         software-properties-common
 
     curl -fssl https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     sudo add-apt-repository \
-     "deb [arch=amd64] https://download.docker.com/linux/debian \
-	 $(lsb_release -cs) \
-	 stable"
+         "deb [arch=amd64] https://download.docker.com/linux/debian \
+         $(lsb_release -cs) \
+         stable"
     sudo apt-get update
     sudo apt install -y docker-ce docker-ce-cli containerd.io
     sudo groupadd docker
