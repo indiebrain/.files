@@ -3,9 +3,13 @@
 ;; In addition to the GNU repository look for external packages in
 ;; these repositories.
 (add-to-list 'package-archives
-	     '("melpa" . "https://melpa.org/packages/"))
+             '("gnu" . "https://elpa.gnu.org/packages/"))
 (add-to-list 'package-archives
-	     '("org" . "http://orgmode.org/elpa/"))
+             '("non-gnu" . "https://elpa.nongnu.org/nongnu/"))
+(add-to-list 'package-archives
+             '("melpa" . "https://melpa.org/packages/"))
+(add-to-list 'package-archives
+             '("org" . "http://orgmode.org/elpa/"))
 
 ;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
