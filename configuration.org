@@ -978,8 +978,8 @@ $ flush_dns
 # usage:
 #   $ flush_dns_cache
 
-if [[ `uname` == "darwin" ]]; then
-    sudo killall -hup mdnsresponder
+if [[ `uname` == "Darwin" ]]; then
+    sudo killall -hup mDNSResponder
 fi
 #+end_src
 
@@ -1085,8 +1085,8 @@ tools and configuration i use across hosts. though running
 allows me to better control how and when the setup script runs during
 initial setup.
 
-the setup script resides in the =$home/bin= directory, which means it
-should be executable on the user's =$path=. to start the initial host
+the setup script resides in the =$HOME/bin= directory, which means it
+should be executable on the user's =$PATH=. to start the initial host
 setup process run =initial-host-setup=.
 
 ***** macos packages
@@ -1187,12 +1187,12 @@ also has the affect of loading the newly generated bash
 configuration which makes installing things like asdf a bit easier.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-if [[ "$(echo $shell)" != "/usr/local/bin/bash" ]]
+if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
 then
     echo "bash is not the current shell, changing shell..."
     chsh -s /usr/local/bin/bash 2>/dev/null
     /usr/local/bin/bash
-    source $home/.bashrc
+    source $HOME/.bashrc
 fi
 #+end_src
 
@@ -1234,7 +1234,7 @@ load the newly generated bash configuration which makes installing
 things like asdf a bit easier.
 
 #+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
-source $home/.bashrc
+source $HOME/.bashrc
 #+end_src
 
 ***** install asdf
@@ -1246,7 +1246,7 @@ i use [[https://asdf-vm.com/#/][asdf - the extensible version manager]] to manag
 and runtimes in which i typically write software.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-asdf_dir=$home/.asdf
+asdf_dir=$HOME/.asdf
 if [ -e $asdf_dir ]; then
     echo "updating $asdf_dir"
     asdf update
@@ -1256,8 +1256,8 @@ else
     cd $asdf_dir
     git checkout "$(git describe --abbrev=0 --tags)"
 fi
-[ -f $home/.asdf/asdf.sh ] && source $home/.asdf/asdf.sh
-[ -f $home/.asdf/completions/asdf.bash ] && source $home/.asdf/completions/asdf.bash
+[ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+[ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
 #+end_src
 
 now that asdf-vm is in place, install the language specific plugins i typically use.
@@ -1325,7 +1325,7 @@ else
     sudo apt-get update
     sudo apt install -y docker-ce docker-ce-cli containerd.io
     sudo groupadd docker
-    sudo usermod -ag docker $user
+    sudo usermod -ag docker $USER
     newgrp docker
 fi
 #+end_src
