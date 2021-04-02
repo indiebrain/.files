@@ -4410,8 +4410,12 @@ suite of specifications. Some interactions of note:
 |           |                                                         |
 
 #+begin_src emacs-lisp
+(use-package inf-ruby
+  :ensure)
+
 (use-package rspec-mode
-  :ensure t
+  :ensure
+  :after (inf-ruby)
   :config
   (setq compilation-scroll-output 'first-error)
   :hook ((after-init-hook . inf-ruby-switch-setup)
