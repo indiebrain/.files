@@ -3951,9 +3951,9 @@ wumpus                          # => "found me!"
   (progn
     ;;; rcodetools.el -- annotation / accurate completion / browsing documentation
 
-;;; Copyright (c) 2006-2008 rubikitch <rubikitch@ruby-lang.org>
-;;;
-;;; Use and distribution subject to the terms of the Ruby license.
+    ;;; Copyright (c) 2006-2008 rubikitch <rubikitch@ruby-lang.org>
+    ;;;
+    ;;; Use and distribution subject to the terms of the Ruby license.
 
     (defvar xmpfilter-command-name "ruby -S xmpfilter --dev --fork --detect-rbtest"
       "The xmpfilter command name.")
@@ -4024,7 +4024,7 @@ wumpus                          # => "found me!"
     (defvar xmpfilter-command-function 'xmpfilter-command)
     (defun xmp (&optional option)
       "Run xmpfilter for annotation/test/spec on whole buffer.
-   See also `rct-interactive'. "
+See also `rct-interactive'. "
       (interactive (rct-interactive))
       (rct-save-position
        (lambda ()
@@ -4033,23 +4033,23 @@ wumpus                          # => "found me!"
     (defun xmpfilter-command (&optional option)
       "The xmpfilter command line, DWIM."
       (setq option (or option ""))
-      (cl-flet ((in-block (beg-re)
-                          (save-excursion
-                            (goto-char (point-min))
-                            (when (re-search-forward beg-re nil t)
-                              (let ((s (point)) e)
-                                (when (re-search-forward "^end\n" nil t)
-                                  (setq e (point))
-                                  (goto-char s)
-                                  (re-search-forward "# => *$" e t)))))))
-        (cond ((in-block "^class.+< Test::Unit::TestCase$")
-               (format "%s --unittest %s" xmpfilter-command-name option))
-              ((in-block "^\\(describe\\|context\\).+do$")
-               (format "%s --spec %s" xmpfilter-command-name option))
-              (t
-               (format "%s %s" xmpfilter-command-name option)))))
+      (flet ((in-block (beg-re)
+                       (save-excursion
+                         (goto-char (point-min))
+                         (when (re-search-forward beg-re nil t)
+                           (let ((s (point)) e)
+                             (when (re-search-forward "^end\n" nil t)
+                               (setq e (point))
+                               (goto-char s)
+                               (re-search-forward "# => *$" e t)))))))
+            (cond ((in-block "^class.+< Test::Unit::TestCase$")
+                   (format "%s --unittest %s" xmpfilter-command-name option))
+                  ((in-block "^\\(describe\\|context\\).+do$")
+                   (format "%s --spec %s" xmpfilter-command-name option))
+                  (t
+                   (format "%s %s" xmpfilter-command-name option)))))
 
-   ;;;; Completion
+;;;; Completion
     (defvar rct-method-completion-table nil) ;internal
     (defvar rct-complete-symbol-function 'rct-complete-symbol--normal
       "Function to use rct-complete-symbol.")
@@ -4059,14 +4059,14 @@ wumpus                          # => "found me!"
 
     (defun rct-complete-symbol (&optional option)
       "Perform ruby method and class completion on the text around point.
-   This command only calls a function according to `rct-complete-symbol-function'.
-   See also `rct-interactive', `rct-complete-symbol--normal', and `rct-complete-symbol--icicles'."
+This command only calls a function according to `rct-complete-symbol-function'.
+See also `rct-interactive', `rct-complete-symbol--normal', and `rct-complete-symbol--icicles'."
       (interactive (rct-interactive))
       (call-interactively rct-complete-symbol-function))
 
     (defun rct-complete-symbol--normal (&optional option)
       "Perform ruby method and class completion on the text around point.
-   See also `rct-interactive'."
+See also `rct-interactive'."
       (interactive (rct-interactive))
       (let ((end (point)) beg
             pattern alist
@@ -4136,7 +4136,7 @@ wumpus                          # => "found me!"
                 (format "-t %s --filename=%s" t-opt bfn))
             ""))))
 
-    (require 'cl-lib)
+    (require 'cl)
 
     (defun rct-find-test-script-buffer (&optional buffer-list)
       "Find the latest used Ruby test script buffer."
@@ -4158,15 +4158,15 @@ wumpus                          # => "found me!"
       "Evaluate the output of rct-complete."
       (rct-exec-and-eval rct-complete-command-name "--completion-emacs"))
 
-   ;;;; TAGS or Ri
+;;;; TAGS or Ri
     (autoload 'ri "ri-ruby" nil t)
     (defvar rct-find-tag-if-available t
       "If non-nil and the method location is in TAGS, go to the location instead of show documentation.")
     (defun rct-ri (&optional option)
       "Browse Ri document at the point.
-   If `rct-find-tag-if-available' is non-nil, search the definition using TAGS.
+If `rct-find-tag-if-available' is non-nil, search the definition using TAGS.
 
-   See also `rct-interactive'. "
+See also `rct-interactive'. "
       (interactive (rct-interactive))
       (rct-exec-and-eval
        rct-doc-command-name
@@ -4185,20 +4185,20 @@ wumpus                          # => "found me!"
           (error
            (ri fullname)))))
 
-   ;;;;
+;;;;
     (defun ruby-toggle-buffer ()
       "Open a related file to the current buffer. test<=>impl."
       (interactive)
       (find-file (shell-command-to-string
                   (format "%s %s" ruby-toggle-file-command-name buffer-file-name))))
 
-   ;;;; rct-fork support
+;;;; rct-fork support
     (defun rct-fork (options)
       "Run rct-fork.
-   Rct-fork makes xmpfilter and completion MUCH FASTER because it pre-loads heavy libraries.
-   When rct-fork is running, the mode-line indicates it to avoid unnecessary run.
-   To kill rct-fork process, use \\[rct-fork-kill].
-   "
+Rct-fork makes xmpfilter and completion MUCH FASTER because it pre-loads heavy libraries.
+When rct-fork is running, the mode-line indicates it to avoid unnecessary run.
+To kill rct-fork process, use \\[rct-fork-kill].
+"
       (interactive (list
                     (read-string "rct-fork options (-e CODE -I LIBDIR -r LIB): "
                                  (rct-fork-default-options))))
@@ -4225,10 +4225,10 @@ wumpus                          # => "found me!"
         (interrupt-process "rct-fork")))
     (define-minor-mode rct-fork-minor-mode
       "This minor mode is turned on when rct-fork is run.
-   It is nothing but an indicator."
+It is nothing but an indicator."
       :lighter " <rct-fork>" :global t)
 
-   ;;;; unit tests
+;;;; unit tests
     (when (and (fboundp 'expectations))
       (require 'ruby-mode)
       (require 'el-mock nil t)
@@ -4378,7 +4378,8 @@ wumpus                          # => "found me!"
                rct-fork-minor-mode)
        ))
 
-    (provide 'rcodetools)))
+    (provide 'rcodetools)
+    ))
 #+end_src
 
 **** In-buffer linting
