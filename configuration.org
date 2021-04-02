@@ -198,17 +198,17 @@ __git_branching_state() {
     state="rebase-m"
     else
     if [ -d "$gitdir/rebase-apply" ]; then
-        if [ -f "$gitdir/rebase-apply/rebasing" ]; then
-        state="rebase"
-        elif [ -f "$gitdir/rebase-apply/applying" ]; then
-        state="am"
-        else
-        state="am/r"
-        fi
+	if [ -f "$gitdir/rebase-apply/rebasing" ]; then
+	state="rebase"
+	elif [ -f "$gitdir/rebase-apply/applying" ]; then
+	state="am"
+	else
+	state="am/r"
+	fi
     elif [ -f "$gitdir/MERGE_HEAD" ]; then
-        state="merge" # merging
+	state="merge" # merging
     elif [ -f "$gitdir/BISECT_LOG" ]; then
-        state="bisect" # bisecting
+	state="bisect" # bisecting
     fi
     fi
     echo "$state"
@@ -224,7 +224,7 @@ __git_working_dir_symbols() {
     if [ true = "$(git rev-parse --is-inside-work-tree 2>/dev/null)" ]; then
     git diff --no-ext-diff --quiet --exit-code || symbols="*"
     if git rev-parse --quiet --verify HEAD >/dev/null; then
-        git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
+	git diff-index --cached --quiet HEAD -- || symbols="${symbols}+"
     fi
     fi
 
@@ -247,8 +247,8 @@ __git_branch_name() {
     local gitdir="$2" || "$(__git_dirname)"
     branch="$(git symbolic-ref HEAD 2>/dev/null)" || {
     branch="$(git describe --contains --all HEAD 2>/dev/null)" ||
-        branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
-        branch="unknown"
+	branch="$(cut -c1-7 "$gitdir/HEAD" 2>/dev/null)..." ||
+	branch="unknown"
 
     branch="${branch##remotes/}"
     branch="($branch)"
@@ -258,24 +258,24 @@ __git_branch_name() {
     # parent branch name
     if [ parent = "$1" ]; then
     if [ master = "$branch" ]; then
-        local refs="$(git for-each-ref --format="%(refname:short)")"
-        case "$refs" in
-        ,*git-svn*) # git-svn repo
-            branch='git-svn' ;;
-        ,*origin*) # remote clone
-            branch='origin' ;;
-        ,*)
-            branch='HEAD' ;; # same repo
-        esac
+	local refs="$(git for-each-ref --format="%(refname:short)")"
+	case "$refs" in
+	,*git-svn*) # git-svn repo
+	    branch='git-svn' ;;
+	,*origin*) # remote clone
+	    branch='origin' ;;
+	,*)
+	    branch='HEAD' ;; # same repo
+	esac
     else
-        # TODO.. would be nice to improve this to determine the actual
-        # merge base (git merge-base) and compare against that instead of
-        # always assuming master. In this way a 'topic/feature' branch
-        # would show the diff counts for its parent 'next/develop' branch
-        # rather than those plus those on the 'next/develop' branch.
-        # I don't think we want to loop over the refs comparing ... that's
-        # fuzzy.
-        branch='master' # on a branch
+	# TODO.. would be nice to improve this to determine the actual
+	# merge base (git merge-base) and compare against that instead of
+	# always assuming master. In this way a 'topic/feature' branch
+	# would show the diff counts for its parent 'next/develop' branch
+	# rather than those plus those on the 'next/develop' branch.
+	# I don't think we want to loop over the refs comparing ... that's
+	# fuzzy.
+	branch='master' # on a branch
     fi
     fi
     echo "$branch"
@@ -285,9 +285,9 @@ __git_branch_name() {
 __git_in_gitdir() {
     if [ true = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
     if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
-        echo 'bare'
+	echo 'bare'
     else
-        echo 'gitdir'
+	echo 'gitdir'
     fi
     fi
 }
@@ -336,29 +336,29 @@ __git_prompt() {
 
     local in_gitdir="$(__git_in_gitdir)"
     case "$in_gitdir" in
-        gitdir|bare)
-        branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
-        extras=""
-        ;;
-        ,*)
-        local branch="$(__git_branch_name current ${gitdir})"
-        local br_state="$(__git_branching_state $gitdir)"
+	gitdir|bare)
+	branch="~$(echo $in_gitdir | tr "[:lower:]" "[:upper:]")~"
+	extras=""
+	;;
+	,*)
+	local branch="$(__git_branch_name current ${gitdir})"
+	local br_state="$(__git_branching_state $gitdir)"
 
-        # rebasing..use merge head for branch name
-        case "$br_state" in
-            rebase-*)
-            # get the ref head during rebase
-            branch="$(cat "$gitdir/rebase-merge/head-name")"
-            branch="${branch##refs/heads/}"
-            branch="${branch##remotes/}"
-            ;;
-        esac
+	# rebasing..use merge head for branch name
+	case "$br_state" in
+	    rebase-*)
+	    # get the ref head during rebase
+	    branch="$(cat "$gitdir/rebase-merge/head-name")"
+	    branch="${branch##refs/heads/}"
+	    branch="${branch##remotes/}"
+	    ;;
+	esac
 
-        # extras (count strings, working dir symbols)
-        local countstr="$(__git_count_str)"
-        local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
-        extras="${countstr} ${wd_syms}"
-        ;;
+	# extras (count strings, working dir symbols)
+	local countstr="$(__git_count_str)"
+	local wd_syms="${LIGHT_VIOLET}$(__git_working_dir_symbols)${RESET}"
+	extras="${countstr} ${wd_syms}"
+	;;
     esac
     branch="${GREY}${branch}${RESET}"
 
@@ -550,7 +550,7 @@ output. Setting the =CLICOLOR= environment variable enables this on such
 systems. macOS is one such UNIX-like operating system which supports
 this global colorizing configuration.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
 export CLICOLOR=1
 #+end_src
 
@@ -571,7 +571,7 @@ This configuration has the following effects:
   from one another.
 - =grep= will highlight matches in its output.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
 alias ls='ls --color'
 alias grep='grep --color'
 #+end_src
@@ -596,7 +596,7 @@ alias gl='git log --graph --oneline --decorate --max-count 10'
 On Debian GNU/Linux hosts, adds a shorthand to copy data to the system
 clipboard from the terminal.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
 alias pbcopy='xclip -selection clipboard'
 #+end_src
 
@@ -636,7 +636,7 @@ On macOS hosts, Homebrew may provide the bash-completion package and
 we'll load completions according to its conventions - see the Homebrew
 documentation on [[https://docs.brew.sh/Shell-Completion][Shell-Completion]] for more.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./bash/.bash_profile")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
 if type brew &>/dev/null; then
   HOMEBREW_PREFIX="$(brew --prefix)"
   if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
@@ -652,7 +652,7 @@ fi
 However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official
 means of loading bash-completion completions]].
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./bash/.bash_profile")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
 [[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
     source /usr/share/bash-completion/bash_completion
 #+end_src
@@ -776,7 +776,7 @@ rcodetools
 
 ** Gnome terminal
 :PROPERTIES:
-:header-args: :mkdirp yes :tangle (when (eq system-type 'gnu/linux) "./gnome-terminal/.gnome-terminal-profiles.dconf")
+:header-args: :mkdirp yes :tangle (if (eq system-type 'gnu/linux) "./gnome-terminal/.gnome-terminal-profiles.dconf" "no")
 :CUSTOM_ID: h:1733b4d1-8b92-4cbe-b5c2-e8885b0bd785
 :END:
 
@@ -937,7 +937,7 @@ driven development tool. this ensures that:
 automatically load the private key into the ssh-agent and store
 passwords in the keychain on os x hosts.
 
-#+begin_src text :mkdirp yes :tangle (when (eq system-type 'darwin) "./ssh/.ssh/config")
+#+begin_src text :mkdirp yes :tangle (if (eq system-type 'darwin) "./ssh/.ssh/config" "no")
 Host *
   AddKeysToAgent yes
   UseKeychain yes
@@ -1104,7 +1104,7 @@ the closest thing, but has functional deficiencies. nonetheless, in most
 cases it's better than nothing so we ensure that it exists on macos
 hosts here.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 if ! [ -x "$(command -v brew)" ]; then
     ruby -e "$(curl -fssl https://raw.githubusercontent.com/homebrew/install/master/install)"
 fi
@@ -1119,7 +1119,7 @@ brew tap homebrew/cask-versions
 on macos, ensure that these programs are present. generally they're
 required to build or support the tools i use to produce software.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 packages="aspell automake autoconf bash bash-completion@2 curl emacs git libtool ncurses openssl readline the_silver_searcher unzip"
 #+end_src
 
@@ -1143,7 +1143,7 @@ binary_packages="emacs firefox-developer-edition gpg-suite iterm2 keepassxc next
 and now we're ready to ensure that each of the packages are
 installed. on macos hosts, we use homebrew to install packages.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 for package in $packages; do
     if [ "$( brew list -1 | grep $package )" == "" ]; then
     echo "installing $package"
@@ -1175,7 +1175,7 @@ depreciation warning when using bash in their latest os update]]...
 lolwat? here we'll use homebrew to install a recent version of =gnu bash=
 and make sure it's our user's default shell.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
 then
     sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
@@ -1186,7 +1186,7 @@ change the shell to bash for the rest of the setup script.  this
 also has the affect of loading the newly generated bash
 configuration which makes installing things like asdf a bit easier.
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 if [[ "$(echo $shell)" != "/usr/local/bin/bash" ]]
 then
     echo "bash is not the current shell, changing shell..."
@@ -1203,7 +1203,7 @@ fi
 
 on gnu/linux hosts, ensure that the following packages are present.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 packages="aspell automake autoconf bash curl emacs git libtool silversearcher-ag unzip"
 #+end_src
 
@@ -1214,7 +1214,7 @@ packages="aspell automake autoconf bash curl emacs git libtool silversearcher-ag
 on gnu/linux hosts - for which i always use debian gnu/linux -
 we'll use the aptitude package manager.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 for package in $packages; do
     if [ "$(sudo apt-cache policy $package | grep 'installed: (none)')" ]
     then
@@ -1233,7 +1233,7 @@ done
 load the newly generated bash configuration which makes installing
 things like asdf a bit easier.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 source $home/.bashrc
 #+end_src
 
@@ -1291,7 +1291,7 @@ bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
 ensures that docker is installed. on mac os x hosts, we use
 [[https://brew.sh/][homebrew]] to install docker:
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 if [ $(which docker) ]; then
     echo "docker is already installed"
 else
@@ -1302,7 +1302,7 @@ fi
 while on gnu/linux hosts, we assume we're using my favorite distro -
 debian - and use the [[https://wiki.debian.org/aptitude][aptitude package manager]] to install docker.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 if [ $(which docker) ]
 then
     echo "docker is already installed"
@@ -1320,8 +1320,8 @@ else
     curl -fssl https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     sudo add-apt-repository \
      "deb [arch=amd64] https://download.docker.com/linux/debian \
-         $(lsb_release -cs) \
-         stable"
+	 $(lsb_release -cs) \
+	 stable"
     sudo apt-get update
     sudo apt install -y docker-ce docker-ce-cli containerd.io
     sudo groupadd docker
@@ -1340,7 +1340,7 @@ this comes bundled in the homebrew cask version of docker, so there's
 nothing for us to do. however on gnu/linux hosts we need to do some
 additional steps to get everything up and running.
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 if [ $(which docker-compose) ]
 then
     echo "installing docker-compose..."
@@ -1373,7 +1373,7 @@ configuration of these packages.
 
 install the custom profile themes packaged by these =.files.=
 
-#+begin_src sh :tangle (when (eq system-type 'darwin) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 open ~/*.itermcolors
 #+end_src
 
@@ -1389,6 +1389,6 @@ open ~/*.itermcolors
 
 Install the custom profile themes packaged by these =.files.=
 
-#+begin_src sh :tangle (when (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup")
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 dconf load /org/gnome/terminal/legacy/profiles:/ < ~/.gnome-terminal-profiles.dconf
 #+end_src
