@@ -83,9 +83,9 @@ provided by this document.
 ;; In addition to the GNU repository look for external packages in
 ;; these repositories.
 (add-to-list 'package-archives
-         '("melpa" . "https://melpa.org/packages/"))
+     '("melpa" . "https://melpa.org/packages/"))
 (add-to-list 'package-archives
-         '("org" . "http://orgmode.org/elpa/"))
+     '("org" . "http://orgmode.org/elpa/"))
 
 ;; Make sure `use-package' is available.
 (unless (package-installed-p 'use-package)
@@ -318,7 +318,7 @@ disorienting when things like =find-file= start in a location other than
 =~/=.
 
 #+begin_src emacs-lisp
-  (setq default-directory "~/")
+(setq default-directory "~/")
 #+end_src
 
 ** Exposing =$PATH= to Emacs on MacOS hosts
@@ -335,13 +335,13 @@ programs. This is only executed if Emacs can detect that it is running
 on a MacOS host.
 
 #+begin_src emacs-lisp
-  (use-package exec-path-from-shell
-    :if (memq window-system '(mac ns x))
-    :ensure t
-    :config
-    (exec-path-from-shell-initialize)
-    (setq exec-path (cons "/opt/local/bin" exec-path))
-    (setenv "PATH" (concat "/opt/local/bin:" (getenv "PATH"))))
+(use-package exec-path-from-shell
+  :if (memq window-system '(mac ns x))
+  :ensure t
+  :config
+  (exec-path-from-shell-initialize)
+  (setq exec-path (cons "/opt/local/bin" exec-path))
+  (setenv "PATH" (concat "/opt/local/bin:" (getenv "PATH"))))
 #+end_src
 
 ** Disable GUI components
@@ -379,8 +379,8 @@ The following configuration achieves these goals:
   (setq use-dialog-box t)               ; only for mouse events
   (setq inhibit-splash-screen t)
   :bind (("C-z" . nil)
-     ("C-x C-z" . nil)
-     ("C-h h" . nil)))
+         ("C-x C-z" . nil)
+         ("C-h h" . nil)))
 #+end_src
 
 ** Always rebuild configuration and refresh package cache
@@ -411,21 +411,21 @@ packages, which is used to speed up boot times, /ceteris paribus/. The
 "quickstart" method is part of Emacs 27 or higher
 
 #+begin_src emacs-lisp
-  (use-package emacs
-    :config
-    (defun indiebrain/rebuild-emacs-init ()
-      "Produce Elisp init from my Org dotemacs.
+(use-package emacs
+  :config
+  (defun indiebrain/rebuild-emacs-init ()
+    "Produce Elisp init from my Org dotemacs.
   Add this to `kill-emacs-hook', to use the newest file in the next
   session. The idea is to reduce startup time, though just by
   rolling it over to the end of a session rather than the beginning
   of it."
-      (let ((init-el "~/.emacs.d/emacs-init.el")
-      (init-org "~/.emacs.d/emacs-init.org"))
-  (when (file-exists-p init-el)
-    (delete-file init-el))
-  (org-babel-tangle-file init-org init-el)))
-    :hook ((kill-emacs-hook . indiebrain/rebuild-emacs-init)
-     (kill-emacs-hook . package-quickstart-refresh)))
+    (let ((init-el "~/.emacs.d/emacs-init.el")
+          (init-org "~/.emacs.d/emacs-init.org"))
+      (when (file-exists-p init-el)
+        (delete-file init-el))
+      (org-babel-tangle-file init-org init-el)))
+  :hook ((kill-emacs-hook . indiebrain/rebuild-emacs-init)
+         (kill-emacs-hook . package-quickstart-refresh)))
 #+end_src
 
 ** Remove mode-line "lighters"
@@ -436,9 +436,9 @@ packages, which is used to speed up boot times, /ceteris paribus/. The
 Noted in the second [[#h:e7cceaf7-6d43-4fb7-b510-7e37480abebd][About use-package]], we can remove the "lighter" text from the mode-line via the =diminish= package.
 
 #+begin_src emacs-lisp
-  (use-package diminish
-    :ensure
-    :after use-package)
+(use-package diminish
+  :ensure
+  :after use-package)
 #+end_src
 
 ** Put customization settings in a "custom.el"
@@ -454,18 +454,18 @@ such collisions from happening. This file is intended to be
 disposable.
 
 #+begin_src emacs-lisp
-  (use-package cus-edit
-    :config
-    (defvar indiebrain/custom-file "~/.emacs.d/custom.el")
+(use-package cus-edit
+  :config
+  (defvar indiebrain/custom-file "~/.emacs.d/custom.el")
 
-    (setq custom-file indiebrain/custom-file)
+  (setq custom-file indiebrain/custom-file)
 
-    (defun indiebrain/cus-edit ()
-      (let ((file indiebrain/custom-file))
-  (unless (file-exists-p file)
-    (make-empty-file file))
-  (load-file file)))
-    :hook (after-init-hook . indiebrain/cus-edit))
+  (defun indiebrain/cus-edit ()
+    (let ((file indiebrain/custom-file))
+      (unless (file-exists-p file)
+        (make-empty-file file))
+      (load-file file)))
+  :hook (after-init-hook . indiebrain/cus-edit))
 #+end_src
 
 ** Fundamentals for Hydras
@@ -513,8 +513,8 @@ and the criteria for exiting.
 Also check [[https://github.com/abo-abo/hydra][the project's source]] for more information.
 
 #+begin_src emacs-lisp
-  (use-package hydra
-    :ensure)
+(use-package hydra
+  :ensure)
 #+end_src
 
 ** Load the color-theme
@@ -535,58 +535,58 @@ the vivendi theme, and a slightly lighter than full-black background
 for the operandi theme.
 
 #+begin_src emacs-lisp
-  (setq modus-vivendi-theme-override-colors-alist
-  '(("bg-main" . "#272727")
-    ("bg-alt"  . "#655b53")))
+(setq modus-vivendi-theme-override-colors-alist
+      '(("bg-main" . "#272727")
+        ("bg-alt"  . "#655b53")))
 
-  (setq modus-operandi-theme-override-colors-alist
-  '(("bg-main" . "#eee8d5")
-    ("bg-alt"  . "#fdf6e3")))
+(setq modus-operandi-theme-override-colors-alist
+      '(("bg-main" . "#eee8d5")
+        ("bg-alt"  . "#fdf6e3")))
 
-  (defmacro modus-themes-format-sexp (sexp &rest objects)
-    `(eval (read (format ,(format "%S" sexp) ,@objects))))
+(defmacro modus-themes-format-sexp (sexp &rest objects)
+  `(eval (read (format ,(format "%S" sexp) ,@objects))))
 
-  (dolist (theme '("vivendi" "operandi"))
-    (modus-themes-format-sexp
-     (defun modus-%1$s-theme-load ()
-       (setq modus-%1$s-theme-slanted-constructs t
-       modus-%1$s-theme-bold-constructs t
-       modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
-       modus-%1$s-theme-mode-line 'moody ; {nil,'3d,'moody}
-       modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
-       modus-%1$s-theme-intense-hl-line t
-       modus-%1$s-theme-intense-paren-match t
-       modus-%1$s-theme-links 'faint ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
-       modus-%1$s-theme-no-mixed-fonts nil
-       modus-%1$s-theme-prompts nil ; {nil,'subtle,'intense}
-       modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
-       modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
-       modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
-       modus-%1$s-theme-headings  ; Read further below in the manual for this one
-       '((1 . section)
-     (2 . line)
-     (t . rainbow-line-no-bold))
-       modus-%1$s-theme-variable-pitch-headings nil
-       modus-%1$s-theme-scale-headings t
-       modus-%1$s-theme-scale-1 1.1
-       modus-%1$s-theme-scale-2 1.15
-       modus-%1$s-theme-scale-3 1.21
-       modus-%1$s-theme-scale-4 1.27
-       modus-%1$s-theme-scale-5 1.33)
-       (load-theme 'modus-%1$s t))
-     theme))
+(dolist (theme '("vivendi" "operandi"))
+  (modus-themes-format-sexp
+   (defun modus-%1$s-theme-load ()
+     (setq modus-%1$s-theme-slanted-constructs t
+           modus-%1$s-theme-bold-constructs t
+           modus-%1$s-theme-fringes 'subtle ; {nil,'subtle,'intense}
+           modus-%1$s-theme-mode-line 'moody ; {nil,'3d,'moody}
+           modus-%1$s-theme-syntax 'alt-syntax ; {nil,faint,'yellow-comments,'green-strings,'yellow-comments-green-strings,'alt-syntax,'alt-syntax-yellow-comments}
+           modus-%1$s-theme-intense-hl-line t
+           modus-%1$s-theme-intense-paren-match t
+           modus-%1$s-theme-links 'faint ; {nil,'faint,'neutral-underline,'faint-neutral-underline,'no-underline}
+           modus-%1$s-theme-no-mixed-fonts nil
+           modus-%1$s-theme-prompts nil ; {nil,'subtle,'intense}
+           modus-%1$s-theme-completions 'moderate ; {nil,'moderate,'opinionated}
+           modus-%1$s-theme-diffs nil ; {nil,'desaturated,'fg-only}
+           modus-%1$s-theme-org-blocks 'grayscale ; {nil,'grayscale,'rainbow}
+           modus-%1$s-theme-headings  ; Read further below in the manual for this one
+           '((1 . section)
+             (2 . line)
+             (t . rainbow-line-no-bold))
+           modus-%1$s-theme-variable-pitch-headings nil
+           modus-%1$s-theme-scale-headings t
+           modus-%1$s-theme-scale-1 1.1
+           modus-%1$s-theme-scale-2 1.15
+           modus-%1$s-theme-scale-3 1.21
+           modus-%1$s-theme-scale-4 1.27
+           modus-%1$s-theme-scale-5 1.33)
+     (load-theme 'modus-%1$s t))
+   theme))
 
-  (defun modus-themes-toggle ()
-    "Toggle between `modus-operandi' and `modus-vivendi' themes."
-    (interactive)
-    (if (eq (car custom-enabled-themes) 'modus-operandi)
-  (progn
-    (disable-theme 'modus-operandi)
-    (modus-vivendi-theme-load))
-      (disable-theme 'modus-vivendi)
-      (modus-operandi-theme-load)))
+(defun modus-themes-toggle ()
+  "Toggle between `modus-operandi' and `modus-vivendi' themes."
+  (interactive)
+  (if (eq (car custom-enabled-themes) 'modus-operandi)
+      (progn
+        (disable-theme 'modus-operandi)
+        (modus-vivendi-theme-load))
+    (disable-theme 'modus-vivendi)
+    (modus-operandi-theme-load)))
 
-  (modus-vivendi-theme-load)
+(modus-vivendi-theme-load)
 #+end_src
 
 ** Typeface configurations
@@ -658,9 +658,9 @@ This configures the behavior of =company-mode= itself, such that:
   :ensure
   :diminish
   :bind (:map company-active-map
-     ("C-n" . company-select-next)
-     ("C-p" . company-select-previous)
-     ("C-:" . company-complete))
+              ("C-n" . company-select-next)
+              ("C-p" . company-select-previous)
+              ("C-:" . company-complete))
   :config
   (setq company-idle-delay 0.3))
 #+end_src
@@ -718,12 +718,12 @@ description here:
 (use-package helm
   :ensure
   :bind (("C-x f" . helm-for-files)
-     ("M-x" . helm-M-x))
+         ("M-x" . helm-M-x))
   :config
   (use-package helm-config)
   (setq helm-candidate-number-limit 100
-    helm-ff-skip-boring-files t
-    helm-M-x-fuzzy-match t))
+        helm-ff-skip-boring-files t
+        helm-M-x-fuzzy-match t))
 #+end_src
 
 ** Search configuration and extensions
@@ -809,9 +809,9 @@ URL from those available using completion methods.
   (setq list-matching-lines-jump-to-current-line t)
   ;; See my "Modus themes" for these inherited faces
   (setq list-matching-lines-buffer-name-face
-    '(:inherit modus-theme-intense-neutral :weight bold))
+        '(:inherit modus-theme-intense-neutral :weight bold))
   (setq list-matching-lines-current-line-face
-    '(:inherit modus-theme-special-mild))
+        '(:inherit modus-theme-special-mild))
 
   (defun indiebrain/occur-url ()
     "Produce list with all URLs in the current buffer."
@@ -825,9 +825,9 @@ Also see `indiebrain/occur-url'."
     (interactive)
     (let ((matches nil))
       (save-excursion
-    (goto-char (point-min))
-    (while (search-forward-regexp browse-url-button-regexp nil t)
-      (push (match-string-no-properties 0) matches)))
+        (goto-char (point-min))
+        (while (search-forward-regexp browse-url-button-regexp nil t)
+          (push (match-string-no-properties 0) matches)))
       (eww
        (completing-read "Browse URL: " matches nil t))))
 
@@ -836,16 +836,16 @@ Also see `indiebrain/occur-url'."
 Meant to economise on key bindings."
     (interactive "P")
     (if arg
-    (indiebrain/occur-url)
+        (indiebrain/occur-url)
       (indiebrain/occur-browse-url-in-buffer)))
 
   :hook ((occur-mode-hook . hl-line-mode)
-     (occur-mode-hook . (lambda ()
-                  (toggle-truncate-lines t))))
+         (occur-mode-hook . (lambda ()
+                              (toggle-truncate-lines t))))
   :bind (("M-s u" . indiebrain/occur-visit-or-list-urls)
-     ("M-s M-o" . multi-occur)
-     :map occur-mode-map
-     ("t" . toggle-truncate-lines)))
+         ("M-s M-o" . multi-occur)
+         :map occur-mode-map
+         ("t" . toggle-truncate-lines)))
 #+end_src
 
 *** wgrep (writable grep)
@@ -867,8 +867,8 @@ matches by leveraging the full power of Emacs' editing capabilities
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t)
   :bind (:map grep-mode-map
-          ("e" . wgrep-change-to-wgrep-mode)
-          ("C-x C-q" . wgrep-change-to-wgrep-mode)))
+              ("e" . wgrep-change-to-wgrep-mode)
+              ("C-x C-q" . wgrep-change-to-wgrep-mode)))
 #+end_src
 
 *** ripgrep (rg.el)
@@ -911,23 +911,23 @@ moving between file headings can be done with =M-{n,p}=.
   (setq rg-default-alias-fallback "all")
 
   (rg-define-search indiebrain/rg-vc-or-dir
-    "RipGrep in project root or present directory."
-    :query ask
-    :format regexp
-    :files "everything"
-    :dir (or (vc-root-dir)              ; search root project dir
-         default-directory)         ; or from the current dir
-    :confirm prefix
-    :flags ("--hidden -g !.git"))
+                    "RipGrep in project root or present directory."
+                    :query ask
+                    :format regexp
+                    :files "everything"
+                    :dir (or (vc-root-dir)              ; search root project dir
+                             default-directory)         ; or from the current dir
+                    :confirm prefix
+                    :flags ("--hidden -g !.git"))
 
   (rg-define-search indiebrain/rg-ref-in-dir
-    "RipGrep for thing at point in present directory."
-    :query point
-    :format regexp
-    :files "everything"
-    :dir default-directory
-    :confirm prefix
-    :flags ("--hidden -g !.git"))
+                    "RipGrep for thing at point in present directory."
+                    :query point
+                    :format regexp
+                    :files "everything"
+                    :dir default-directory
+                    :confirm prefix
+                    :flags ("--hidden -g !.git"))
 
   (defun indiebrain/rg-save-search-as-name ()
     "Save `rg' buffer, naming it after the current search query.
@@ -938,13 +938,13 @@ This function is meant to be mapped to a key in `rg-mode-map'."
       (rg-save-search-as-name (concat "«" pattern "»"))))
 
   :bind (("M-s g" . indiebrain/rg-vc-or-dir)
-     ("M-s r" . indiebrain/rg-ref-in-dir)
-     :map rg-mode-map
-     ("s" . indiebrain/rg-save-search-as-name)
-     ("C-n" . next-line)
-     ("C-p" . previous-line)
-     ("M-n" . rg-next-file)
-     ("M-p" . rg-prev-file)))
+         ("M-s r" . indiebrain/rg-ref-in-dir)
+         :map rg-mode-map
+         ("s" . indiebrain/rg-save-search-as-name)
+         ("C-n" . next-line)
+         ("C-p" . previous-line)
+         ("M-n" . rg-next-file)
+         ("M-p" . rg-prev-file)))
 #+end_src
 
 *** =helm-swoop= - interactive text selection
@@ -987,17 +987,17 @@ fulfilled by =occur=, but integrated into the =helm= system itself.
   ;; If you prefer fuzzy matching
   (setq helm-swoop-use-fuzzy-match t)
   :bind (("M-i" . 'helm-swoop)
-     ("M-I" . 'helm-swoop-back-to-last-point)
-     ("C-c M-i" . 'helm-multi-swoop)
-     ("C-x M-i" . 'helm-multi-swoop-all)
-     ;; When doing isearch, hand the word over to helm-swoop
-     :map isearch-mode-map
-     ("M-i" . helm-swoop-from-isearch)
-     ;; From helm-swoop to helm-multi-swoop-all
-     :map helm-swoop-map
-     ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
-     ;; Instead of helm-multi-swoop-all, you can also use helm-multi-swoop-current-mode
-     ("M-m" . 'helm-multi-swoop-current-mode-from-helm-swoop)))
+         ("M-I" . 'helm-swoop-back-to-last-point)
+         ("C-c M-i" . 'helm-multi-swoop)
+         ("C-x M-i" . 'helm-multi-swoop-all)
+         ;; When doing isearch, hand the word over to helm-swoop
+         :map isearch-mode-map
+         ("M-i" . helm-swoop-from-isearch)
+         ;; From helm-swoop to helm-multi-swoop-all
+         :map helm-swoop-map
+         ("M-i" . 'helm-multi-swoop-all-from-helm-swoop)
+         ;; Instead of helm-multi-swoop-all, you can also use helm-multi-swoop-current-mode
+         ("M-m" . 'helm-multi-swoop-current-mode-from-helm-swoop)))
 #+end_src
 *** The silver searcher
 :PROPERTIES:
@@ -1146,7 +1146,7 @@ atoms and constructs within the syntax of a program.
 (use-package expand-region
   :ensure
   :bind (("C-=" . 'er/expand-region)
-     ("C--" . 'er/contract-region)))
+         ("C--" . 'er/contract-region)))
 #+end_src
 
 * Directory, buffer, window management
@@ -1197,7 +1197,7 @@ copying and renaming/moving a file.
   (setq dired-recursive-deletes 'always)
   (setq delete-by-moving-to-trash t)
   (setq dired-listing-switches
-    "-AGFhlv")
+        "-AGFhlv")
   (setq dired-dwim-target t)
   ;; Note that the the syntax for `use-package' hooks is controlled by
   ;; the `use-package-hook-name-suffix' variable. The "-hook" suffix is
@@ -1221,21 +1221,21 @@ executable, each of which is a string."
        ,doc
        (interactive "P")
        (let* ((vc (vc-root-dir))
-          (dir (expand-file-name (or vc default-directory)))
-          (regexp (read-regexp
-               (format "%s matching REGEXP in %s: " ,prompt
-                   (propertize dir 'face 'bold))))
-          (names (process-lines "fd" ,@flags regexp dir))
-          (buf "*FD Dired*"))
-     (if names
-         (if arg
-         (dired (cons (generate-new-buffer-name buf) names))
-           (find-file
-        (completing-read (format "Items matching %s (%s): "
-                     (propertize regexp 'face 'success)
-                     (length names))
-                 names nil t))))
-     (user-error (format "No matches for « %s » in %s" regexp dir)))))
+              (dir (expand-file-name (or vc default-directory)))
+              (regexp (read-regexp
+                       (format "%s matching REGEXP in %s: " ,prompt
+                               (propertize dir 'face 'bold))))
+              (names (process-lines "fd" ,@flags regexp dir))
+              (buf "*FD Dired*"))
+         (if names
+             (if arg
+                 (dired (cons (generate-new-buffer-name buf) names))
+               (find-file
+                (completing-read (format "Items matching %s (%s): "
+                                         (propertize regexp 'face 'success)
+                                         (length names))
+                                 names nil t))))
+         (user-error (format "No matches for « %s » in %s" regexp dir)))))
 
   (indiebrain/dired-fd
    indiebrain/dired-fd-dirs
@@ -1256,27 +1256,27 @@ This relies on the external 'fd' executable."
   (defun contrib/cdb--bookmarked-directories ()
     (bookmark-maybe-load-default-file)
     (cl-loop for (name . props) in bookmark-alist
-         for fn = (cdr (assq 'filename props))
-         when (and fn (string-suffix-p "/" fn))
-         collect (cons name fn)))
+             for fn = (cdr (assq 'filename props))
+             when (and fn (string-suffix-p "/" fn))
+             collect (cons name fn)))
 
   (defun contrib/cd-bookmark (bm)
     "Insert the path of a bookmarked directory."
     (interactive
      (list (let ((enable-recursive-minibuffers t))
-         (completing-read
-          "Directory: " (contrib/cdb--bookmarked-directories) nil t))))
+             (completing-read
+              "Directory: " (contrib/cdb--bookmarked-directories) nil t))))
     (when (minibufferp)
       (delete-region (minibuffer-prompt-end) (point-max)))
     (insert (cdr (assoc bm (contrib/cdb--bookmarked-directories)))))
 
   :bind (("M-s d" . indiebrain/dired-fd-dirs)
-     ("M-s z" . indiebrain/dired-fd-files-and-dirs)
-     :map dired-mode-map
-     ("C-+" . dired-create-empty-file)
-     ("M-s f" . nil)
-     :map minibuffer-local-filename-completion-map
-     ("C-c d" . contrib/cd-bookmark)))
+         ("M-s z" . indiebrain/dired-fd-files-and-dirs)
+         :map dired-mode-map
+         ("C-+" . dired-create-empty-file)
+         ("M-s f" . nil)
+         :map minibuffer-local-filename-completion-map
+         ("C-c d" . contrib/cd-bookmark)))
 
 ;; NOTE de facto deprecated because of my `indiebrain/dired-fd' functions
 (use-package find-dired
@@ -1284,7 +1284,7 @@ This relies on the external 'fd' executable."
   :after dired
   :config
   (setq find-ls-option
-    '("-ls" . "-AGFhlv"))
+        '("-ls" . "-AGFhlv"))
   (setq find-name-arg "-iname"))
 
 (use-package async :ensure)
@@ -1395,16 +1395,16 @@ following ways:
   (setq ibuffer-use-header-line t)
   (setq ibuffer-default-shrink-to-minimum-size nil)
   (setq ibuffer-formats
-    '((mark modified read-only locked " "
-        (name 30 30 :left :elide)
-        " "
-        (size 9 -1 :right)
-        " "
-        (mode 16 16 :left :elide)
-        " " filename-and-process)
-      (mark " "
-        (name 16 -1)
-        " " filename)))
+        '((mark modified read-only locked " "
+                (name 30 30 :left :elide)
+                " "
+                (size 9 -1 :right)
+                " "
+                (mode 16 16 :left :elide)
+                " " filename-and-process)
+          (mark " "
+                (name 16 -1)
+                " " filename)))
   (setq ibuffer-saved-filter-groups nil)
   (setq ibuffer-old-time 48)
 
@@ -1414,17 +1414,17 @@ With \\[universal-argument] produce an `ibuffer' filtered
 accordingly. Else use standard completion."
     (interactive "P")
     (let* ((major major-mode)
-       (prompt "Buffers for ")
-       (mode-string (format "%s" major))
-       (mode-string-pretty (propertize mode-string 'face 'success)))
+           (prompt "Buffers for ")
+           (mode-string (format "%s" major))
+           (mode-string-pretty (propertize mode-string 'face 'success)))
       (if arg
-      (ibuffer t (concat "*" prompt mode-string "*")
-           (list (cons 'used-mode major)))
-    (switch-to-buffer
-     (read-buffer
-      (concat prompt mode-string-pretty ": ") nil t
-      (lambda (pair) ; pair is (name-string . buffer-object)
-        (with-current-buffer (cdr pair) (derived-mode-p major))))))))
+          (ibuffer t (concat "*" prompt mode-string "*")
+                   (list (cons 'used-mode major)))
+        (switch-to-buffer
+         (read-buffer
+          (concat prompt mode-string-pretty ": ") nil t
+          (lambda (pair) ; pair is (name-string . buffer-object)
+            (with-current-buffer (cdr pair) (derived-mode-p major))))))))
 
   (defun indiebrain/buffers-vc-root (&optional arg)
     "Select buffers that match the present `vc-root-dir'.
@@ -1434,30 +1434,30 @@ accordingly. Else use standard completion.
 When no VC root is available, use standard `switch-to-buffer'."
     (interactive "P")
     (let* ((root (vc-root-dir))
-       (prompt "Buffers for VC ")
-       (vc-string (format "%s" root))
-       (vc-string-pretty (propertize vc-string 'face 'success)))
+           (prompt "Buffers for VC ")
+           (vc-string (format "%s" root))
+           (vc-string-pretty (propertize vc-string 'face 'success)))
       (if root
-      (if arg
-          (ibuffer t (concat "*" prompt vc-string "*")
-               (list (cons 'filename (expand-file-name root))))
-        (switch-to-buffer
-         (read-buffer
-          (concat prompt vc-string-pretty ": ") nil t
-          (lambda (pair) ; pair is (name-string . buffer-object)
-        (with-current-buffer (cdr pair) (string= (vc-root-dir) root))))))
-    (call-interactively 'switch-to-buffer))))
+          (if arg
+              (ibuffer t (concat "*" prompt vc-string "*")
+                       (list (cons 'filename (expand-file-name root))))
+            (switch-to-buffer
+             (read-buffer
+              (concat prompt vc-string-pretty ": ") nil t
+              (lambda (pair) ; pair is (name-string . buffer-object)
+                (with-current-buffer (cdr pair) (string= (vc-root-dir) root))))))
+        (call-interactively 'switch-to-buffer))))
 
   :hook (ibuffer-mode-hook . hl-line-mode)
   :bind (("M-s b" . indiebrain/buffers-major-mode)
-     ("M-s v" . indiebrain/buffers-vc-root)
-     ("C-x C-b" . ibuffer)
-     :map ibuffer-mode-map
-     ("* f" . ibuffer-mark-by-file-name-regexp)
-     ("* g" . ibuffer-mark-by-content-regexp) ; "g" is for "grep"
-     ("* n" . ibuffer-mark-by-name-regexp)
-     ("s n" . ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
-     ("/ g" . ibuffer-filter-by-content)))
+         ("M-s v" . indiebrain/buffers-vc-root)
+         ("C-x C-b" . ibuffer)
+         :map ibuffer-mode-map
+         ("* f" . ibuffer-mark-by-file-name-regexp)
+         ("* g" . ibuffer-mark-by-content-regexp) ; "g" is for "grep"
+         ("* n" . ibuffer-mark-by-name-regexp)
+         ("s n" . ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
+         ("/ g" . ibuffer-filter-by-content)))
 #+end_src
 
 *** Scratch buffers per-major-mode
@@ -1479,24 +1479,24 @@ idea of copying the region from [[https://gist.github.com/eev2/52edbfdb645e26aef
   :ensure
   :config
   (defun indiebrain/scratch-buffer-setup ()
-  "Add contents to `scratch' buffer and name it accordingly.
+    "Add contents to `scratch' buffer and name it accordingly.
 If region is active, add its contents to the new buffer."
-  (let* ((mode major-mode)
-     (string (format "Scratch buffer for: %s\n\n" mode))
-     (region (with-current-buffer (current-buffer)
-             (if (region-active-p)
-             (buffer-substring-no-properties
-              (region-beginning)
-              (region-end)))
-             ""))
-     (text (concat string region)))
-    (when scratch-buffer
-      (save-excursion
-    (insert text)
-    (goto-char (point-min))
-    (comment-region (point-at-bol) (point-at-eol)))
-      (forward-line 2))
-    (rename-buffer (format "*Scratch for %s*" mode) t)))
+    (let* ((mode major-mode)
+           (string (format "Scratch buffer for: %s\n\n" mode))
+           (region (with-current-buffer (current-buffer)
+                     (if (region-active-p)
+                         (buffer-substring-no-properties
+                          (region-beginning)
+                          (region-end)))
+                     ""))
+           (text (concat string region)))
+      (when scratch-buffer
+        (save-excursion
+          (insert text)
+          (goto-char (point-min))
+          (comment-region (point-at-bol) (point-at-eol)))
+        (forward-line 2))
+      (rename-buffer (format "*Scratch for %s*" mode) t)))
   :hook (scratch-create-buffer-hook . indiebrain/scratch-buffer-setup)
   :bind ("C-c s" . scratch))
 #+end_src
@@ -1566,8 +1566,8 @@ managers such as DWM, BSPWM refer to this state as 'monocle'."
     :lighter " [M]"
     :global nil
     (if (one-window-p)
-    (when indiebrain/window-configuration
-      (set-window-configuration indiebrain/window-configuration))
+        (when indiebrain/window-configuration
+          (set-window-configuration indiebrain/window-configuration))
       (setq indiebrain/window-configuration (current-window-configuration))
       (delete-other-windows)))
   :bind ("s-m" . indiebrain/window-single-toggle))
@@ -1595,14 +1595,14 @@ where more than those it would actually speed up my workflow.
   :config
   (setq windmove-create-window nil)     ; Emacs 27.1
   :bind (("<s-up>" . windmove-up)
-     ("<s-right>" . windmove-right)
-     ("<s-down>" . windmove-down)
-     ("<s-left>" . windmove-left)
-     ;; numpad keys clockwise: 8 6 2 4
-     ("<kp-up>" . windmove-up)
-     ("<kp-right>" . windmove-right)
-     ("<kp-down>" . windmove-down)
-     ("<kp-left>" . windmove-left)))
+         ("<s-right>" . windmove-right)
+         ("<s-down>" . windmove-down)
+         ("<s-left>" . windmove-left)
+         ;; numpad keys clockwise: 8 6 2 4
+         ("<kp-up>" . windmove-up)
+         ("<kp-right>" . windmove-right)
+         ("<kp-down>" . windmove-down)
+         ("<kp-left>" . windmove-left)))
 #+end_src
 
 * Applications and utilities
@@ -1630,34 +1630,34 @@ This configures the function of date-time behavior.
   states, I communicate time in this manner.
 
 #+begin_src emacs-lisp
-  (use-package calendar
+(use-package calendar
+  :config
+  (setq calendar-mark-diary-entries-flag t)
+  (setq calendar-time-display-form
+        '(24-hours ":" minutes
+                   (when time-zone
+                     (concat " (" time-zone ")"))))
+  (setq calendar-week-start-day 1)      ; Monday
+  (setq calendar-date-style 'iso)
+  (setq calendar-christian-all-holidays-flag nil)
+  (setq calendar-holidays
+        (append holiday-local-holidays  ; TODO set local holidays
+                holiday-solar-holidays))
+
+  (use-package solar
     :config
-    (setq calendar-mark-diary-entries-flag t)
-    (setq calendar-time-display-form
-    '(24-hours ":" minutes
-     (when time-zone
-       (concat " (" time-zone ")"))))
-    (setq calendar-week-start-day 1)      ; Monday
-    (setq calendar-date-style 'iso)
-    (setq calendar-christian-all-holidays-flag nil)
-    (setq calendar-holidays
-    (append holiday-local-holidays  ; TODO set local holidays
-      holiday-solar-holidays))
+    (setq calendar-latitude 39.952583
+          calendar-longitude -75.165222))
 
-    (use-package solar
-      :config
-      (setq calendar-latitude 39.952583
-      calendar-longitude -75.165222))
+  (use-package lunar
+    :config
+    (setq lunar-phase-names
+          '("New Moon"
+            "First Quarter Moon"
+            "Full Moon"
+            "Last Quarter Moon")))
 
-    (use-package lunar
-      :config
-      (setq lunar-phase-names
-      '("New Moon"
-    "First Quarter Moon"
-    "Full Moon"
-    "Last Quarter Moon")))
-
-    :hook (calendar-today-visible-hook . calendar-mark-today))
+  :hook (calendar-today-visible-hook . calendar-mark-today))
 #+end_src
 
 ** Diary
@@ -1669,25 +1669,25 @@ Emacs core contains a package used to capture tasks and generate
 notifications for them.
 
 #+begin_src emacs-lisp
-  (use-package diary-lib
-    :config
-    (setq diary-file "~/.emacs.d/diary")
-    (setq diary-entry-marker "diary")
-    (setq diary-show-holidays-flag t)
-    (setq diary-header-line-flag nil)
-    (setq diary-mail-addr "aaron.kuehler@gmail.com")
-    (setq diary-mail-days 3)
-    (setq diary-number-of-entries 3)
-    (setq diary-comment-start ";")
-    (setq diary-comment-end "")
-    (setq diary-date-forms
-    '((day "/" month "[^/0-9]")
-      (day "/" month "/" year "[^0-9]")
-      (day " *" monthname " *" year "[^0-9]")
-      (monthname " *" day "[^,0-9]")
-      (monthname " *" day ", *" year "[^0-9]")
-      (year "[-/]" month "[-/]" day "[^0-9]")
-      (dayname "\\W"))))
+(use-package diary-lib
+  :config
+  (setq diary-file "~/.emacs.d/diary")
+  (setq diary-entry-marker "diary")
+  (setq diary-show-holidays-flag t)
+  (setq diary-header-line-flag nil)
+  (setq diary-mail-addr "aaron.kuehler@gmail.com")
+  (setq diary-mail-days 3)
+  (setq diary-number-of-entries 3)
+  (setq diary-comment-start ";")
+  (setq diary-comment-end "")
+  (setq diary-date-forms
+        '((day "/" month "[^/0-9]")
+          (day "/" month "/" year "[^0-9]")
+          (day " *" monthname " *" year "[^0-9]")
+          (monthname " *" day "[^,0-9]")
+          (monthname " *" day ", *" year "[^0-9]")
+          (year "[-/]" month "[-/]" day "[^0-9]")
+          (dayname "\\W"))))
 #+end_src
 
 ** Manual pages (manpages) reader
@@ -1766,7 +1766,7 @@ However, Emacs also has a built in mode for quickly navigating
 manpages. This has the added benefit of enhanced typography,
 navigation, etc provided by Emacs.
 
- What you can do inside such a buffer (with minor tweaks by me):
+What you can do inside such a buffer (with minor tweaks by me):
 
 - =i= will go to the information node you want using completion (same
   principle as with the Info pages of C-h i and the like)
@@ -1782,8 +1782,8 @@ navigation, etc provided by Emacs.
 #+begin_src emacs-lisp
 (use-package man
   :bind (:map Man-mode-map
-    ("i" . Man-goto-section)
-    ("g" . Man-update-manpage)))
+              ("i" . Man-goto-section)
+              ("g" . Man-update-manpage)))
 #+end_src
 
 ** Org
@@ -1842,7 +1842,7 @@ Additional notes on less obvious settings:
   terribly confusing and unpredictable. - All the markup characters should be hidden from view, in the same
   way links are. This generally reduces the distractions in the
   document.
--
+  -
 - The return key should never follow a link because it is more likely
   to be invoked by accident. Use =C-c C-o= instead.
 - Setting =org-loop-over-headlines-in-active-region= ensures that
@@ -1851,96 +1851,96 @@ Additional notes on less obvious settings:
   don't touch the sub-tree headers.
 
 #+begin_src emacs-lisp
-  (use-package org
-    :config
-    ;; agenda and basic directory structure
-    (setq org-directory "~/Org")
-    (setq org-default-notes-file "~/Org/notes.org")
-    (setq org-agenda-files
-    '("~/Org"
-      "~/.emacs.d"
-      "~/Documents"))
-    ;; refile, todo
-    (setq org-refile-targets
-    '((org-agenda-files . (:maxlevel . 2))
-      (nil . (:maxlevel . 2))))
-    (setq org-refile-use-outline-path t)
-    (setq org-refile-allow-creating-parent-nodes 'confirm)
-    (setq org-refile-use-cache t)
-    (setq org-reverse-note-order nil)
-    (setq org-todo-keywords
-    '((sequence "TODO(t)" "|" "DONE(D)" "CANCEL(C)")
-      (sequence "MEET(m)" "|" "MET(M)")
-      (sequence "STUDY(s)" "|" "STUDIED(S)")
-      (sequence "WRITE(w)" "|" "WROTE(W)")))
-    (setq org-todo-keyword-faces
-    '(("MEET" . '(font-lock-preprocessor-face org-todo))
-      ("STUDY" . '(font-lock-variable-name-face org-todo))
-      ("WRITE" . '(font-lock-type-face org-todo))))
-    (setq org-priority-faces
-    '((?A . '(org-scheduled-today org-priority))
-      (?B . org-priority)
-      (?C . '(shadow org-priority))))
-    (setq org-fontify-done-headline nil)
-    (setq org-fontify-quote-and-verse-blocks t)
-    (setq org-fontify-whole-heading-line nil)
-    (setq org-fontify-whole-block-delimiter-line t)
-    (setq org-enforce-todo-dependencies t)
-    (setq org-enforce-todo-checkbox-dependencies t)
-    (setq org-track-ordered-property-with-tag t)
-    (setq org-highest-priority ?A)
-    (setq org-lowest-priority ?C)
-    (setq org-default-priority ?A)
-    ;; tags
-    (setq org-tag-alist                   ; TODO review org tag list
-    '((:startgroup)
-      ("@work")
-      ("@priv")
-      (:endgroup)
-      ("emacs")
-      ("modus")
-      ("politics")
-      ("economics")
-      ("philosophy")
-      ("paper")
-      ("book")
-      ("essay")
-      ("article")
-      ("mail")
-      ("website")))
-    ;; code blocks
-    (setq org-confirm-babel-evaluate nil)
-    ;; log
-    (setq org-log-done 'time)
-    (setq org-log-note-clock-out nil)
-    (setq org-log-redeadline nil)
-    (setq org-log-reschedule nil)
-    (setq org-read-date-prefer-future 'time)
-    ;; general
-    (setq org-adapt-indentation nil)      ; No, thanks!
-    (setq org-special-ctrl-a/e nil)
-    (setq org-special-ctrl-k nil)
-    (setq org-M-RET-may-split-line '((default . nil)))
-    (setq org-hide-emphasis-markers t)
-    (setq org-hide-macro-markers t)
-    (setq org-hide-leading-stars nil)
-    (setq org-structure-template-alist    ; CHANGED in Org 9.3, Emacs 27.1
-    '(("s" . "src")
-      ("E" . "src emacs-lisp")
-      ("e" . "example")
-      ("q" . "quote")
-      ("v" . "verse")
-      ("V" . "verbatim")
-      ("c" . "center")
-      ("C" . "comment")))
-    (setq org-catch-invisible-edits 'show)
-    (setq org-return-follows-link nil)
-    (setq org-loop-over-headlines-in-active-region 'start-level)
-    (setq org-imenu-depth 7)
-    (setq org-modules '(ol-gnus ol-info ol-eww))
-    :bind (:map org-mode-map
-    ("<C-return>" . nil)
-    ("<C-S-return>" . nil)))
+(use-package org
+  :config
+  ;; agenda and basic directory structure
+  (setq org-directory "~/Org")
+  (setq org-default-notes-file "~/Org/notes.org")
+  (setq org-agenda-files
+        '("~/Org"
+          "~/.emacs.d"
+          "~/Documents"))
+  ;; refile, todo
+  (setq org-refile-targets
+        '((org-agenda-files . (:maxlevel . 2))
+          (nil . (:maxlevel . 2))))
+  (setq org-refile-use-outline-path t)
+  (setq org-refile-allow-creating-parent-nodes 'confirm)
+  (setq org-refile-use-cache t)
+  (setq org-reverse-note-order nil)
+  (setq org-todo-keywords
+        '((sequence "TODO(t)" "|" "DONE(D)" "CANCEL(C)")
+          (sequence "MEET(m)" "|" "MET(M)")
+          (sequence "STUDY(s)" "|" "STUDIED(S)")
+          (sequence "WRITE(w)" "|" "WROTE(W)")))
+  (setq org-todo-keyword-faces
+        '(("MEET" . '(font-lock-preprocessor-face org-todo))
+          ("STUDY" . '(font-lock-variable-name-face org-todo))
+          ("WRITE" . '(font-lock-type-face org-todo))))
+  (setq org-priority-faces
+        '((?A . '(org-scheduled-today org-priority))
+          (?B . org-priority)
+          (?C . '(shadow org-priority))))
+  (setq org-fontify-done-headline nil)
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-fontify-whole-heading-line nil)
+  (setq org-fontify-whole-block-delimiter-line t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-enforce-todo-checkbox-dependencies t)
+  (setq org-track-ordered-property-with-tag t)
+  (setq org-highest-priority ?A)
+  (setq org-lowest-priority ?C)
+  (setq org-default-priority ?A)
+  ;; tags
+  (setq org-tag-alist                   ; TODO review org tag list
+        '((:startgroup)
+          ("@work")
+          ("@priv")
+          (:endgroup)
+          ("emacs")
+          ("modus")
+          ("politics")
+          ("economics")
+          ("philosophy")
+          ("paper")
+          ("book")
+          ("essay")
+          ("article")
+          ("mail")
+          ("website")))
+  ;; code blocks
+  (setq org-confirm-babel-evaluate nil)
+  ;; log
+  (setq org-log-done 'time)
+  (setq org-log-note-clock-out nil)
+  (setq org-log-redeadline nil)
+  (setq org-log-reschedule nil)
+  (setq org-read-date-prefer-future 'time)
+  ;; general
+  (setq org-adapt-indentation nil)      ; No, thanks!
+  (setq org-special-ctrl-a/e nil)
+  (setq org-special-ctrl-k nil)
+  (setq org-M-RET-may-split-line '((default . nil)))
+  (setq org-hide-emphasis-markers t)
+  (setq org-hide-macro-markers t)
+  (setq org-hide-leading-stars nil)
+  (setq org-structure-template-alist    ; CHANGED in Org 9.3, Emacs 27.1
+        '(("s" . "src")
+          ("E" . "src emacs-lisp")
+          ("e" . "example")
+          ("q" . "quote")
+          ("v" . "verse")
+          ("V" . "verbatim")
+          ("c" . "center")
+          ("C" . "comment")))
+  (setq org-catch-invisible-edits 'show)
+  (setq org-return-follows-link nil)
+  (setq org-loop-over-headlines-in-active-region 'start-level)
+  (setq org-imenu-depth 7)
+  (setq org-modules '(ol-gnus ol-info ol-eww))
+  :bind (:map org-mode-map
+              ("<C-return>" . nil)
+              ("<C-S-return>" . nil)))
 #+end_src
 
 *** Links
@@ -2021,47 +2021,47 @@ respective headings.
   :after org
   :config
   (setq org-capture-templates
-  `(("a" "Article to write" entry
-     (file+headline "tasks.org" "Writing list")
-     ,(concat "* WRITE %^{Title} %^g\n"
-    "SCHEDULED: %^t\n"
-    ":PROPERTIES:\n"
-    ":CAPTURED: %U\n:END:\n\n"
-    "%i%?"))
-    ("b" "Basic task for future review" entry
-     (file+headline "tasks.org" "Basic tasks that need to be reviewed")
-     ,(concat "* %^{Title}\n"
-    ":PROPERTIES:\n"
-    ":CAPTURED: %U\n"
-    ":END:\n\n"
-    "%i%l"))
-    ("w" "Work")
-    ("wt" "Task or assignment" entry
-     (file+headline "work.org" "Tasks and assignments")
-     ,(concat "* TODO %^{Title} :@work:\n"
-    "SCHEDULED: %^t\n"
-    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
-    "%i%?"))
-    ("wm" "Meeting, event, appointment" entry
-     (file+headline "work.org" "Meetings, events, and appointments")
-     ,(concat "* MEET %^{Title} :@work:\n"
-    "SCHEDULED: %^T\n"
-    ":PROPERTIES:\n"
-    ":CAPTURED: %U\n:END:\n\n"
-    "%i%?"))
-    ("t" "Task with a due date" entry
-     (file+headline "tasks.org" "Task list with a date")
-     ,(concat "* %^{Scope of task||TODO|STUDY|MEET} %^{Title} %^g\n"
-    "SCHEDULED: %^t\n"
-    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
-    "%i%?"))))
+        `(("a" "Article to write" entry
+           (file+headline "tasks.org" "Writing list")
+           ,(concat "* WRITE %^{Title} %^g\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))
+          ("b" "Basic task for future review" entry
+           (file+headline "tasks.org" "Basic tasks that need to be reviewed")
+           ,(concat "* %^{Title}\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n"
+                    ":END:\n\n"
+                    "%i%l"))
+          ("w" "Work")
+          ("wt" "Task or assignment" entry
+           (file+headline "work.org" "Tasks and assignments")
+           ,(concat "* TODO %^{Title} :@work:\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))
+          ("wm" "Meeting, event, appointment" entry
+           (file+headline "work.org" "Meetings, events, and appointments")
+           ,(concat "* MEET %^{Title} :@work:\n"
+                    "SCHEDULED: %^T\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))
+          ("t" "Task with a due date" entry
+           (file+headline "tasks.org" "Task list with a date")
+           ,(concat "* %^{Scope of task||TODO|STUDY|MEET} %^{Title} %^g\n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+                    "%i%?"))))
 
   (defun contrib/org-capture-no-delete-windows (oldfun args)
     (cl-letf (((symbol-function 'delete-other-windows) 'ignore))
       (apply oldfun args)))
 
   (advice-add 'org-capture-place-template
-    :around 'contrib/org-capture-no-delete-windows)
+              :around 'contrib/org-capture-no-delete-windows)
 
   :bind ("C-c c" . org-capture))
 #+end_src
@@ -2118,200 +2118,200 @@ documentation facilities over each item, such as =C-h v=):
   need that kind of functionality.
 
 #+begin_src emacs-lisp
-  (use-package org-agenda
-    :after org
-    :config
-    ;; Basic setup
-    (setq org-agenda-span 14)
-    (setq org-agenda-start-on-weekday 1)  ; Monday
-    (setq org-agenda-confirm-kill t)
-    (setq org-agenda-show-all-dates t)
-    (setq org-agenda-show-outline-path nil)
-    (setq org-agenda-window-setup 'current-window)
-    (setq org-agenda-skip-comment-trees t)
-    (setq org-agenda-menu-show-matcher t)
-    (setq org-agenda-menu-two-columns nil)
-    (setq org-agenda-sticky nil)
-    (setq org-agenda-custom-commands-contexts nil)
-    (setq org-agenda-max-entries nil)
-    (setq org-agenda-max-todos nil)
-    (setq org-agenda-max-tags nil)
-    (setq org-agenda-max-effort nil)
+(use-package org-agenda
+  :after org
+  :config
+  ;; Basic setup
+  (setq org-agenda-span 14)
+  (setq org-agenda-start-on-weekday 1)  ; Monday
+  (setq org-agenda-confirm-kill t)
+  (setq org-agenda-show-all-dates t)
+  (setq org-agenda-show-outline-path nil)
+  (setq org-agenda-window-setup 'current-window)
+  (setq org-agenda-skip-comment-trees t)
+  (setq org-agenda-menu-show-matcher t)
+  (setq org-agenda-menu-two-columns nil)
+  (setq org-agenda-sticky nil)
+  (setq org-agenda-custom-commands-contexts nil)
+  (setq org-agenda-max-entries nil)
+  (setq org-agenda-max-todos nil)
+  (setq org-agenda-max-tags nil)
+  (setq org-agenda-max-effort nil)
 
-    ;; General view options
-    (setq org-agenda-prefix-format
-    '((agenda . " %i %-12:c%?-12t% s")
-      (todo . " %i %-12:c")
-      (tags . " %i %-12:c")
-      (search . " %i %-12:c")))
-    (setq org-agenda-sorting-strategy
-    '(((agenda habit-down time-up priority-down category-keep)
-       (todo priority-down category-keep)
-       (tags priority-down category-keep)
-       (search category-keep))))
-    (setq org-agenda-breadcrumbs-separator "->")
-    (setq org-agenda-todo-keyword-format "%-1s")
-    (setq org-agenda-diary-sexp-prefix nil)
-    (setq org-agenda-fontify-priorities 'cookies)
-    (setq org-agenda-category-icon-alist nil)
-    (setq org-agenda-remove-times-when-in-prefix nil)
-    (setq org-agenda-remove-timeranges-from-blocks nil)
-    (setq org-agenda-compact-blocks nil)
-    (setq org-agenda-block-separator ?—)
+  ;; General view options
+  (setq org-agenda-prefix-format
+        '((agenda . " %i %-12:c%?-12t% s")
+          (todo . " %i %-12:c")
+          (tags . " %i %-12:c")
+          (search . " %i %-12:c")))
+  (setq org-agenda-sorting-strategy
+        '(((agenda habit-down time-up priority-down category-keep)
+           (todo priority-down category-keep)
+           (tags priority-down category-keep)
+           (search category-keep))))
+  (setq org-agenda-breadcrumbs-separator "->")
+  (setq org-agenda-todo-keyword-format "%-1s")
+  (setq org-agenda-diary-sexp-prefix nil)
+  (setq org-agenda-fontify-priorities 'cookies)
+  (setq org-agenda-category-icon-alist nil)
+  (setq org-agenda-remove-times-when-in-prefix nil)
+  (setq org-agenda-remove-timeranges-from-blocks nil)
+  (setq org-agenda-compact-blocks nil)
+  (setq org-agenda-block-separator ?—)
 
-    (defun indiebrain/org-agenda-format-date-aligned (date)
-      "Format a DATE string for display in the daily/weekly agenda.
+  (defun indiebrain/org-agenda-format-date-aligned (date)
+    "Format a DATE string for display in the daily/weekly agenda.
   This function makes sure that dates are aligned for easy reading.
 
   Slightly tweaked version of `org-agenda-format-date-aligned' that
   produces dates with a fixed length."
-      (require 'cal-iso)
-      (let* ((dayname (calendar-day-name date t))
-       (day (cadr date))
-       (day-of-week (calendar-day-of-week date))
-       (month (car date))
-       (monthname (calendar-month-name month t))
-       (year (nth 2 date))
-       (iso-week (org-days-to-iso-week
-      (calendar-absolute-from-gregorian date)))
-       (weekyear (cond ((and (= month 1) (>= iso-week 52))
-        (1- year))
-       ((and (= month 12) (<= iso-week 1))
-        (1+ year))
-       (t year)))
-       (weekstring (if (= day-of-week 1)
-       (format " (W%02d)" iso-week)
-     "")))
-  (format "%s %2d %s %4d%s"
-    dayname day monthname year weekstring)))
+    (require 'cal-iso)
+    (let* ((dayname (calendar-day-name date t))
+           (day (cadr date))
+           (day-of-week (calendar-day-of-week date))
+           (month (car date))
+           (monthname (calendar-month-name month t))
+           (year (nth 2 date))
+           (iso-week (org-days-to-iso-week
+                      (calendar-absolute-from-gregorian date)))
+           (weekyear (cond ((and (= month 1) (>= iso-week 52))
+                            (1- year))
+                           ((and (= month 12) (<= iso-week 1))
+                            (1+ year))
+                           (t year)))
+           (weekstring (if (= day-of-week 1)
+                           (format " (W%02d)" iso-week)
+                         "")))
+      (format "%s %2d %s %4d%s"
+              dayname day monthname year weekstring)))
 
-    (setq org-agenda-format-date #'indiebrain/org-agenda-format-date-aligned)
+  (setq org-agenda-format-date #'indiebrain/org-agenda-format-date-aligned)
 
-    ;; Marks
-    (setq org-agenda-bulk-mark-char "#")
-    (setq org-agenda-persistent-marks nil)
+  ;; Marks
+  (setq org-agenda-bulk-mark-char "#")
+  (setq org-agenda-persistent-marks nil)
 
-    ;; Diary entries
-    (setq org-agenda-insert-diary-strategy 'date-tree)
-    (setq org-agenda-insert-diary-extract-time nil)
-    (setq org-agenda-include-diary t)
+  ;; Diary entries
+  (setq org-agenda-insert-diary-strategy 'date-tree)
+  (setq org-agenda-insert-diary-extract-time nil)
+  (setq org-agenda-include-diary t)
 
-    ;; Follow mode
-    (setq org-agenda-start-with-follow-mode nil)
-    (setq org-agenda-follow-indirect t)
+  ;; Follow mode
+  (setq org-agenda-start-with-follow-mode nil)
+  (setq org-agenda-follow-indirect t)
 
-    ;; Multi-item tasks
-    (setq org-agenda-dim-blocked-tasks t)
-    (setq org-agenda-todo-list-sublevels t)
+  ;; Multi-item tasks
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-todo-list-sublevels t)
 
-    ;; Filters and restricted views
-    (setq org-agenda-persistent-filter nil)
-    (setq org-agenda-restriction-lock-highlight-subtree t)
+  ;; Filters and restricted views
+  (setq org-agenda-persistent-filter nil)
+  (setq org-agenda-restriction-lock-highlight-subtree t)
 
-    ;; Items with deadline and scheduled timestamps
-    (setq org-agenda-include-deadlines t)
-    (setq org-deadline-warning-days 5)
-    (setq org-agenda-skip-scheduled-if-done nil)
-    (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
-    (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
-    (setq org-agenda-skip-deadline-if-done nil)
-    (setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
-    (setq org-agenda-skip-scheduled-delay-if-deadline nil)
-    (setq org-agenda-skip-additional-timestamps-same-entry nil)
-    (setq org-agenda-skip-timestamp-if-done nil)
-    (setq org-agenda-search-headline-for-time t)
-    (setq org-scheduled-past-days 365)
-    (setq org-deadline-past-days 365)
-    (setq org-agenda-move-date-from-past-immediately-to-today t)
-    (setq org-agenda-show-future-repeats t)
-    (setq org-agenda-prefer-last-repeat nil)
-    (setq org-agenda-timerange-leaders
-    '("" "(%d/%d): "))
-    (setq org-agenda-scheduled-leaders
-    '("Scheduled: " "Sched.%2dx: "))
-    (setq org-agenda-inactive-leader "[")
-    (setq org-agenda-deadline-leaders
-    '("Deadline:  " "In %3d d.: " "%2d d. ago: "))
-    ;; Time grid
-    (setq org-agenda-time-leading-zero t)
-    (setq org-agenda-timegrid-use-ampm nil)
-    (setq org-agenda-use-time-grid t)
-    (setq org-agenda-show-current-time-in-grid t)
-    (setq org-agenda-current-time-string
-    "Now -·-·-·-·-·-·-")
-    (setq org-agenda-time-grid
-    '((daily today require-timed)
-      (0600 0700 0800 0900 1000 1100
-      1200 1300 1400 1500 1600
-      1700 1800 1900 2000 2100)
-      " ....." "-----------------"))
-    (setq org-agenda-default-appointment-duration nil)
+  ;; Items with deadline and scheduled timestamps
+  (setq org-agenda-include-deadlines t)
+  (setq org-deadline-warning-days 5)
+  (setq org-agenda-skip-scheduled-if-done nil)
+  (setq org-agenda-skip-scheduled-if-deadline-is-shown t)
+  (setq org-agenda-skip-timestamp-if-deadline-is-shown t)
+  (setq org-agenda-skip-deadline-if-done nil)
+  (setq org-agenda-skip-deadline-prewarning-if-scheduled 1)
+  (setq org-agenda-skip-scheduled-delay-if-deadline nil)
+  (setq org-agenda-skip-additional-timestamps-same-entry nil)
+  (setq org-agenda-skip-timestamp-if-done nil)
+  (setq org-agenda-search-headline-for-time t)
+  (setq org-scheduled-past-days 365)
+  (setq org-deadline-past-days 365)
+  (setq org-agenda-move-date-from-past-immediately-to-today t)
+  (setq org-agenda-show-future-repeats t)
+  (setq org-agenda-prefer-last-repeat nil)
+  (setq org-agenda-timerange-leaders
+        '("" "(%d/%d): "))
+  (setq org-agenda-scheduled-leaders
+        '("Scheduled: " "Sched.%2dx: "))
+  (setq org-agenda-inactive-leader "[")
+  (setq org-agenda-deadline-leaders
+        '("Deadline:  " "In %3d d.: " "%2d d. ago: "))
+  ;; Time grid
+  (setq org-agenda-time-leading-zero t)
+  (setq org-agenda-timegrid-use-ampm nil)
+  (setq org-agenda-use-time-grid t)
+  (setq org-agenda-show-current-time-in-grid t)
+  (setq org-agenda-current-time-string
+        "Now -·-·-·-·-·-·-")
+  (setq org-agenda-time-grid
+        '((daily today require-timed)
+          (0600 0700 0800 0900 1000 1100
+                1200 1300 1400 1500 1600
+                1700 1800 1900 2000 2100)
+          " ....." "-----------------"))
+  (setq org-agenda-default-appointment-duration nil)
 
-    ;; Global to-do list
-    (setq org-agenda-todo-ignore-with-date t)
-    (setq org-agenda-todo-ignore-timestamp t)
-    (setq org-agenda-todo-ignore-scheduled t)
-    (setq org-agenda-todo-ignore-deadlines t)
-    (setq org-agenda-todo-ignore-time-comparison-use-seconds t)
-    (setq org-agenda-tags-todo-honor-ignore-options nil)
+  ;; Global to-do list
+  (setq org-agenda-todo-ignore-with-date t)
+  (setq org-agenda-todo-ignore-timestamp t)
+  (setq org-agenda-todo-ignore-scheduled t)
+  (setq org-agenda-todo-ignore-deadlines t)
+  (setq org-agenda-todo-ignore-time-comparison-use-seconds t)
+  (setq org-agenda-tags-todo-honor-ignore-options nil)
 
-    ;; Tagged items
-    (setq org-agenda-show-inherited-tags t)
-    (setq org-agenda-use-tag-inheritance
-    '(todo search agenda))
-    (setq org-agenda-hide-tags-regexp nil)
-    (setq org-agenda-remove-tags nil)
-    (setq org-agenda-tags-column -120)
+  ;; Tagged items
+  (setq org-agenda-show-inherited-tags t)
+  (setq org-agenda-use-tag-inheritance
+        '(todo search agenda))
+  (setq org-agenda-hide-tags-regexp nil)
+  (setq org-agenda-remove-tags nil)
+  (setq org-agenda-tags-column -120)
 
-    ;; Agenda entry
-    ;;
-    ;; NOTE I do not use this right now. Leaving everything to its
-    ;; default value.
-    (setq org-agenda-start-with-entry-text-mode nil)
-    (setq org-agenda-entry-text-maxlines 5)
-    (setq org-agenda-entry-text-exclude-regexps nil)
-    (setq org-agenda-entry-text-leaders "    > ")
+  ;; Agenda entry
+  ;;
+  ;; NOTE I do not use this right now. Leaving everything to its
+  ;; default value.
+  (setq org-agenda-start-with-entry-text-mode nil)
+  (setq org-agenda-entry-text-maxlines 5)
+  (setq org-agenda-entry-text-exclude-regexps nil)
+  (setq org-agenda-entry-text-leaders "    > ")
 
-    ;; Logging, clocking
-    ;;
-    ;; NOTE I do not use these yet, though I plan to. Leaving everything to
-    ;; its default value for the time being.
-    (setq org-agenda-log-mode-items '(closed clock))
-    (setq org-agenda-clock-consistency-checks
-    '((:max-duration "10:00" :min-duration 0 :max-gap "0:05" :gap-ok-around
-     ("4:00")
-     :default-face ; This should definitely be reviewed
-     ((:background "DarkRed")
-      (:foreground "white"))
-     :overlap-face nil :gap-face nil :no-end-time-face nil
-     :long-face nil :short-face nil)))
-    (setq org-agenda-log-mode-add-notes t)
-    (setq org-agenda-start-with-log-mode nil)
-    (setq org-agenda-start-with-clockreport-mode nil)
-    (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 2))
-    (setq org-agenda-search-view-always-boolean nil)
-    (setq org-agenda-search-view-force-full-words nil)
-    (setq org-agenda-search-view-max-outline-level 0)
-    (setq org-agenda-search-headline-for-time t)
-    (setq org-agenda-use-time-grid t)
-    (setq org-agenda-cmp-user-defined nil)
-    (setq org-sort-agenda-notime-is-late t)
-    (setq org-sort-agenda-noeffort-is-high t)
+  ;; Logging, clocking
+  ;;
+  ;; NOTE I do not use these yet, though I plan to. Leaving everything to
+  ;; its default value for the time being.
+  (setq org-agenda-log-mode-items '(closed clock))
+  (setq org-agenda-clock-consistency-checks
+        '((:max-duration "10:00" :min-duration 0 :max-gap "0:05" :gap-ok-around
+                         ("4:00")
+                         :default-face ; This should definitely be reviewed
+                         ((:background "DarkRed")
+                          (:foreground "white"))
+                         :overlap-face nil :gap-face nil :no-end-time-face nil
+                         :long-face nil :short-face nil)))
+  (setq org-agenda-log-mode-add-notes t)
+  (setq org-agenda-start-with-log-mode nil)
+  (setq org-agenda-start-with-clockreport-mode nil)
+  (setq org-agenda-clockreport-parameter-plist '(:link t :maxlevel 2))
+  (setq org-agenda-search-view-always-boolean nil)
+  (setq org-agenda-search-view-force-full-words nil)
+  (setq org-agenda-search-view-max-outline-level 0)
+  (setq org-agenda-search-headline-for-time t)
+  (setq org-agenda-use-time-grid t)
+  (setq org-agenda-cmp-user-defined nil)
+  (setq org-sort-agenda-notime-is-late t)
+  (setq org-sort-agenda-noeffort-is-high t)
 
-    ;; Agenda column view
-    ;;
-    ;; NOTE I do not use these, but may need them in the future.
-    (setq org-agenda-view-columns-initially nil)
-    (setq org-agenda-columns-show-summaries t)
-    (setq org-agenda-columns-compute-summary-properties t)
-    (setq org-agenda-columns-add-appointments-to-effort-sum nil)
-    (setq org-agenda-auto-exclude-function nil)
-    (setq org-agenda-bulk-custom-functions nil)
+  ;; Agenda column view
+  ;;
+  ;; NOTE I do not use these, but may need them in the future.
+  (setq org-agenda-view-columns-initially nil)
+  (setq org-agenda-columns-show-summaries t)
+  (setq org-agenda-columns-compute-summary-properties t)
+  (setq org-agenda-columns-add-appointments-to-effort-sum nil)
+  (setq org-agenda-auto-exclude-function nil)
+  (setq org-agenda-bulk-custom-functions nil)
 
-    :bind (("C-c a" . org-agenda)
-     :map org-mode-map
-     ("C-'" . nil)
-     ("C-," . nil)))
+  :bind (("C-c a" . org-agenda)
+         :map org-mode-map
+         ("C-'" . nil)
+         ("C-," . nil)))
 #+end_src
 
 *** Code Blocks
@@ -2394,37 +2394,37 @@ consistent across exports. See this detailed tutorial on [[https://writequit.org
 IDs]] for more details.
 
 #+begin_src emacs-lisp
-  (use-package org-id
-    :after org
-    :commands contrib/org-id-headlines
-    :config
-    (setq org-id-link-to-org-use-id
-    'create-if-interactive-and-no-custom-id)
+(use-package org-id
+  :after org
+  :commands contrib/org-id-headlines
+  :config
+  (setq org-id-link-to-org-use-id
+        'create-if-interactive-and-no-custom-id)
 
-    (defun contrib/org-id-get (&optional pom create prefix)
-      "Get the CUSTOM_ID property of the entry at point-or-marker
+  (defun contrib/org-id-get (&optional pom create prefix)
+    "Get the CUSTOM_ID property of the entry at point-or-marker
   POM. If POM is nil, refer to the entry at point. If the entry
   does not have an CUSTOM_ID, the function returns nil. However,
   when CREATE is non nil, create a CUSTOM_ID if none is present
   already. PREFIX will be passed through to `org-id-new'. In any
   case, the CUSTOM_ID of the entry is returned."
-      (org-with-point-at pom
-    (let ((id (org-entry-get nil "CUSTOM_ID")))
-    (cond
-     ((and id (stringp id) (string-match "\\S-" id))
-      id)
-     (create
-      (setq id (org-id-new (concat prefix "h")))
-      (org-entry-put pom "CUSTOM_ID" id)
-      (org-id-add-location id (format "%s" (buffer-file-name (buffer-base-buffer))))
-      id)))))
+    (org-with-point-at pom
+      (let ((id (org-entry-get nil "CUSTOM_ID")))
+        (cond
+         ((and id (stringp id) (string-match "\\S-" id))
+          id)
+         (create
+          (setq id (org-id-new (concat prefix "h")))
+          (org-entry-put pom "CUSTOM_ID" id)
+          (org-id-add-location id (format "%s" (buffer-file-name (buffer-base-buffer))))
+          id)))))
 
-    (defun contrib/org-id-headlines ()
-      "Add CUSTOM_ID properties to all headlines in the current
+  (defun contrib/org-id-headlines ()
+    "Add CUSTOM_ID properties to all headlines in the current
   file which do not already have one."
-      (interactive)
-      (org-map-entries
-       (lambda () (contrib/org-id-get (point) t)))))
+    (interactive)
+    (org-map-entries
+     (lambda () (contrib/org-id-get (point) t)))))
 #+end_src
 
 *** Presentations
@@ -2438,19 +2438,19 @@ of defining and sharing ideas. To begin a presentation one needs only
 to =M-x org-present=; to stop a presentation =C-c C-q=.
 
 #+begin_src emacs-lisp
-  (use-package org-present
-    :ensure t
-    :config
-    (add-hook 'org-present-mode-hook
-    (lambda ()
-    (org-present-big)
-    (org-display-inline-images)
-    (org-present-read-only)))
-    (add-hook 'org-present-mode-quit-hook
-    (lambda ()
-    (org-present-small)
-    (org-remove-inline-images)
-    (org-present-read-write))))
+(use-package org-present
+  :ensure t
+  :config
+  (add-hook 'org-present-mode-hook
+            (lambda ()
+              (org-present-big)
+              (org-display-inline-images)
+              (org-present-read-only)))
+  (add-hook 'org-present-mode-quit-hook
+            (lambda ()
+              (org-present-small)
+              (org-remove-inline-images)
+              (org-present-read-write))))
 #+end_src
 
 *** Static site generator
@@ -2518,7 +2518,7 @@ initiated by the =/= key.
   :after proced
   :diminish
   :bind (:map proced-mode-map
-    ("/" . proced-narrow)))
+              ("/" . proced-narrow)))
 #+end_src
 
 ** Representational State Transfer Client (REST API Client)
@@ -2627,17 +2627,17 @@ set elsewhere in this document to 72 characters long.
   :config
   (setq git-commit-summary-max-length 50)
   (setq git-commit-known-pseudo-headers
-  '("Signed-off-by"
-    "Acked-by"
-    "Modified-by"
-    "Cc"
-    "Suggested-by"
-    "Reported-by"
-    "Tested-by"
-    "Reviewed-by"))
+        '("Signed-off-by"
+          "Acked-by"
+          "Modified-by"
+          "Cc"
+          "Suggested-by"
+          "Reported-by"
+          "Tested-by"
+          "Reviewed-by"))
   (setq git-commit-style-convention-checks
-  '(non-empty-second-line
-    overlong-summary-line)))
+        '(non-empty-second-line
+          overlong-summary-line)))
 #+end_src
 
 **** Magit diffs
@@ -2668,12 +2668,12 @@ contained within paths contained in the =magit-repository-directories=
 variable.
 
 #+begin_src emacs-lisp
-  (use-package magit-repos
-    :after magit
-    :commands magit-list-repositories
-    :config
-    (setq magit-repository-directories
-    '(("~/Developer" . 1))))
+(use-package magit-repos
+  :after magit
+  :commands magit-list-repositories
+  :config
+  (setq magit-repository-directories
+        '(("~/Developer" . 1))))
 #+end_src
 
 *** Resolving conflicts
@@ -2745,11 +2745,11 @@ Additionally, the above mentioned =smerge= hydra is activated when
 visiting a file with merge conflicts.
 
 #+begin_src emacs-lisp
-  (use-package smerge-mode
-    :config
-    (defhydra indiebrain/hydra-smerge-mode
-      (:color pink :hint nil :post (smerge-auto-leave))
-      "
+(use-package smerge-mode
+  :config
+  (defhydra indiebrain/hydra-smerge-mode
+    (:color pink :hint nil :post (smerge-auto-leave))
+    "
      ^Motions^      ^Actions^
   ---^^-------------^^-------
   _n_: Next      _b_: Base
@@ -2757,48 +2757,48 @@ visiting a file with merge conflicts.
   ^^             _l_: Lower
   ^^             _a_: All
   "
-      ("n" smerge-next)
-      ("p" smerge-prev)
-      ("b" smerge-keep-base)
-      ("u" smerge-keep-upper)
-      ("l" smerge-keep-lower)
-      ("a" smerge-keep-all)
-      ("q" nil "cancel" :color blue))
+    ("n" smerge-next)
+    ("p" smerge-prev)
+    ("b" smerge-keep-base)
+    ("u" smerge-keep-upper)
+    ("l" smerge-keep-lower)
+    ("a" smerge-keep-all)
+    ("q" nil "cancel" :color blue))
 
-    (defun indiebrain/smerge-mode-hydra ()
-      "Load `indiebrain/hydra-smerge-mode' in `smerge-mode'."
-      (when smerge-mode
-  (indiebrain/hydra-smerge-mode/body)))
-    :hook ((vc-find-file-hook . indiebrain/smerge-mode-hydra)
-     (magit-diff-visit-file-hook . indiebrain/smerge-mode-hydra)))
+  (defun indiebrain/smerge-mode-hydra ()
+    "Load `indiebrain/hydra-smerge-mode' in `smerge-mode'."
+    (when smerge-mode
+      (indiebrain/hydra-smerge-mode/body)))
+  :hook ((vc-find-file-hook . indiebrain/smerge-mode-hydra)
+         (magit-diff-visit-file-hook . indiebrain/smerge-mode-hydra)))
 
-  (use-package ediff
-    :config
-    (setq ediff-keep-variants nil)
-    (setq ediff-make-buffers-readonly-at-startup nil)
-    (setq ediff-merge-revisions-with-ancestor t)
-    (setq ediff-show-clashes-only t)
-    (setq ediff-split-window-function 'split-window-horizontally)
-    (setq ediff-window-setup-function 'ediff-setup-windows-plain)
+(use-package ediff
+  :config
+  (setq ediff-keep-variants nil)
+  (setq ediff-make-buffers-readonly-at-startup nil)
+  (setq ediff-merge-revisions-with-ancestor t)
+  (setq ediff-show-clashes-only t)
+  (setq ediff-split-window-function 'split-window-horizontally)
+  (setq ediff-window-setup-function 'ediff-setup-windows-plain)
 
-    ;; Tweak those for safer identification and removal
-    (setq ediff-combination-pattern
-    '("<<<<<<< indiebrain-ediff-combine Variant A" A
-      ">>>>>>> indiebrain-ediff-combine Variant B" B
-      "####### indiebrain-ediff-combine Ancestor" Ancestor
-      "======= indiebrain-ediff-combine End"))
+  ;; Tweak those for safer identification and removal
+  (setq ediff-combination-pattern
+        '("<<<<<<< indiebrain-ediff-combine Variant A" A
+          ">>>>>>> indiebrain-ediff-combine Variant B" B
+          "####### indiebrain-ediff-combine Ancestor" Ancestor
+          "======= indiebrain-ediff-combine End"))
 
-    ;; TODO automate process in a robust way, or at least offer a good key
-    ;; binding.
-    (defun indiebrain/ediff-flush-combination-pattern ()
-      "Remove my custom `ediff-combination-pattern' markers.
+  ;; TODO automate process in a robust way, or at least offer a good key
+  ;; binding.
+  (defun indiebrain/ediff-flush-combination-pattern ()
+    "Remove my custom `ediff-combination-pattern' markers.
 
   This is a quick-and-dirty way to get rid of the markers that are
   left behind by `smerge-ediff' when combining the output of two
   diffs. While this could be automated via a hook, I am not yet
   sure this is a good approach."
-      (interactive)
-      (flush-lines ".*indiebrain-ediff.*" (point-min) (point-max) nil)))
+    (interactive)
+    (flush-lines ".*indiebrain-ediff.*" (point-min) (point-max) nil)))
 #+end_src
 
 *** Interacting with forges
@@ -2880,31 +2880,31 @@ warning face).
   :config
   (setq mode-line-percent-position '(-3 "%p"))
   (setq mode-line-defining-kbd-macro
-  (propertize " Macro" 'face 'mode-line-emphasis))
+        (propertize " Macro" 'face 'mode-line-emphasis))
   (setq-default mode-line-format
-    '("%e"
-      mode-line-front-space
-      mode-line-mule-info
-      mode-line-client
-      mode-line-modified
-      mode-line-remote
-      mode-line-frame-identification
-      mode-line-buffer-identification
-      "  "
-      mode-line-position
-      (vc-mode vc-mode)
-      " "
-      mode-line-modes
-      " "
-      mode-line-misc-info
-      mode-line-end-spaces))
+                '("%e"
+                  mode-line-front-space
+                  mode-line-mule-info
+                  mode-line-client
+                  mode-line-modified
+                  mode-line-remote
+                  mode-line-frame-identification
+                  mode-line-buffer-identification
+                  "  "
+                  mode-line-position
+                  (vc-mode vc-mode)
+                  " "
+                  mode-line-modes
+                  " "
+                  mode-line-misc-info
+                  mode-line-end-spaces))
 
   (define-minor-mode indiebrain/mode-line-hidden-mode
     "Toggle modeline visibility in the current buffer."
     :init-value nil
     :global nil
     (if indibrain/mode-line-hidden-mode
-  (setq-local mode-line-format nil)
+        (setq-local mode-line-format nil)
       (kill-local-variable 'mode-line-format)
       (force-mode-line-update))))
 #+end_src
@@ -2928,7 +2928,7 @@ contained in this configuration, the =moody.el= package is incorporated.
   ;; TODO: this should be part of a future `indiebrain-simple.el' or something
   (defun indiebrain/moody--even-p (n)
     (if (numberp n)
-  (= (% n 2) 0)
+        (= (% n 2) 0)
       (user-error "%s is not a number" n)))
 
   (defun indiebrain/moody--height ()
@@ -2936,11 +2936,11 @@ contained in this configuration, the =moody.el= package is incorporated.
 Bind this to a hook that gets called after loading/changing the
 mode line's typeface (or the default one if they are the same)."
     (let* ((font (face-font 'mode-line))
-     (height (truncate (* 1.35 (aref (font-info font) 2))))
-     (height-even (if (indiebrain/moody--even-p height) height (+ height 1))))
+           (height (truncate (* 1.35 (aref (font-info font) 2))))
+           (height-even (if (indiebrain/moody--even-p height) height (+ height 1))))
       (if font
-    height-even
-  20)))
+          height-even
+        20)))
 
   (defun indiebrain/moody--mode-line-height ()
     "Set Moody height to the value of `indiebrain/moody--height'."
@@ -3075,41 +3075,41 @@ Both of these packages are developed by Jonas Bernoulli (aka tarsius).
   documentation (=C=h f RET whitespace-cleanup)=.
 
 #+begin_src emacs-lisp
-  (use-package display-line-numbers
-    :config
-    ;; Set absolute line numbers. A value of "relative" is also useful.
-    (setq display-line-numbers-type t)
-    ;; Those two variables were introduced in Emacs 27.1
-    (setq display-line-numbers-major-tick 20)
-    (setq display-line-numbers-minor-tick 5)
-    ;; Use absolute numbers in narrowed buffers
-    (setq display-line-numbers-widen t)
+(use-package display-line-numbers
+  :config
+  ;; Set absolute line numbers. A value of "relative" is also useful.
+  (setq display-line-numbers-type t)
+  ;; Those two variables were introduced in Emacs 27.1
+  (setq display-line-numbers-major-tick 20)
+  (setq display-line-numbers-minor-tick 5)
+  ;; Use absolute numbers in narrowed buffers
+  (setq display-line-numbers-widen t)
 
-    (define-minor-mode indiebrain/display-line-numbers-mode
-      "Toggle `display-line-numbers-mode' and `hl-line-mode'."
-      :init-value nil
-      :global nil
-      (if indiebrain/display-line-numbers-mode
-    (progn
-      (display-line-numbers-mode 1)
-      (hl-line-mode 1)
-      (setq-local truncate-lines t))
-    (display-line-numbers-mode -1)
-    (hl-line-mode -1)
-    (setq-local truncate-lines nil)))
-    :bind ("<f7>" . indiebrain/display-line-numbers-mode))
+  (define-minor-mode indiebrain/display-line-numbers-mode
+    "Toggle `display-line-numbers-mode' and `hl-line-mode'."
+    :init-value nil
+    :global nil
+    (if indiebrain/display-line-numbers-mode
+        (progn
+          (display-line-numbers-mode 1)
+          (hl-line-mode 1)
+          (setq-local truncate-lines t))
+      (display-line-numbers-mode -1)
+      (hl-line-mode -1)
+      (setq-local truncate-lines nil)))
+  :bind ("<f7>" . indiebrain/display-line-numbers-mode))
 
-  (use-package whitespace
-    :config
-    (defun indiebrain/toggle-invisibles ()
-      "Toggles the display of indentation and space characters."
-      (interactive)
-      (if (bound-and-true-p whitespace-mode)
-    (whitespace-mode -1)
-    (whitespace-mode)))
-    :bind (("<f6>" . indiebrain/toggle-invisibles)
-     ("C-c z" . delete-trailing-whitespace))
-    :hook (before-save-hook . whitespace-cleanup))
+(use-package whitespace
+  :config
+  (defun indiebrain/toggle-invisibles ()
+    "Toggles the display of indentation and space characters."
+    (interactive)
+    (if (bound-and-true-p whitespace-mode)
+        (whitespace-mode -1)
+      (whitespace-mode)))
+  :bind (("<f6>" . indiebrain/toggle-invisibles)
+         ("C-c z" . delete-trailing-whitespace))
+  :hook (before-save-hook . whitespace-cleanup))
 #+end_src
 
 *** Undo history
@@ -3171,9 +3171,9 @@ I use visual bookmarks in much the same way.
   (setq bm-wrap-immediately t)
   (setq bm-wrap-search t)
   :bind (("<C-f8>" . bm-next)
-     ("<C-S-f8>" . bm-previous)
-     ("<s-f8>" . bm-toggle-buffer-persistence)
-     ("<f8>" . bm-toggle)))
+         ("<C-S-f8>" . bm-previous)
+         ("<s-f8>" . bm-toggle-buffer-persistence)
+         ("<f8>" . bm-toggle)))
 #+end_src
 
 ** Cursor and mouse settings
@@ -3216,8 +3216,8 @@ more straightforward workflows.
 (use-package multiple-cursors
   :ensure
   :bind (("C-<" . mc/mark-previous-like-this)
-     ("C->" . mc/mark-next-like-this)
-     ("s->" . mc/mark-all-like-this)))
+         ("C->" . mc/mark-next-like-this)
+         ("s->" . mc/mark-all-like-this)))
 #+end_src
 
 *** Mouse wheel behavior
@@ -3250,10 +3250,10 @@ primary selection). I choose not to use this here.
   :config
   ;; In Emacs 27+, use Control + mouse wheel to scale text.
   (setq mouse-wheel-scroll-amount
-    '(1
-      ((shift) . 5)
-      ((meta) . 0.5)
-      ((control) . text-scale)))
+        '(1
+          ((shift) . 5)
+          ((meta) . 0.5)
+          ((control) . text-scale)))
   (setq mouse-drag-copy-region nil)
   (setq make-pointer-invisible t)
   (setq mouse-wheel-progressive-speed nil)
@@ -3282,30 +3282,30 @@ when I am reading prose or reviewing code and expect to perform few or
 no edits.
 
 #+begin_src emacs-lisp
-  (use-package emacs
-    :config
-    (setq-default scroll-preserve-screen-position t)
-    (setq-default scroll-conservatively 1) ; affects `scroll-step'
-    (setq-default scroll-margin 0)
+(use-package emacs
+  :config
+  (setq-default scroll-preserve-screen-position t)
+  (setq-default scroll-conservatively 1) ; affects `scroll-step'
+  (setq-default scroll-margin 0)
 
-    (define-minor-mode indiebrain/scroll-center-cursor-mode
-      "Toggle centered cursor scrolling behaviour."
-      :init-value nil
-      :lighter " S="
-      :global nil
-      (if indiebrain/scroll-center-cursor-mode
-      (setq-local scroll-margin (* (frame-height) 2)
-              scroll-conservatively 0
-              maximum-scroll-margin 0.5)
-    (dolist (local '(scroll-preserve-screen-position
-             scroll-conservatively
-             maximum-scroll-margin
-             scroll-margin))
-      (kill-local-variable `,local))))
+  (define-minor-mode indiebrain/scroll-center-cursor-mode
+    "Toggle centered cursor scrolling behaviour."
+    :init-value nil
+    :lighter " S="
+    :global nil
+    (if indiebrain/scroll-center-cursor-mode
+        (setq-local scroll-margin (* (frame-height) 2)
+                    scroll-conservatively 0
+                    maximum-scroll-margin 0.5)
+      (dolist (local '(scroll-preserve-screen-position
+                       scroll-conservatively
+                       maximum-scroll-margin
+                       scroll-margin))
+        (kill-local-variable `,local))))
 
-    ;; C-c l is used for `org-store-link'. The mnemonic for this is to
-    ;; focus the Line and also works as a variant of C-l.
-    :bind ("s-l" . indiebrain/scroll-center-cursor-mode))
+  ;; C-c l is used for `org-store-link'. The mnemonic for this is to
+  ;; focus the Line and also works as a variant of C-l.
+  :bind ("s-l" . indiebrain/scroll-center-cursor-mode))
 #+end_src
 
 *** Delete selection
@@ -3346,10 +3346,10 @@ mouse over an actionable item:
   (setq tooltip-short-delay 0.5)
   (setq x-gtk-use-system-tooltips nil)
   (setq tooltip-frame-parameters
-    '((name . "tooltip")
-      (internal-border-width . 6)
-      (border-width . 0)
-      (no-special-glyphs . t)))
+        '((name . "tooltip")
+          (internal-border-width . 6)
+          (border-width . 0)
+          (no-special-glyphs . t)))
   :hook (after-init-hook . tooltip-mode))
 #+end_src
 
@@ -3370,10 +3370,10 @@ mouse over an actionable item:
   (setq tooltip-short-delay 0.5)
   (setq x-gtk-use-system-tooltips nil)
   (setq tooltip-frame-parameters
-    '((name . "tooltip")
-      (internal-border-width . 6)
-      (border-width . 0)
-      (no-special-glyphs . t)))
+        '((name . "tooltip")
+          (internal-border-width . 6)
+          (border-width . 0)
+          (no-special-glyphs . t)))
   :hook (after-init-hook . tooltip-mode))
 #+end_src
 
@@ -3490,8 +3490,8 @@ point.
 #+begin_src emacs-lisp
 (use-package package
   :commands (list-packages
-         package-refresh-contents
-         package-list-packages)
+             package-refresh-contents
+             package-list-packages)
   :config
   ;; All variables are for Emacs 28+
   (setq package-name-column-width 40)
@@ -3534,12 +3534,12 @@ behaviors include:
 #+begin_src emacs-lisp
 (use-package prog-mode
   :hook (prog-mode-hook . (lambda ()
-                (electric-pair-mode t)
-                (company-mode t)
-                (flyspell-prog-mode)
-                (flymake-mode)
-                (flycheck-mode)
-                (projectile-mode))))
+                            (electric-pair-mode t)
+                            (company-mode t)
+                            (flyspell-prog-mode)
+                            (flymake-mode)
+                            (flycheck-mode)
+                            (projectile-mode))))
 #+end_src
 
 *** Bash script - The Bourne Again Shell
@@ -3594,35 +3594,35 @@ Shellcheck is an external tool which lints shell scripts.
   ;;; Define a flycheck checker for shellcheck
   ;;; From: https://github.com/flycheck/flycheck/blob/0f144f13a07e202169acb63880d989cb41787759/doc/developer/developing.rst#writing-more-complex-checkers
   (flycheck-define-checker sh-shellcheck
-                           "A shell script syntax and style checker using Shellcheck.
+    "A shell script syntax and style checker using Shellcheck.
 
     See URL `https://github.com/koalaman/shellcheck/'."
-                           :command ("shellcheck"
-                                     "--format" "checkstyle"
-                                     "--shell" (eval (symbol-name sh-shell))
-                                     (option-flag "--external-sources"
-                                                  flycheck-shellcheck-follow-sources)
-                                     (option "--exclude" flycheck-shellcheck-excluded-warnings list
-                                             flycheck-option-comma-separated-list)
-                                     "-")
-                           :standard-input t
-                           :modes sh-mode
-                           :error-parser flycheck-parse-checkstyle
-                           :error-filter (lambda (errors)
-                                           (flycheck-remove-error-file-names "-" errors))
-                           :predicate (lambda () (memq sh-shell '(bash ksh88 sh)))
-                           :verify
-                           (lambda (_)
-                             (let ((supported (memq sh-shell '(bash ksh88 sh))))
-                               (list (flycheck-verification-result-new
-                                      :label (format "Shell %s supported" sh-shell)
-                                      :message (if supported "yes" "no")
-                                      :face (if supports-shell 'success '(bold warning))))))
-                           :error-explainer
-                           (lambda (err)
-                             (let ((error-code (flycheck-error-id err))
-                                   (url "https://github.com/koalaman/shellcheck/wiki/%S"))
-                               (and error-code `(url . ,(format url error-code)))))))
+    :command ("shellcheck"
+              "--format" "checkstyle"
+              "--shell" (eval (symbol-name sh-shell))
+              (option-flag "--external-sources"
+                           flycheck-shellcheck-follow-sources)
+              (option "--exclude" flycheck-shellcheck-excluded-warnings list
+                      flycheck-option-comma-separated-list)
+              "-")
+    :standard-input t
+    :modes sh-mode
+    :error-parser flycheck-parse-checkstyle
+    :error-filter (lambda (errors)
+                    (flycheck-remove-error-file-names "-" errors))
+    :predicate (lambda () (memq sh-shell '(bash ksh88 sh)))
+    :verify
+    (lambda (_)
+      (let ((supported (memq sh-shell '(bash ksh88 sh))))
+        (list (flycheck-verification-result-new
+               :label (format "Shell %s supported" sh-shell)
+               :message (if supported "yes" "no")
+               :face (if supports-shell 'success '(bold warning))))))
+    :error-explainer
+    (lambda (err)
+      (let ((error-code (flycheck-error-id err))
+            (url "https://github.com/koalaman/shellcheck/wiki/%S"))
+        (and error-code `(url . ,(format url error-code)))))))
 #+end_src
 
 *** Cascading Style Sheets (CSS)
@@ -3664,16 +3664,16 @@ Caddy is a powerful, extensible platform to serve your sites,
 services, and apps, written in Go. Although most people use it as a
 web server or proxy, it is an excellent choice for a:
 
-    web server
-    reverse proxy
-    sidecar proxy
-    load balancer
-    API gateway
-    ingress controller
-    system manager
-    process supervisor
-    task scheduler
-    (any long-running process)
+web server
+reverse proxy
+sidecar proxy
+load balancer
+API gateway
+ingress controller
+system manager
+process supervisor
+task scheduler
+(any long-running process)
 
 and operates primarily at L4 (transport layer) and L7 (application
 layer) of the OSI model, though it has the ability to work with other
@@ -4120,7 +4120,7 @@ wumpus                          # => "found me!"
                 (format "-t %s --filename=%s" t-opt bfn))
             ""))))
 
-    (require 'cl)
+    (require 'cl-lib)
 
     (defun rct-find-test-script-buffer (&optional buffer-list)
       "Find the latest used Ruby test script buffer."
@@ -4540,7 +4540,7 @@ associates
 #+begin_src emacs-lisp
 (use-package yaml-mode
   :mode (("\\.yml$" . yaml-mode)
-        ("\\.yaml$" . yaml-mode))
+         ("\\.yaml$" . yaml-mode))
   :ensure)
 #+end_src
 
@@ -4612,11 +4612,11 @@ produce the opposite effect of both `fill-paragraph' and
     (interactive)
     (let ((fill-column most-positive-fixnum))
       (if (use-region-p)
-      (fill-region (region-beginning) (region-end))
-    (fill-paragraph nil region))))
+          (fill-region (region-beginning) (region-end))
+        (fill-paragraph nil region))))
 
   :hook (text-mode-hook . (lambda ()
-                (turn-on-auto-fill)))
+                            (turn-on-auto-fill)))
   :bind ("M-Q" . indiebrain/unfill-region-or-paragraph))
 #+end_src
 
@@ -4688,14 +4688,14 @@ implied by the region boundaries.
 Else toggle the comment status of the line at point."
     (interactive "*P")
     (if (use-region-p)
-    (comment-dwim arg)
+        (comment-dwim arg)
       (save-excursion
-    (comment-line arg))))
+        (comment-line arg))))
 
   :bind (("C-;" . indiebrain/comment-dwim)
-     ("C-:" . comment-kill)
-     ("M-;" . comment-indent)
-     ("C-x C-;" . comment-box)))
+         ("C-:" . comment-kill)
+         ("M-;" . comment-indent)
+         ("C-x C-;" . comment-box)))
 #+end_src
 
 ** Configure 'electric' behavior
@@ -4738,23 +4738,23 @@ auto-insertion of characters. This is a summary of my settings:
   (setq electric-pair-inhibit-predicate'electric-pair-conservative-inhibit)
   (setq electric-pair-preserve-balance t)
   (setq electric-pair-pairs
-    '((8216 . 8217)
-      (8220 . 8221)
-      (171 . 187)))
+        '((8216 . 8217)
+          (8220 . 8221)
+          (171 . 187)))
   (setq electric-pair-skip-self 'electric-pair-default-skip-self)
   (setq electric-pair-skip-whitespace nil)
   (setq electric-pair-skip-whitespace-chars
-    '(9
-      10
-      32))
+        '(9
+          10
+          32))
   (setq electric-quote-context-sensitive t)
   (setq electric-quote-paragraph t)
   (setq electric-quote-string nil)
   (setq electric-quote-replace-double t)
   :hook (after-init-hook . (lambda ()
-                 (electric-indent-mode 1)
-                 (electric-pair-mode -1)
-                 (electric-quote-mode -1))))
+                             (electric-indent-mode 1)
+                             (electric-pair-mode -1)
+                             (electric-quote-mode -1))))
 #+end_src
 
 ** Parentheses (show-parens-mode)
@@ -4860,7 +4860,7 @@ Use `flyspell-region' on the active region, else invoke
          :map flyspell-mode-map
          ("C-;" . nil))
   :hook (text-mode-hook . (lambda ()
-                           (flyspell-mode))))
+                            (flyspell-mode))))
 #+end_src
 
 ** Grammar checking (artbollocks)
