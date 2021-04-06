@@ -552,11 +552,13 @@ for the operandi theme.
 (use-package modus-themes
   :ensure
   :config
-  (setq modus-vivendi-theme-override-colors-alist
-        '(("bg-main" . "#272727")
+  (setq modus-themes-hl-line 'intense-background)
+
+  (setq modus-themes-vivendi-color-overrides
+        '((bg-main . "#272727")
           ("bg-alt"  . "#655b53")))
 
-  (setq modus-operandi-theme-override-colors-alist
+  (setq modus-themes-operandi-color-overrides
         '(("bg-main" . "#eee8d5")
           ("bg-alt"  . "#fdf6e3")))
 
