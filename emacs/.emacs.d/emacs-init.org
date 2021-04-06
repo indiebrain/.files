@@ -1872,10 +1872,10 @@ Additional notes on less obvious settings:
 (use-package org
   :config
   ;; agenda and basic directory structure
-  (setq org-directory "~/Org")
-  (setq org-default-notes-file "~/Org/notes.org")
+  (setq org-directory "~/.org")
+  (setq org-default-notes-file "~/.org/notes.org")
   (setq org-agenda-files
-        '("~/Org"
+        '("~/.org"
           "~/.emacs.d"
           "~/Documents"))
   ;; refile, todo
