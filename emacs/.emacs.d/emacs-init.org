@@ -556,11 +556,11 @@ for the operandi theme.
 
   (setq modus-themes-vivendi-color-overrides
         '((bg-main . "#272727")
-          ("bg-alt"  . "#655b53")))
+          (bg-alt  . "#655b53")))
 
   (setq modus-themes-operandi-color-overrides
-        '(("bg-main" . "#eee8d5")
-          ("bg-alt"  . "#fdf6e3")))
+        '((bg-main . "#fbf1c7")
+          (bg-alt  . "#bdad93")))
 
   (defmacro modus-themes-format-sexp (sexp &rest objects)
     `(eval (read (format ,(format "%S" sexp) ,@objects))))
@@ -605,7 +605,7 @@ for the operandi theme.
       (disable-theme 'modus-vivendi)
       (modus-operandi-theme-load)))
 
-  (modus-vivendi-theme-load))
+  (modus-operandi-theme-load))
 #+end_src
 
 ** Typeface configurations
