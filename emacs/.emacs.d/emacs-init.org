@@ -2392,8 +2392,10 @@ behavior when exporting org documents to various formats.
   (setq org-html-head-include-default-style nil)
   (setq org-html-head-include-scripts nil)
   (use-package ox-texinfo)
+  (use-package ox-gfm
+    :ensure)
   ;; FIXME: how to remove everything else?
-  (setq org-export-backends '(html texinfo))
+  (setq org-export-backends '(html texinfo gfm))
 
   (defun indiebrain/ox-html ()
     (interactive)
@@ -2401,7 +2403,12 @@ behavior when exporting org documents to various formats.
 
   (defun indiebrain/ox-texinfo ()
     (interactive)
-    (org-texinfo-export-to-info)))
+    (org-texinfo-export-to-info))
+
+  (defun indiebrain/ox-github-flavored-markdown ()
+    (interactive)
+    (org-gfm-export-to-markdown)))
+
 #+end_src
 
 *** Consistent Org headline IDs (and anchor tags)
