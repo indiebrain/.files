@@ -605,7 +605,7 @@ for the operandi theme.
       (disable-theme 'modus-vivendi)
       (modus-operandi-theme-load)))
 
-  (modus-operandi-theme-load))
+  (modus-vivendi-theme-load))
 #+end_src
 
 ** Typeface configurations
