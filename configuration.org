@@ -894,18 +894,19 @@ the following ignores:
 ,*#
 #+end_src
 
-** ruby programming languae
+** ruby programming language
 :PROPERTIES:
 :CUSTOM_ID: h:31fb3eef-7494-4347-9419-5a770a84bebb
 :END:
+
 *** rspec
-:properties:
+:PROPERTIES:
 :header-args: :mkdirp yes :tangle ./ruby/.rspec
 :CUSTOM_ID: h:466d4e53-4de3-48e5-ade6-2846e3e49c50
-:end:
+:END:
 
-this section specifies system-wide configuration for rspec - the ruby behavior
-driven development tool. this ensures that:
+This section specifies system-wide configuration for rspec - the ruby
+behavior driven development tool. this ensures that:
 
 - example and specification output should use the terminal control
   characters to colorize output. this provides rich visual feedback of
