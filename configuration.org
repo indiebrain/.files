@@ -687,33 +687,30 @@ goals:
   existing file with an updated version. This means that if there are
   multiple bash sessions only the last one to exit will have its history
   saved.
-- Entering a command will automatically append itself and reload the
-  history. To do this correctly, we need to do a bit of a hack. We need
-  to append to the history file immediately with =history -a= and reload
-  new entries from the history file via =history -n=.
+- Entering a command will automatically log itself to the history.
 - Store only unique commands in bash history. Don't store multiple
-  instances of =ls= for example. The =HISTCONTROL=
-  =erasedups= configuration value controls this.
+  instances of =ls= for example. The =HISTCONTROL= =erasedups= configuration
+  value controls this.
 - Prefixing a command with a white space character excludes it from the
   history. The =HISTCONTROL= =ignoreboth= configuration value controls this.
-- The Bash defaults on the number of items and size of the history are
-  limited - they harken back to days when storage was more
-  expensive. This sets a reasonably large cap on the number of items to
-  keep in history via the =HISTSIZE= and =HISTFILESIZE= environment
-  variables.
-- Provides a blacklist of commands which should never appear in the
-  history via =HISTIGNORE=. Typically having history entries for the
-  following commands in the bash history either accounts for clutter and
-  removes or obscures the more meaningful history entries. Therefore, we
-  prevent creating history entries for the following commands.
+- The Bash defaults on the number of items and size of the history -
+  they harken back to days when storage was more expensive. This sets a
+  reasonably large cap on the number of items to keep in history via the
+  =HISTSIZE= and =HISTFILESIZE= environment variables.
+- Provides a blacklist of command "patterns" which should never appear
+  in the history via =HISTIGNORE=. Typically having history entries for
+  the following commands in the bash history either accounts for clutter
+  and removes or obscures the more meaningful history entries.
+  Therefore, we prevent creating history entries for the following
+  commands.
 
 #+begin_src sh
 shopt -s histappend
-export PROMPT_COMMAND="history -a; history -n; $PROMPT_COMMAND"
+export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 export HISTCONTROL=ignoreboth:erasedups
 export HISTSIZE=100000
 export HISTFILESIZE=10000000
-export HISTIGNORE='bg:cd:clear:exit:fg:ll:ls:pwd:history'
+export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
 #+end_src
 
 ** ASDF Version manager
