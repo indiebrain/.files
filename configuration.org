@@ -415,23 +415,6 @@ disabling =spring= globally.
 DISABLE_SPRING=1
 #+end_src
 
-**** Departure
-:PROPERTIES:
-:CUSTOM_ID: h:9fb8284d-b1dc-4ce1-8f88-bd9531652fe1
-:END:
-
-The =departure= ruby gem wraps the Percona Toolkit Online Schema Change
-(pt-osc). Since MySQL does not apply Data Description Language
-statements - IE schema migrations - within the scope of a transaction,
-it's entirely possible that adding or removing a column irrevocably
-corrupts a database. The departure gem tends to get in the way when
-working locally, so this configuration disables it, skipping protections
-from broken schema migrations locally.
-
-#+begin_src sh
-export DISABLE_DEPARTURE=1
-#+end_src
-
 **** Overcommit
 :PROPERTIES:
 :CUSTOM_ID: h:02f87061-1ddb-4400-a7f4-98c9d732bf07
