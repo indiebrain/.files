@@ -9,7 +9,7 @@
 DOTFILES_HOME="$HOME/.files"
 
 function remove_common_configuration() {
-    stow --delete bash git emacs asdf ruby scripts
+    stow --delete bash git emacs asdf ruby scripts proselint
 }
 
 function remove_macos_configuration() {
