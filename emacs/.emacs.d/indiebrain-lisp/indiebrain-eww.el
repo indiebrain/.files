@@ -187,7 +187,7 @@ new EWW buffer."
 
 (defvar indiebrain-eww-search-engines
   '((debbugs . indiebrain-eww-search-debbugs)
-    (DuckDuckGo . indiebrain-eqq-search-duckduckgo)
+    (DuckDuckGo . indiebrain-eww-search-duckduckgo)
     (Wikipedia . indiebrain-eww-search-wikipedia))
   "Alist of web search commands.
 The car of each cons cell is an arbitrary string that describes
