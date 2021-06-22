@@ -3655,29 +3655,44 @@ And here is =indiebrain-vc.el= (part of [[https://github.com/indiebrain/.files/]
 
 #+include: indiebrain-lisp/indiebrain-vc.el src emacs-lisp :tangle no
 
-*** Interactive and powerful git front-end (Magit)
+*** Interactive and powerful git front-end (Magit and Forge)
 :PROPERTIES:
 :CUSTOM_ID: h:FEEF77DF-54C9-45F5-A54B-FB28DBA1765F
 :END:
 
-As noted in the section on the built-in Version Control framework I use
+As noted in the section on the built-in [[#h:A852E4F8-426C-4AA1-846E-41204B0D28C4][Version Control framework]] I use
 Magit for easy access to the /advanced features of Git/. While I rely on
 the built-in tools for all day-to-day operations.
 
 Magit offers a modal interface where the full power of =git= is neatly
-organised in sets of keys that are directly accessible without holding
+organized in sets of keys that are directly accessible without holding
 down any modifiers.
 
 While inside the =magit-status= buffer, hit =?= to produce a transient menu
 with the possible vectors to action. Do it again inside each of the
 Magit buffers to view the keys that work for their context.
 
-agit has great defaults and it should work admirably without any further
+Magit has great defaults and it should work admirably without any further
 tweaks or extra setup. That granted, the =git-commit= package (part of
 Magit) is configured in accordance with the guidelines provided by this
 article on [[https://chris.beams.io/posts/git-commit/][writing a Git commit message]]. The gist is to compose commits
 that are clean and easy to read. The =fill-column= is set elsewhere in
 this document to 72 characters long.
+
+Additionally, the =forge= library is a wonderful companion library to
+=magit= which enables collaboration on popular git forges (GitHub and
+Gitlab). =forge= uses the [[https://magit.vc/manual/ghub/index.html#Top][ghub API client]] to interact with forges. See the
+=forge= / =ghub= client documentation for directions on setting up API
+credentials. Typically, for my use case, I need to specify the usernames
+of my GitHub / Gitlab accounts in my =.gitconfig=. Then I generate [[https://magit.vc/manual/forge/Token-Creation.html#Token-Creation][an API
+token with the abilities listed in the =forge= documentation]]. Then the
+token is stored in an encrypted =.authinfo.gpg= file in my user's home
+directory. The entries in the =authinfo.gpg= file look something like these:
+
+#+begin_example
+machine api.github.com login indiebrain^forge password 012345abcdef...
+machine gitlab.com/api/v4 login indiebrain^forge password 012345abcdef...
+#+end_example
 
 #+begin_src emacs-lisp
 (indiebrain-emacs-elpa-package 'magit
@@ -3704,7 +3719,9 @@ this document to 72 characters long.
 
   (require 'magit-repos)
   (setq magit-repository-directories
-    '(("~/Developer" . 1))))
+    '(("~/Developer/" . 1))))
+
+(indiebrain-emacs-elpa-package 'forge)
 #+end_src
 
 *** Smerge and Ediff
