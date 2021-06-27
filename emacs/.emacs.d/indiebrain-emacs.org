@@ -6404,11 +6404,11 @@ appropriate variables.
 
 The most common action is the command =indiebrain-comment-comment-dwim=
 which is bound to =C-;=. Note that =C-;= is normally occupied by some
-=flyspell= command (disabled in [[#h:3f1b2856-c6b7-418a-9d7d-464bd1ebe69c][Flyspell and indiebrain-spell.el (spell
-check)]]). Compare that keybinding to the one I have for the much more
-specialised =indiebrain-comment-timestamp-keyword=: =C-x C-;=. What those
-commands do is documented in their docstrings, so please check the code
-below.
+=flyspell= command (disabled in [[#h:DB14B9F0-C8CA-4841-A295-62C7A673620D][Spellchecking (flyspell and
+indiebrain-spell.el)]]). Compare that keybinding to the one I have for the
+much more specialised =indiebrain-comment-timestamp-keyword=: =C-x C-;=.
+What those commands do is documented in their docstrings, so please
+check the code below.
 
 #+begin_src emacs-lisp
 (indiebrain-emacs-builtin-package 'newcomment
@@ -6559,8 +6559,17 @@ checking when editing prose.
 
 Also bear in mind that the key binding =C-;= that Flyspell uses by default
 is disabled because I re-purpose it for a faster version of =C-x C-;=
-(much more useful for my work—see the newcomment.el and
-indiebrain-comment.el)).
+(much more useful for my work - see the [[#h:C9E1E50B-A782-4163-B5C4-27BEA8A599A2][Comments (newcomment.el and
+indiebrain-comment.el)]] section).
+
+Flyspell offers two modes I find useful in my work. First, =flyspell-mode=
+is intended to provide on-the-fly spellchecking in prose heavy buffers.
+I enable =flyspell-mode= in buffers where the major mode derives from
+=text-mode=. However, my aptitude for typos extends to non-prose buffers
+as well. For those "code-centric" buffers, =flyspell-prog-mode= limits
+spellchecking of comment regions of a buffer. This does NOT help me in
+the case where I mistype a variable or function name in code. For that I
+tend to rely on in-buffer linter feedback (see [[#h:25282A11-6994-4849-9DF4-E99937F8072D][Flycheck]]).
 
 #+begin_src emacs-lisp
 (indiebrain-emacs-builtin-package 'flyspell
@@ -6568,7 +6577,10 @@ indiebrain-comment.el)).
   (setq flyspell-issue-welcome-flag nil)
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
-  (define-key flyspell-mode-map (kbd "C-;") nil))
+  (define-key flyspell-mode-map (kbd "C-;") nil)
+
+  (add-hook 'text-mode-hook #'flyspell-mode)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode))
 
 (indiebrain-emacs-builtin-package 'indiebrain-spell
   (let ((map global-map))
