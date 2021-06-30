@@ -3052,6 +3052,26 @@ code. Do it with =M-x find-library transpose-frame=.
     (define-key map (kbd "C-s-t") #'flop-frame) ; what I consider "transpose" in this context
     (define-key map (kbd "C-s-r") #'rotate-frame-clockwise)))
 #+end_src
+** Frame management
+
+The closest analogy to an Emacs "Frame" is what modern desktop
+environments call a "window." I usually intend to run Emacs in a single
+frame and use its built in window and buffer management systems to
+manage my workflow. The only real functionality related to Emacs frames
+that I like to expose is the ability to toggle the frame in/out of
+full-screen mode. By default, this functionality is bound to the =[f11]=
+key, however MacOS - which I use primarily for work (See more in [[#h:21C6323F-F376-450D-881F-6134998D3236][What is
+your distro and/or window manager?]]) - map the =[f11]= key to some OS
+functionality which I never desire (and have no idea how to disable
+this.). So, as a work around, I redefine the =[f12]= key to toggle Emacs
+frames into full-screen mode.
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-builtin-package 'frame
+  (let ((map global-map))
+    (define-key map [f12] #'toggle-frame-fullscreen)))
+#+end_src
+
 * Applications and utilities
 :PROPERTIES:
 :CUSTOM_ID: h:a927f3be-91fb-4ad7-a45e-48980a3b7941
