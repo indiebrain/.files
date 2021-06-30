@@ -873,7 +873,6 @@ appear showing you the keys you can use and the actions bound to them.
 * Selection candidates and search methods
 :PROPERTIES:
 :CUSTOM_ID: h:3672aa42-5caa-4fb1-a1ed-0f92a2705692
-:ID:       91AA758E-3EDE-41CC-A73E-BB422581BEC9
 :END:
 
 ** Completion framework and extras
@@ -983,7 +982,6 @@ Embark's completions buffer, as well as the default completions' buffer.
 *** Minibuffer configurations and extras (indiebrain-minibuffer.el)
 :PROPERTIES:
 :CUSTOM_ID: h:813B4DC2-EB36-4825-90EE-299CA53A9AD1
-:ID:       B08E7CDE-C96F-4543-A1E1-9ABE8EAB6996
 :END:
 
 The minibuffer is the epicentre of extended interactivity with all sorts
@@ -1743,9 +1741,9 @@ This is =indiebrain-project.el= (part of [[https://github.com/indiebrain/.files/
 #+include: indiebrain-lisp/indiebrain-project.el src emacs-lisp :tangle no
 
 *** Completion for recent files and directories (indiebrain-recentf.el)
-:properties:
-:custom_id: h:e7008b34-7a7f-40af-9f98-58d36c41f515
-:end:
+:PROPERTIES:
+:CUSTOM_ID: h:e7008b34-7a7f-40af-9f98-58d36c41f515
+:END:
 
 This is a built-in minor mode that keeps track of the files you have
 opened, allowing you to revisit them faster. its true power consists in
@@ -7165,7 +7163,6 @@ reasonable indentation depth for nesting nodes in the document tree.
 This section contains configurations for packages that are dedicated to
 the task of recording the state of various Emacs tools, such as the
 history of the minibuffer.
-
 
 ** Emacs server and desktop
 :PROPERTIES:
