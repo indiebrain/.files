@@ -71,7 +71,7 @@ or not, such as `indiebrain-project-flymake-mode-activate'."
 (defun indiebrain-project--project-files-in-directory (dir)
   "Use `fd' to list files in DIR."
   (unless (executable-find "fd")
-    (error "Cannot find 'fd' command is shell environment $PATH"))
+    (error "Cannot find 'fd' command in shell environment $PATH"))
   (let* ((default-directory dir)
          (localdir (file-local-name (expand-file-name dir)))
          (command (format "fd -t f -0 . %s" localdir)))
@@ -224,8 +224,7 @@ Optional N integer overrides that variable's value."
          (int (indiebrain-common-number-integer-p num)))
     (> (indiebrain-project--max-line) int)))
 
-;; Copied from Manuel Uberti, whom I had inspired with an earlier
-;; version of this, and adapted accordingly:
+;; Copied from Manuel Uberti:
 ;; <https://www.manueluberti.eu/emacs/2020/11/21/flymake-projects/>.
 ;;;###autoload
 (defun indiebrain-project-flymake-mode-activate ()
