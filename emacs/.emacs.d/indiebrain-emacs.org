@@ -2174,7 +2174,7 @@ Here are just the basics.
   (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
   (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
   (setq xref-file-name-display 'project-relative)
-  (setq xref-search-program 'grep))
+  (setq xref-search-program 'ripgrep))
 #+end_src
 
 **** Mode-specific new buffer templates (autoinsert and indiebrain-autoinsert.el)
