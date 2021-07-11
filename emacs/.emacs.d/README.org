@@ -12,11 +12,12 @@ repository]] for details.
 
 * Notes
 
-This configuration is compatible with Emacs 27+ and uses =org-babel=
-to maintain a Literate Style configuration in [[./emacs-init.org][emacs-init.org]].
+This configuration is compatible with Emacs 28+ and uses =org-babel=
+to maintain a Literate Style configuration.
 
-Initialization is performed in [[./early-init.el][early-init.el]] and [[./init.el][init.el]].
+Initialization is performed in [[./early-init.el][early-init.el]] and [[./init.el][init.el]]. The bulk of
+documentation and configuration is in the [[./indiebrain-emacs.org][indiebrain-emacs.org]].
 
 Since version 24, Emacs has inforporated the ELPA package manager as
 core functionality. The configuration makes heavy use of the =package=
-and =use-package=.
+library.
