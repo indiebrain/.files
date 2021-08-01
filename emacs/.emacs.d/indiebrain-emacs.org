@@ -3053,6 +3053,9 @@ code. Do it with =M-x find-library transpose-frame=.
     (define-key map (kbd "C-s-r") #'rotate-frame-clockwise)))
 #+end_src
 ** Frame management
+:PROPERTIES:
+:CUSTOM_ID: h:F3B6698D-D3F0-4ACC-8AE0-84D5EF2874E3
+:END:
 
 The closest analogy to an Emacs "Frame" is what modern desktop
 environments call a "window." I usually intend to run Emacs in a single
@@ -6989,6 +6992,22 @@ contents are flushed to disk.
   (add-hook 'before-save-hook #'gofmt-before-save))
 #+end_src
 
+*** Groovy (groovy-mode)
+:PROPERTIES:
+:CUSTOM_ID: h:B9841CB5-D82A-4B35-A43F-5A58F5E207FB
+:END:
+
+I'm not terribly interested in the Groovy language. Yet, some tools I
+encounter in my work seem to like using Groovy for scripting. This bit
+add a minimal amount of consistency to buffers in which I'm editing
+these types of buffers ([[#h:BDA11B18-F3F5-47B5-9F93-F29B303481EF][Jenkins pipeline (jenkinsfile-mode)]] syntax for
+example).
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'groovy-mode
+  (setq groovy-indent-offset 2))
+#+end_src
+
 *** JavaScript (js2-mode)
 :PROPERTIES:
 :CUSTOM_ID: h:E3E82ED2-7A81-4B20-A3E9-2DE51D068344
@@ -7046,6 +7065,20 @@ Some notable configurations:
   (flycheck-add-mode 'javascript-eslint 'js-mode)
   (flycheck-add-mode 'javascript-eslint 'js2-mode)
   (setq flycheck-javascript-eslint-executable "node_modules/.bin/eslint"))
+#+end_src
+
+*** Jenkins pipeline (jenkinsfile-mode)
+:PROPERTIES:
+:CUSTOM_ID: h:BDA11B18-F3F5-47B5-9F93-F29B303481EF
+:END:
+
+I've fallen into a Release Engineering role more than once in my career.
+Some organizations for whom I work use the Jenkins Continuous
+Integration tool to "build" their software. This adds support for
+editing "build" descriptions using the pipeline syntax.
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'jenkinsfile-mode)
 #+end_src
 
 *** Ruby
