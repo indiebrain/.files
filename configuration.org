@@ -830,7 +830,7 @@ system. the following contains configuration which:
 
 #+begin_src conf
 [user]
-name = aaron kuehler
+name = Aaron Kuehler
 email = aaron.kuehler@gmail.com
 signingkey = 9e3e4c59e2694215
 
