@@ -4068,7 +4068,7 @@ straightforward system of plain text notation.
 
 Couched in those terms, Org is at once a distribution of well integrated
 libraries and a vibrant ecosystem that keeps producing new ideas and
-workflows on how to organise one's life with plain text.
+workflows on how to organize one's life with plain text.
 
 The present document is written in =org-mode= while its website version is
 outputted by a tool (also part of Org) that exports Org notation to its
@@ -4789,7 +4789,7 @@ will not be shown in the Diary display, but will still activate the
 reminder. Nice and simple!
 
 To recapitulate, the Diary is flexible enough to accommodate a variety of
-preferences on how to organise one's life events. The key to get started
+preferences on how to organize one's life events. The key to get started
 is to learn how to edit the actual file, which is fairly easy. It then
 is trivial to either display that information on demand or be notified
 about it.
@@ -8006,7 +8006,7 @@ each in their own unique way:
   snippets.
 
 - Rainer König :: Rainer has [[https://www.youtube.com/playlist?list=PLVtKhBrRV_ZkPnBtt_TD1Cs9PJlU0IIdE][a series of video tutorials]] on how to
-  organise your life using various Org features, such as check lists and
+  organize your life using various Org features, such as check lists and
   the agenda. Each video covers a single utility or closely related
   concepts, while the whole playlist offers a progression from basic to
   more advanced workflows. Highly recommended!
@@ -8042,7 +8042,7 @@ each in their own unique way:
 
 - Karl Voit :: Karl is an expert in Personal Information Management
   (PIM) covering that and relevant topics over at [[https://karl-voit.at/][karl-voit.at]]. There
-  are lots of interesting articles on offer, such as how to organise
+  are lots of interesting articles on offer, such as how to organize
   data with [[https://karl-voit.at/2020/01/25/avoid-complex-folder-hierarchies/][Don't Do Complex Folder Hierarchies]] and to keep a web
   presence with [[https://karl-voit.at/2020/10/23/avoid-web-forums/][Don't Contribute Anything Relevant in Web Forums]]. Karl
   also participated in the 2021 edition of the /Grazer Linuxtage/
@@ -8051,7 +8051,7 @@ each in their own unique way:
 - Sacha Chua :: Sacha's work is instrumental to the Emacs community's
   self awareness. The [[https://sachachua.com/blog/category/geek/emacs/][weekly "Emacs news" blog entries]] offers an
   overview of what is happening in our space---consider it essential
-  reading. While Sacha was among the organisers of the last two yearly
+  reading. While Sacha was among the organizers of the last two yearly
   Emacsconf events and has shared a lot of valuable insights throughout
   the years, such as hand-drawn guides to using Emacs, chats with
   prominent members of the Emacs community, and more.
