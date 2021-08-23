@@ -805,34 +805,39 @@ This section configures the =git= version control system.
 :end:
 
 This section provides the core configuration of the =git= version control
-system. the following contains configuration which:
+system. The following contains configuration which:
 
-- instructs git how to write the author information for commits.
+- Instructs git how to write the author information for commits.
 - references a global / host gitignore file.
-- prints colorized output for git commands like =status=, and =diff=.
+- Prints colorized output for git commands like =status=, and =diff=.
 - defines aliases, or shorthand, for frequently used, or often forgotten
   git incantations.
-- signs every commit with my gnupg key to verify the authenticity of
+- Signs every commit with my gnupg key to verify the authenticity of
   such commits to other parties.
-- configures the =git clean= command to be less intrusive - ie drop the
+- Configures the =git clean= command to be less intrusive - ie drop the
   "are you sure?" charade.
-- only pushe the current branch when running =git push=;rather than
+- Only pushe the current branch when running =git push=;rather than
   pushing all refs in the local repository.
-- prevents =git= from eagerly fetching the tags from the =origin= remote.
+- Prevents =git= from eagerly fetching the tags from the =origin= remote.
   this is useful for improving the responsiveness of large repositories
   with lots of tags, and the user may manually download them later if
   they so choose.
-- performs a =--prune= operation on each fetch from the =origin= remote.
+- Performs a =--prune= operation on each fetch from the =origin= remote.
   again, this is useful for large repositories where the =origin= may
   contain refs which i'll never need to reference. when removed
   from the remote, these branches are automatically removed from the
   local object database as well.
+- Conditionally augments the Git system's configuration based on if the
+  repository is owned by my employer.
 
 #+begin_src conf
 [user]
 name = Aaron Kuehler
 email = aaron.kuehler@gmail.com
 signingkey = 9e3e4c59e2694215
+
+[includeIf "gitdir:~/Developer/work/"]
+  path = ~/.work.gitconfig
 
 [core]
 excludesfile = ~/.gitignore_global
@@ -858,6 +863,21 @@ default = simple
 [remote "origin"]
 tagopt = --no-tags
 prune = true
+#+end_src
+
+*** Work specific configuration
+:properties:
+:header-args: :mkdirp yes :tangle ./git/.work.gitconfig
+:end:
+When working on repositories for an employer, I often need certain
+aspects of the git configuration to behave differently. [[https://git-scm.com/docs/git-config#_conditional_includes][Git's
+Conditional Includes feature makes it possible to layer in such
+configuration]]. This file contains configuration augmentations suitable
+for working on my employer's repositories.
+
+#+begin_src conf
+[user]
+email = aaron.kuehler@powerhrg.com
 #+end_src
 
 *** Global ignore file
