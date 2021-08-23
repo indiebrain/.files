@@ -62,8 +62,11 @@
      \n
      "-h, --help      Print this help and exit" \n
      "-v, --verbose   Print script debug info" \n
+     \n
+     "Available flags:" \n
+     \n
      "-f, --flag      Some flag description" \n
-     "-p, --param     Some param description" \n
+     \n
      -4"EOF" \n
      > "exit" \n
      -4 "}" \n
@@ -113,10 +116,14 @@
      \n
      "validate_params() {" \n
      > "[[ -z \"${param-}\" ]] && die \"Missing required parameter: param\"" \n
+     "" \n
+     "return 0" \n
      -4 "}" \n
      \n
      "validate_args() {" \n
      > "[[ ${#args[@]} -eq 0 ]] && die \"Missing script arguments\"" \n
+     "" \n
+     "return 0" \n
      -4 "}" \n
      \n
      "parse_params() {" \n
