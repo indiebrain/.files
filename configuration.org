@@ -878,6 +878,7 @@ for working on my employer's repositories.
 #+begin_src conf
 [user]
 email = aaron.kuehler@powerhrg.com
+signingkey = 93600A0F0CF9E1BB
 #+end_src
 
 *** Global ignore file
