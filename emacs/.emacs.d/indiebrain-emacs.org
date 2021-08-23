@@ -7190,6 +7190,32 @@ suite of specifications. Some interactions of note:
   (add-hook 'after-init-hook #'inf-ruby-switch-setup))
 #+end_src
 
+*** Rust
+
+Rust is not a language in which I'm primarily interested, but I do come
+across it from time to time. This adds the ability to work effectively
+with the Rust language and =cargo= dependency management / build system.
+
+One may use the universal argument to alter the Cargo command. the key
+chord =C-u C-c C-c C-r RET= will place the cargo command in the mini
+buffer. From there the command can be altered then executed. For example
+to specify that the program should be run via in release mode one would
+=C-u C-c C-c r RET --release RET=. Some examples of commonly used cargo
+key chords:
+
+| C-c C-c RET | Run =cargo fmt= on the current project   |
+| C-c C-c C-r | Run =cargo run= on the current project   |
+| C-c C-c C-b | Run =cargo build= on the current project |
+| C-c C-c C-a | Add a =crate= to the current project     |
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'rust-mode)
+
+(indiebrain-emacs-elpa-package 'flycheck-rust)
+(indiebrain-emacs-elpa-package 'cargo
+  (add-hook 'rust-mode-hook #'cargo-minor-mode))
+#+end_src
+
 *** Web / HTML (web-mode)
 :PROPERTIES:
 :CUSTOM_ID: h:0EA60830-0F9B-4DB9-9271-0A1F2F451E29
