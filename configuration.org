@@ -836,6 +836,9 @@ name = Aaron Kuehler
 email = aaron.kuehler@gmail.com
 signingkey = 9e3e4c59e2694215
 
+[github]
+    user = indiebrain
+
 [includeIf "gitdir:~/Developer/work/"]
   path = ~/.work.gitconfig
 
