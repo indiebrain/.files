@@ -5750,12 +5750,17 @@ an overview of the current time in various parts of the planet.
   (setq display-time-mail-string nil)
   (setq display-time-mail-face nil)
 
-;;; World clock
+  ;;; World clock
+  ;;;
+  ;;; Useful list of zones: https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+  ;;;
   (setq zoneinfo-style-world-list
-    '(("America/New_York" "New York")
-      ("America/Chicago" "Chicago")
-      ("America/Los_Angeles" "Los Angeles")
-      ("Australia/Brisbane", "Brisbane")))
+
+        '(("Australia/Brisbane" "Brisbane")
+          ("Europe/London" "London")
+          ("America/New_York" "New York")
+          ("America/Chicago" "Chicago")
+          ("America/Los_Angeles" "Los Angeles")))
 
   ;; All of the following variables are for Emacs 28
   (setq world-clock-list t)
