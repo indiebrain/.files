@@ -25,6 +25,7 @@ forge-database.sqlite
 history
 ido.last
 network-security.data
+org-roam.db
 projectile-bookmarks.eld
 projectile.cache
 request/
