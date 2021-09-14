@@ -4200,7 +4200,7 @@ Refer to [[#h:DE9C418F-0C2D-4C3B-A4DF-AFE8BE0AB8BA][Custom extensions for "focus
 (indiebrain-emacs-builtin-package 'org
   (setq org-directory (convert-standard-filename "~/.org"))
   (setq org-imenu-depth 7)
-;;;; general settings
+  ;;;; general settings
   (setq org-adapt-indentation nil)      ; No, non, nein, όχι!
   (setq org-special-ctrl-a/e nil)
   (setq org-special-ctrl-k nil)
@@ -4209,15 +4209,15 @@ Refer to [[#h:DE9C418F-0C2D-4C3B-A4DF-AFE8BE0AB8BA][Custom extensions for "focus
   (setq org-hide-macro-markers t)
   (setq org-hide-leading-stars nil)
   (setq org-structure-template-alist    ; CHANGED in Org 9.3, Emacs 27.1
-    '(("s" . "src")
-      ("r" . "src ruby")
-      ("E" . "src emacs-lisp")
-      ("e" . "example")
-      ("q" . "quote")
-      ("v" . "verse")
-      ("V" . "verbatim")
-      ("c" . "center")
-      ("C" . "comment")))
+        '(("s" . "src")
+          ("r" . "src ruby")
+          ("E" . "src emacs-lisp")
+          ("e" . "example")
+          ("q" . "quote")
+          ("v" . "verse")
+          ("V" . "verbatim")
+          ("c" . "center")
+          ("C" . "comment")))
   (setq org-catch-invisible-edits 'show)
   (setq org-return-follows-link nil)
   (setq org-loop-over-headlines-in-active-region 'start-level)
@@ -4225,21 +4225,21 @@ Refer to [[#h:DE9C418F-0C2D-4C3B-A4DF-AFE8BE0AB8BA][Custom extensions for "focus
   (setq org-use-sub-superscripts '{})
   (setq org-insert-heading-respect-content t)
 
-;;;; refile, todo
+  ;;;; refile, todo
   (setq org-refile-targets
-    '((org-agenda-files . (:maxlevel . 2))
-      (nil . (:maxlevel . 2))))
+        '((org-agenda-files . (:maxlevel . 2))
+          (nil . (:maxlevel . 2))))
   (setq org-refile-use-outline-path t)
   (setq org-refile-allow-creating-parent-nodes 'confirm)
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order nil)
   (setq org-todo-keywords
-    '((sequence "TODO(t)" "|" "DONE(D)" "CANCEL(C)")))
+        '((sequence "TODO(t)" "|" "DONE(D)" "CANCEL(C)")))
   (setq org-todo-keyword-faces nil)
   (setq org-priority-faces
-    '((?A . '(org-scheduled-today org-priority))
-      (?B . org-priority)
-      (?C . '(shadow org-priority))))
+        '((?A . '(org-scheduled-today org-priority))
+          (?B . org-priority)
+          (?C . '(shadow org-priority))))
   (setq org-fontify-done-headline nil)
   (setq org-fontify-quote-and-verse-blocks t)
   (setq org-fontify-whole-heading-line nil)
@@ -4247,16 +4247,16 @@ Refer to [[#h:DE9C418F-0C2D-4C3B-A4DF-AFE8BE0AB8BA][Custom extensions for "focus
 
   (defun indiebrain/modus-themes-org-fontify-block-delimiter-lines ()
     "Match `org-fontify-whole-block-delimiter-line' to theme style.
-Run this function at the post theme load phase, such as with the
-hook `modus-themes-after-load-theme-hook'."
+  Run this function at the post theme load phase, such as with the
+  hook `modus-themes-after-load-theme-hook'."
     (if (eq modus-themes-org-blocks 'gray-background)
-    (setq org-fontify-whole-block-delimiter-line t)
+        (setq org-fontify-whole-block-delimiter-line t)
       (setq org-fontify-whole-block-delimiter-line nil))
     (when (derived-mode-p 'org-mode)
       (font-lock-flush)))
 
   (add-hook 'modus-themes-after-load-theme-hook
-        #'indiebrain/modus-themes-org-fontify-block-delimiter-lines)
+            #'indiebrain/modus-themes-org-fontify-block-delimiter-lines)
 
   (setq org-highlight-latex-and-related nil) ; other options affect elisp regexp in src blocks
   (setq org-enforce-todo-dependencies t)
@@ -4266,11 +4266,11 @@ hook `modus-themes-after-load-theme-hook'."
   (setq org-lowest-priority ?C)
   (setq org-default-priority ?A)
 
-;;;; tags
+  ;;;; tags
   (setq org-tag-alist                   ; TODO review org tag list
-    nil)
+        nil)
 
-;;;; log
+  ;;;; log
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
   (setq org-log-note-clock-out nil)
@@ -4278,26 +4278,26 @@ hook `modus-themes-after-load-theme-hook'."
   (setq org-log-reschedule nil)
   (setq org-read-date-prefer-future 'time)
 
-;;;; links
+  ;;;; links
   (setq org-link-keep-stored-after-insertion t)
 
-;;;; capture
-(setq org-capture-templates
-    `(("t" "Basic task" entry
-       (file+headline "tasks.org" "Backlog")
-       ,(concat "* TODO %^{Title}\n"
-            ":PROPERTIES:\n"
-            ":CAPTURED: %t\n"
-            ":END:\n\n"
-            "%i%l"))
-      ("w" "Work")
-      ("wb" "Backlog Item" entry
-       (file+headline "tasks.org" "Backlog")
-       ,(concat "* TODO %^{Title} \n"
-                "SCHEDULED: %^t\n"
-                ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
-                "https://nitro.powerhrg.com/runway/backlog_items/%^{Backlog Item Number}\n\n"
-                "%i%?"))))
+  ;;;; capture
+  (setq org-capture-templates
+        `(("t" "Basic task" entry
+           (file+headline "tasks.org" "Backlog")
+           ,(concat "* TODO %^{Title}\n"
+                    ":PROPERTIES:\n"
+                    ":CAPTURED: %t\n"
+                    ":END:\n\n"
+                    "%i%l"))
+          ("w" "Work")
+          ("wb" "Backlog Item" entry
+           (file+headline "tasks.org" "Backlog")
+           ,(concat "* TODO %^{Title} \n"
+                    "SCHEDULED: %^t\n"
+                    ":PROPERTIES:\n:CAPTURED: %U\n:END:\n\n"
+                    "https://nitro.powerhrg.com/runway/backlog_items/%^{Backlog Item Number}\n\n"
+                    "%i%?"))))
 
   ;; Source: https://stackoverflow.com/a/54251825
   (defun contrib/org-capture-no-delete-windows (oldfun args)
@@ -4306,10 +4306,10 @@ hook `modus-themes-after-load-theme-hook'."
 
   ;; Same source as above
   (advice-add 'org-capture-place-template
-          :around 'contrib/org-capture-no-delete-windows)
+              :around 'contrib/org-capture-no-delete-windows)
 
-;;;; agenda
-;;;;; Basic agenda setup
+  ;;;; agenda
+  ;;;;; Basic agenda setup
   (setq org-default-notes-file (thread-last org-directory (expand-file-name "notes.org")))
   (setq org-agenda-files `(,org-directory "~/.org"))
   (setq org-agenda-span 14)
@@ -4328,17 +4328,17 @@ hook `modus-themes-after-load-theme-hook'."
   (setq org-agenda-max-tags nil)
   (setq org-agenda-max-effort nil)
 
-;;;;; General agenda view options
+  ;;;;; General agenda view options
   (setq org-agenda-prefix-format
-    '((agenda . " %i %-12:c%?-12t% s")
-      (todo . " %i %-12:c")
-      (tags . " %i %-12:c")
-      (search . " %i %-12:c")))
+        '((agenda . " %i %-12:c%?-12t% s")
+          (todo . " %i %-12:c")
+          (tags . " %i %-12:c")
+          (search . " %i %-12:c")))
   (setq org-agenda-sorting-strategy
-    '(((agenda habit-down time-up priority-down category-keep)
-       (todo priority-down category-keep)
-       (tags priority-down category-keep)
-       (search category-keep))))
+        '(((agenda habit-down time-up priority-down category-keep)
+           (todo priority-down category-keep)
+           (tags priority-down category-keep)
+           (search category-keep))))
   (setq org-agenda-breadcrumbs-separator "->")
   (setq org-agenda-todo-keyword-format "%-1s")
   (setq org-agenda-fontify-priorities 'cookies)
@@ -4350,54 +4350,54 @@ hook `modus-themes-after-load-theme-hook'."
 
   (defun indiebrain/org-agenda-format-date-aligned (date)
     "Format a DATE string for display in the daily/weekly agenda.
-This function makes sure that dates are aligned for easy reading.
+  This function makes sure that dates are aligned for easy reading.
 
-Slightly tweaked version of `org-agenda-format-date-aligned' that
-produces dates with a fixed length."
+  Slightly tweaked version of `org-agenda-format-date-aligned' that
+  produces dates with a fixed length."
     (require 'cal-iso)
     (let* ((dayname (calendar-day-name date t))
-       (day (cadr date))
-       (day-of-week (calendar-day-of-week date))
-       (month (car date))
-       (monthname (calendar-month-name month t))
-       (year (nth 2 date))
-       (iso-week (org-days-to-iso-week
-              (calendar-absolute-from-gregorian date)))
-       (weekyear (cond ((and (= month 1) (>= iso-week 52))
-                (1- year))
-               ((and (= month 12) (<= iso-week 1))
-                (1+ year))
-               (t year)))
-       (weekstring (if (= day-of-week 1)
-               (format " (W%02d)" iso-week)
-             "")))
+           (day (cadr date))
+           (day-of-week (calendar-day-of-week date))
+           (month (car date))
+           (monthname (calendar-month-name month t))
+           (year (nth 2 date))
+           (iso-week (org-days-to-iso-week
+                      (calendar-absolute-from-gregorian date)))
+           (weekyear (cond ((and (= month 1) (>= iso-week 52))
+                            (1- year))
+                           ((and (= month 12) (<= iso-week 1))
+                            (1+ year))
+                           (t year)))
+           (weekstring (if (= day-of-week 1)
+                           (format " (W%02d)" iso-week)
+                         "")))
       (format "%s %2d %s %4d%s"
-          dayname day monthname year weekstring)))
+              dayname day monthname year weekstring)))
 
   (setq org-agenda-format-date #'indiebrain/org-agenda-format-date-aligned)
 
-;;;;; Agenda marks
+  ;;;;; Agenda marks
   (setq org-agenda-bulk-mark-char "#")
   (setq org-agenda-persistent-marks nil)
 
-;;;;; Agenda diary entries
+  ;;;;; Agenda diary entries
   (setq org-agenda-insert-diary-strategy 'date-tree)
   (setq org-agenda-insert-diary-extract-time nil)
   (setq org-agenda-include-diary t)
 
-;;;;; Agenda follow mode
+  ;;;;; Agenda follow mode
   (setq org-agenda-start-with-follow-mode nil)
   (setq org-agenda-follow-indirect t)
 
-;;;;; Agenda multi-item tasks
+  ;;;;; Agenda multi-item tasks
   (setq org-agenda-dim-blocked-tasks t)
   (setq org-agenda-todo-list-sublevels t)
 
-;;;;; Agenda filters and restricted views
+  ;;;;; Agenda filters and restricted views
   (setq org-agenda-persistent-filter nil)
   (setq org-agenda-restriction-lock-highlight-subtree t)
 
-;;;;; Agenda items with deadline and scheduled timestamps
+  ;;;;; Agenda items with deadline and scheduled timestamps
   (setq org-agenda-include-deadlines t)
   (setq org-deadline-warning-days 5)
   (setq org-agenda-skip-scheduled-if-done nil)
@@ -4415,28 +4415,28 @@ produces dates with a fixed length."
   (setq org-agenda-show-future-repeats t)
   (setq org-agenda-prefer-last-repeat nil)
   (setq org-agenda-timerange-leaders
-    '("" "(%d/%d): "))
+        '("" "(%d/%d): "))
   (setq org-agenda-scheduled-leaders
-    '("Scheduled: " "Sched.%2dx: "))
+        '("Scheduled: " "Sched.%2dx: "))
   (setq org-agenda-inactive-leader "[")
   (setq org-agenda-deadline-leaders
-    '("Deadline:  " "In %3d d.: " "%2d d. ago: "))
+        '("Deadline:  " "In %3d d.: " "%2d d. ago: "))
   ;; Time grid
   (setq org-agenda-time-leading-zero t)
   (setq org-agenda-timegrid-use-ampm nil)
   (setq org-agenda-use-time-grid t)
   (setq org-agenda-show-current-time-in-grid t)
   (setq org-agenda-current-time-string
-    (concat "Now " (make-string 36 ?—)))
+        (concat "Now " (make-string 36 ?—)))
   (setq org-agenda-time-grid
-    '((daily today require-timed)
-      (0600 0700 0800 0900 1000 1100
-        1200 1300 1400 1500 1600
-        1700 1800 1900 2000 2100)
-      " ....." "-----------------"))
+        '((daily today require-timed)
+          (0600 0700 0800 0900 1000 1100
+                1200 1300 1400 1500 1600
+                1700 1800 1900 2000 2100)
+          " ....." "-----------------"))
   (setq org-agenda-default-appointment-duration nil)
 
-;;;;; Agenda global to-do list
+  ;;;;; Agenda global to-do list
   (setq org-agenda-todo-ignore-with-date t)
   (setq org-agenda-todo-ignore-timestamp t)
   (setq org-agenda-todo-ignore-scheduled t)
@@ -4444,15 +4444,15 @@ produces dates with a fixed length."
   (setq org-agenda-todo-ignore-time-comparison-use-seconds t)
   (setq org-agenda-tags-todo-honor-ignore-options nil)
 
-;;;;; Agenda tagged items
+  ;;;;; Agenda tagged items
   (setq org-agenda-show-inherited-tags t)
   (setq org-agenda-use-tag-inheritance
-    '(todo search agenda))
+        '(todo search agenda))
   (setq org-agenda-hide-tags-regexp nil)
   (setq org-agenda-remove-tags nil)
   (setq org-agenda-tags-column -120)
 
-;;;;; Agenda entry
+  ;;;;; Agenda entry
   ;; NOTE: I do not use this right now. Leaving everything to its
   ;; default value.
   (setq org-agenda-start-with-entry-text-mode nil)
@@ -4460,18 +4460,18 @@ produces dates with a fixed length."
   (setq org-agenda-entry-text-exclude-regexps nil)
   (setq org-agenda-entry-text-leaders "    > ")
 
-;;;;; Agenda logging and clocking
+  ;;;;; Agenda logging and clocking
   ;; NOTE: I do not use these yet, though I plan to. Leaving everything
   ;; to its default value for the time being.
   (setq org-agenda-log-mode-items '(closed clock))
   (setq org-agenda-clock-consistency-checks
-    '((:max-duration "10:00" :min-duration 0 :max-gap "0:05" :gap-ok-around
-             ("4:00")
-             :default-face ; This should definitely be reviewed
-             ((:background "DarkRed")
-              (:foreground "white"))
-             :overlap-face nil :gap-face nil :no-end-time-face nil
-             :long-face nil :short-face nil)))
+        '((:max-duration "10:00" :min-duration 0 :max-gap "0:05" :gap-ok-around
+                         ("4:00")
+                         :default-face ; This should definitely be reviewed
+                         ((:background "DarkRed")
+                          (:foreground "white"))
+                         :overlap-face nil :gap-face nil :no-end-time-face nil
+                         :long-face nil :short-face nil)))
   (setq org-agenda-log-mode-add-notes t)
   (setq org-agenda-start-with-log-mode nil)
   (setq org-agenda-start-with-clockreport-mode nil)
@@ -4485,7 +4485,7 @@ produces dates with a fixed length."
   (setq org-agenda-sort-notime-is-late t) ; Org 9.4
   (setq org-agenda-sort-noeffort-is-high t) ; Org 9.4
 
-;;;;; Agenda column view
+  ;;;;; Agenda column view
   ;; NOTE I do not use these, but may need them in the future.
   (setq org-agenda-view-columns-initially nil)
   (setq org-agenda-columns-show-summaries t)
@@ -4494,7 +4494,7 @@ produces dates with a fixed length."
   (setq org-agenda-auto-exclude-function nil)
   (setq org-agenda-bulk-custom-functions nil)
 
-;;;; code blocks
+  ;;;; code blocks
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-window-setup 'current-window)
   (setq org-edit-src-persistent-message nil)
@@ -4503,7 +4503,7 @@ produces dates with a fixed length."
   (setq org-src-tab-acts-natively t)
   (setq org-edit-src-content-indentation 0)
 
-;;;; export
+  ;;;; export
   (setq org-export-with-toc t)
   (setq org-export-headline-levels 8)
   (setq org-export-dispatch-use-expert-ui nil)
@@ -4522,9 +4522,9 @@ produces dates with a fixed length."
     (interactive)
     (org-texinfo-export-to-info))
 
-;;;; IDs
+  ;;;; IDs
   (setq org-id-link-to-org-use-id
-    'create-if-interactive-and-no-custom-id)
+        'create-if-interactive-and-no-custom-id)
 
   (declare-function org-id-add-location "org")
 
@@ -4532,25 +4532,25 @@ produces dates with a fixed length."
   ;; <https://writequit.org/articles/emacs-org-mode-generate-ids.html>.
   (defun contrib/org-id-get (&optional pom create prefix)
     "Get the CUSTOM_ID property of the entry at point-or-marker
-POM. If POM is nil, refer to the entry at point. If the entry
-does not have an CUSTOM_ID, the function returns nil. However,
-when CREATE is non nil, create a CUSTOM_ID if none is present
-already. PREFIX will be passed through to `org-id-new'. In any
-case, the CUSTOM_ID of the entry is returned."
+  POM. If POM is nil, refer to the entry at point. If the entry
+  does not have an CUSTOM_ID, the function returns nil. However,
+  when CREATE is non nil, create a CUSTOM_ID if none is present
+  already. PREFIX will be passed through to `org-id-new'. In any
+  case, the CUSTOM_ID of the entry is returned."
     (org-with-point-at pom
       (let ((id (org-entry-get nil "CUSTOM_ID")))
-    (cond
-     ((and id (stringp id) (string-match "\\S-" id))
-      id)
-     (create
-      (setq id (org-id-new (concat prefix "h")))
-      (org-entry-put pom "CUSTOM_ID" id)
-      (org-id-add-location id (format "%s" (buffer-file-name (buffer-base-buffer))))
-      id)))))
+        (cond
+         ((and id (stringp id) (string-match "\\S-" id))
+          id)
+         (create
+          (setq id (org-id-new (concat prefix "h")))
+          (org-entry-put pom "CUSTOM_ID" id)
+          (org-id-add-location id (format "%s" (buffer-file-name (buffer-base-buffer))))
+          id)))))
 
   (defun contrib/org-id-headlines ()
     "Add CUSTOM_ID properties to all headlines in the current
-file which do not already have one."
+  file which do not already have one."
     (interactive)
     (org-map-entries
      (lambda () (contrib/org-id-get (point) t))))
@@ -4567,6 +4567,38 @@ file which do not already have one."
     (define-key map (kbd "<C-S-return>") nil)
     (define-key map (kbd "C-c S-l") #'org-toggle-link-display)
     (define-key map (kbd "C-c C-S-l") #'org-insert-last-stored-link)))
+#+end_src
+
+*** org-roam (org-based knowledge database)
+
+=org-roam= extends the basic org capabilities and provides a mechanism for
+capturing and organizing org-documents as a graph of related topics. It
+is said that organizing your notes and thoughts in this way can lead to
+unexpected insights among the notes you take. I'm skeptical of this,
+but I've tried other self-managed organization solutions (The "few big
+org files" approach for one) but found them inconvenient for one reason
+or another. I'm experimenting with the "many small org files (with a
+database of cross-references)" approach provided by =org-roam=. This
+style of note taking is often called the "Slip-Box" or "Zettlkasten"
+method. This experiment is strongly influenced by the [[https://systemcrafters.net/build-a-second-brain-in-emacs/getting-started-with-org-roam/][System Crafters
+post on org-roam version 2]].
+
+#+begin_src emacs-lisp
+(setq org-roam-v2-ack t)
+(setq org-roam-completion-everywhere t)
+
+(indiebrain-emacs-elpa-package 'org-roam
+  (setq org-roam-directory "~/.org")
+
+  (let ((map global-map))
+    (define-key map (kbd "C-c n l") #'org-roam-buffer-toggle)
+    (define-key map (kbd "C-c n f") #'org-roam-node-find)
+    (define-key map (kbd "C-c n i") #'org-roam-node-insert))
+
+  ;; (let ((map org-mode-map))
+  ;;   (define-key map (kbd "C-M i") #'completion-at-point))
+  (org-roam-setup)
+  )
 #+end_src
 
 ** Static site generator (org-page)
