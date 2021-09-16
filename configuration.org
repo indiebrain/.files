@@ -1138,7 +1138,23 @@ On macOS hosts, ensure that these programs are present. Generally they're
 required to build or support the tools I use to produce software.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-packages="aspell automake autoconf bash bash-completion@2 curl git libtool ncurses openssl proselint readline the_silver_searcher unzip"
+packages="
+    aspell
+    autoconf
+    automake
+    bash
+    bash-completion@2
+    curl
+    git
+    libtool
+    ncurses
+    openssl
+    proselint
+    readline
+    ripgrep
+    the_silver_searcher
+    unzip
+"
 #+end_src
 
 ****** macOS binary packages
@@ -1150,7 +1166,17 @@ On macOS clients, also ensure that the following binary applications are
 available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
-binary_packages="emacs-nightly firefox-developer-edition gpg-suite iterm2 keepassxc nextcloud signal spectacle"
+binary_packages="
+    emacs-nightly
+    firefox-developer-edition
+    gpg-suite
+    iterm2
+    keepassxc
+    nextcloud
+    slack
+    signal
+    spectacle
+"
 #+end_src
 
 ****** Install packages
@@ -1222,7 +1248,20 @@ fi
 On GNU/Linux hosts, ensure that the following packages are present.
 
 #+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
-packages="aspell automake autoconf bash curl emacs git libtool python3-proselint silversearcher-ag unzip"
+packages="
+    aspell
+    autoconf
+    automake
+    bash
+    curl
+    emacs
+    git
+    libtool
+    python3-proselint
+    ripgrep
+    silversearcher-ag
+    unzip
+"
 #+end_src
 
 ****** Install packages
