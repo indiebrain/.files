@@ -1430,6 +1430,7 @@ Install the custom profile themes packaged by these =.files.=
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
 open ~/*.itermcolors
+rm -rf ~/*.itermcolors
 #+end_src
 
 ****** GNU/Linux
@@ -1446,4 +1447,5 @@ Install the custom profile themes packaged by these =.files.=
 
 #+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
 dconf load /org/gnome/terminal/legacy/profiles:/ < ~/.gnome-terminal-profiles.dconf
+rm-rf ~/.gnome-terminal-profiles.dconf
 #+end_src
