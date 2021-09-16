@@ -37,8 +37,8 @@
 ;; NOTE: "Hack" and "Iosevka Comfy" are personal builds of Hack and
 ;; Iosevka respectively:
 ;;
-;; 1. https://gitlab.com/indiebrainesilaos/hack-font-mod
-;; 2. https://gitlab.com/indiebrainesilaos/iosevka-comfy
+;; 1. https://github.com/indiebrain/hack-font-mod
+;; 2. https://github.com/indiebrain/iosevka-comfy
 (defcustom indiebrain-fonts-typeface-sets-alist
   '((laptop  . ( :fixed-pitch-family "Hack"
                  :fixed-pitch-regular-weight normal
