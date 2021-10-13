@@ -7029,6 +7029,25 @@ contents are flushed to disk.
   (add-hook 'before-save-hook #'gofmt-before-save))
 #+end_src
 
+*** GraphQL (graphql-mode)
+
+#+begin_quote
+GraphQL is a query language for APIs and a runtime for fulfilling those
+queries with your existing data. GraphQL provides a complete and
+understandable description of the data in your API, gives clients the
+power to ask for exactly what they need and nothing more, makes it
+easier to evolve APIs over time, and enables powerful developer tools.
+#+end_quote
+
+GraphQL schema have a specific structure and syntax all their own.
+=graphql-mode= provides syntax highlighting and tools to manipulate
+GraphQL schema. I'm just getting started with GraphQL so there's not
+much here yet.
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'graphql-mode)
+#+end_src
+
 *** Groovy (groovy-mode)
 :PROPERTIES:
 :CUSTOM_ID: h:B9841CB5-D82A-4B35-A43F-5A58F5E207FB
