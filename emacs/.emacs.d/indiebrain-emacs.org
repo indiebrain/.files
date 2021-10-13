@@ -1725,7 +1725,7 @@ referenced in the source code below this configuration block):
   (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)) ; C-x p is `project-prefix-map'
 
 (indiebrain-emacs-builtin-package 'indiebrain-project
-  (setq indiebrain-project-project-roots '("~/Developer/"))
+  (setq indiebrain-project-project-roots '("~/Developer/" "~/src/github.com/Shopify/"))
   (setq indiebrain-project-commit-log-limit 25)
   (setq indiebrain-project-large-file-lines 1000)
   (let ((map global-map))
