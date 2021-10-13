@@ -7104,6 +7104,33 @@ Some notable configurations:
   (setq flycheck-javascript-eslint-executable "node_modules/.bin/eslint"))
 #+end_src
 
+*** React JSX (rjsx-mode)
+:PROPERTIES:
+:ID:       60EE33AB-57B7-4C5F-970A-99CB9084B488
+:END:
+
+#+begin_quote
+This funny tag syntax is neither a string nor HTML.
+#+end_quote
+
+JSX is the primary language used to produce React components. It uses a
+primarily JavaScript-ish syntax but introduces an HTML-looking DSL for
+describing Component trees. This makes it so that neither web-mode nor
+js2-mode do a particularly good job of accommodating this hybrid
+content.
+
+The =rjsx-mode= package extends js2-mode parser to support the official
+spec of JSX. Since =rjsx-mode= inherits most of its configuration from
+=js2-mode=, this section is fairly sparse for now. See the [[#h:E3E82ED2-7A81-4B20-A3E9-2DE51D068344][JavaScript
+(js2-mode)]] section for more details. However, the one interesting bit
+here is I automatically activate =rjsx-mode= when opening up
+TypeScript "enhanced" JSX files.
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'rjsx-mode
+  (add-to-list 'auto-mode-alist '("\\.tsx$" . rjsx-mode)))
+#+end_src
+
 *** Jenkins pipeline (jenkinsfile-mode)
 :PROPERTIES:
 :CUSTOM_ID: h:BDA11B18-F3F5-47B5-9F93-F29B303481EF
