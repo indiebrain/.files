@@ -7,3 +7,5 @@ credentials.org
 /asdf/
 /ssh/
 /scripts/
+/proselint/.config/
+!/proselint/.config/proselint
