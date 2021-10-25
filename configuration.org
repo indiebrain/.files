@@ -129,6 +129,21 @@ export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
 export PATH="$HOME/bin:$PATH"
 #+end_src
 
+**** $CDPATH
+
+The =CDPATH= env var is a =:= separated list of filesystem paths that the
+=cd= command uses to lookup possible targets for the directory change
+operation. By default =cd= expects its targets to live in the current
+directory - =.=. However, specifying additional paths in =CDPATH= will
+allow =cd= to look in these paths as well.
+
+This is useful if you have nested, frequently accessed directory
+hierarchies - for stowing work vs personal projects, for example.
+
+#+begin_src sh
+export CDPATH=".:$HOME/src/github.com/Shopify:$HOME/Developer"
+#+end_src
+ 
 **** Prompt
 :PROPERTIES:
 :CUSTOM_ID: h:a3276615-99d2-4259-acbe-87c88e698ef7
