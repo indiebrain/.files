@@ -4569,38 +4569,6 @@ Refer to [[#h:DE9C418F-0C2D-4C3B-A4DF-AFE8BE0AB8BA][Custom extensions for "focus
     (define-key map (kbd "C-c C-S-l") #'org-insert-last-stored-link)))
 #+end_src
 
-*** org-roam (org-based knowledge database)
-
-=org-roam= extends the basic org capabilities and provides a mechanism for
-capturing and organizing org-documents as a graph of related topics. It
-is said that organizing your notes and thoughts in this way can lead to
-unexpected insights among the notes you take. I'm skeptical of this,
-but I've tried other self-managed organization solutions (The "few big
-org files" approach for one) but found them inconvenient for one reason
-or another. I'm experimenting with the "many small org files (with a
-database of cross-references)" approach provided by =org-roam=. This
-style of note taking is often called the "Slip-Box" or "Zettlkasten"
-method. This experiment is strongly influenced by the [[https://systemcrafters.net/build-a-second-brain-in-emacs/getting-started-with-org-roam/][System Crafters
-post on org-roam version 2]].
-
-#+begin_src emacs-lisp
-(setq org-roam-v2-ack t)
-(setq org-roam-completion-everywhere t)
-
-(indiebrain-emacs-elpa-package 'org-roam
-  (setq org-roam-directory "~/.org")
-
-  (let ((map global-map))
-    (define-key map (kbd "C-c n l") #'org-roam-buffer-toggle)
-    (define-key map (kbd "C-c n f") #'org-roam-node-find)
-    (define-key map (kbd "C-c n i") #'org-roam-node-insert))
-
-  ;; (let ((map org-mode-map))
-  ;;   (define-key map (kbd "C-M i") #'completion-at-point))
-  (org-roam-setup)
-  )
-#+end_src
-
 ** Static site generator (org-page)
 :PROPERTIES:
 :CUSTOM_ID: h:1A471BF7-449C-44D1-B89B-3469D3F0FDFD
@@ -5492,6 +5460,13 @@ is but a sample of the most frequent interactions with this mode:
     (add-to-list 'auto-mode-alist '("\\.rest$" . restclient-mode)))
 #+end_src
 
+** Git backed note taking (gist-mode)
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'gist
+  (define-key global-map (kbd "C-x g l") #'gist-list)
+  (define-key global-map (kbd "C-x g c b") #'gist-region-or-buffer-private))
+#+end_src
 * General interface and interactions
 :PROPERTIES:
 :CUSTOM_ID: h:2fe25adb-7f53-4c86-9e6c-4a9a96781dac
