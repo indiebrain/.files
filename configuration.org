@@ -817,40 +817,61 @@ system. The following contains configuration which:
 
 #+begin_src conf
 [user]
-name = Aaron Kuehler
-email = aaron.kuehler@gmail.com
-signingkey = 9e3e4c59e2694215
+    name = Aaron Kuehler
+    email = aaron.kuehler@gmail.com
+    signingkey = 9e3e4c59e2694215
 
 [github]
-user = indiebrain
+    user = indiebrain
+    oauth-token =
 
 [includeIf "gitdir:~/src/github.com/Shopify/"]
-path = ~/.work.gitconfig
+       path = ~/.work.gitconfig
 
 [core]
-excludesfile = ~/.gitignore_global
+    excludesfile = ~/.gitignore_global
+        commitGraph = true
 
 [color]
-ui = true
+    ui = true
 
 [alias]
-co  = checkout
-cb  = checkout -b
-db  = branch -d
-rclone = clone --recursive
-
-[commit]
-gpgSign = true
+    co  = checkout
+    cb  = checkout -b
+    db  = branch -d
+    rclone = clone --recursive
 
 [clean]
-requireforce = false
+    requireforce = false
 
 [push]
-default = simple
+    default = simple
 
 [remote "origin"]
-tagopt = --no-tags
-prune = true
+    tagopt = --no-tags
+    prune = true
+
+[commit]
+    gpgSign = true
+
+[diff]
+    algorithm = patience
+
+[gc]
+    writeCommitGraph = true
+
+[protocol]
+    version = 2
+
+[credential]
+    helper =
+    helper = store --file /opt/dev/var/private/git_credential_store
+
+[url "https://github.com/Shopify/"]
+    insteadOf = git@github.com:Shopify/
+    insteadOf = git@github.com:shopify/
+    insteadOf = ssh://git@github.com/Shopify/
+    insteadOf = ssh://git@github.com/shopify/
 #+end_src
 
 *** Work specific configuration
@@ -866,35 +887,34 @@ for working on my employer's repositories.
 
 #+begin_src conf
 [user]
-name = Aaron Kuehler
-email = aaron.kuehler@shopify.com
-signingkey = FB12DE8A350E08534FD864389FB7E68BA7D8D52B
+    name = Aaron Kuehler
+    email = aaron.kuehler@shopify.com
+    signingkey = FB12DE8A350E08534FD864389FB7E68BA7D8D52B
 
 [core]
-commitGraph = true
-editor = code -w
+    commitGraph = true
 
 [credential]
-helper =
-helper = store --file /opt/dev/var/private/git_credential_store
+    helper =
+    helper = store --file /opt/dev/var/private/git_credential_store
 
 [diff]
-algorithm = patience
+    algorithm = patience
 
 [gc]
-writeCommitGraph = true
+    writeCommitGraph = true
 
 [protocol]
-version = 2
+    version = 2
 
 [url "https://github.com/Shopify/"]
-insteadOf = git@github.com:Shopify/
-insteadOf = git@github.com:shopify/
-insteadOf = ssh://git@github.com/Shopify/
-insteadOf = ssh://git@github.com/shopify/
+    insteadOf = git@github.com:Shopify/
+    insteadOf = git@github.com:shopify/
+    insteadOf = ssh://git@github.com/Shopify/
+    insteadOf = ssh://git@github.com/shopify/
 
 [gpg]
-program = /nix/var/nix/gcroots/dev-profiles/dev-support-dev-profile/bin/gpg-auto-pin
+    program = /nix/var/nix/gcroots/dev-profiles/dev-support-dev-profile/bin/gpg-auto-pin
 #+end_src
 
 *** Global ignore file
