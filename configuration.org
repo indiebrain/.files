@@ -143,7 +143,7 @@ hierarchies - for stowing work vs personal projects, for example.
 #+begin_src sh
 export CDPATH=".:$HOME/src/github.com/Shopify:$HOME/Developer"
 #+end_src
- 
+
 **** Prompt
 :PROPERTIES:
 :CUSTOM_ID: h:a3276615-99d2-4259-acbe-87c88e698ef7
@@ -1202,9 +1202,9 @@ binary_packages="
     iterm2
     keepassxc
     nextcloud
+    rectangle
     slack
     signal
-    spectacle
 "
 #+end_src
 
