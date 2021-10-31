@@ -845,7 +845,7 @@ system. The following contains configuration which:
 
 [core]
     excludesfile = ~/.gitignore_global
-        commitGraph = true
+    commitGraph = true
 
 [color]
     ui = true
