@@ -2367,7 +2367,7 @@ ecosystem:
   (setq dired-dwim-target t)
   (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
 
-  (add-hook 'dired-mode-hook #'dired-hide-details-mode)
+  ;; (add-hook 'dired-mode-hook #'dired-hide-details-mode)
   (add-hook 'dired-mode-hook #'hl-line-mode))
 
 (indiebrain-emacs-builtin-package 'dired-aux
