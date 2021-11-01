@@ -664,7 +664,7 @@ environment variable to launch a text editor in these cases. This makes
 sure that =emacs= is the preferred text editor.
 
 #+begin_src sh
-export EDITOR="emacsclient -nw"
+export EDITOR="emacsclient -nw || emacs -nw"
 #+end_src
 **** History
 :PROPERTIES:
