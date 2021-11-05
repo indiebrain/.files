@@ -451,6 +451,12 @@ check the [[https://protesilaos.com/modus-themes-changelog/][Change Log of the M
   ;;
   ;; NOTE: these are not my preferences!  I am always testing various
   ;; configurations. Though I still like what I have here.
+  (setq modus-themes-operandi-color-overrides
+        '((bg-main . "#f9f5d7")))
+
+  (setq modus-themes-vivendi-color-overrides
+        '((bg-main . "#1d2021")))
+
   (setq modus-themes-slanted-constructs nil
     modus-themes-bold-constructs nil
     modus-themes-no-mixed-fonts nil
