@@ -490,7 +490,7 @@ check the [[https://protesilaos.com/modus-themes-changelog/][Change Log of the M
     ;; 'underline-only-accented
     modus-themes-hl-line 'accented-background
 
-    modus-themes-paren-match 'subtle ; {nil,'subtle-bold,'intense,'intense-bold}
+    modus-themes-paren-match 'intense ; {nil,'subtle-bold,'intense,'intense-bold}
 
     ;; Options for `modus-themes-links': nil, 'faint,
     ;; 'neutral-underline, 'faint-neutral-underline, 'no-underline,
