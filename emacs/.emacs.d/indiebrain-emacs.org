@@ -470,7 +470,7 @@ check the [[https://protesilaos.com/modus-themes-changelog/][Change Log of the M
     ;; 'borderless, 'borderless-3d, 'borderless-moody, 'accented,
     ;; 'accented-3d, 'accented-moody, 'borderless-accented,
     ;; 'borderless-accented-3d, 'borderless-accented-moody
-    modus-themes-mode-line nil
+    modus-themes-mode-line 'accented-moody
 
     ;; Options for `modus-themes-syntax': nil, 'faint,
     ;; 'yellow-comments, 'green-strings,
