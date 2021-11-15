@@ -2141,6 +2141,26 @@ Also check: [[#h:B45C2559-C230-44FD-855E-E0C7D99396D9][Isearch, occur, grep, and
   (setq reb-re-syntax 'read))
 #+end_src
 
+*** Fast, line oriented search (ripgrep)
+
+[[https://github.com/BurntSushi/ripgrep][Ripgrep]] is a line-oriented search tool which recursively searches
+filesystem trees for a regexp pattern. Ripgrep respects ignorefiles and
+skips hidden inodes by default.
+
+=rg= is a library based on the ripgrep command line tool. It allows you to
+interactively create searches, automatic searches based on the editing
+context, refine and modify search results and much more.
+
+#+begin_src emacs-lisp
+(indiebrain-emacs-elpa-package 'rg
+  (rg-enable-default-bindings)
+
+  ;; Enable, optional, isearch integration
+  (require 'rg-isearch)
+  (let ((map isearch-mode-map))
+    (define-key map (kbd "M-s r") 'rg-isearch-menu)))
+#+end_src
+
 *** wgrep (writable grep)
 :PROPERTIES:
 :CUSTOM_ID: h:8B7E1B4C-D129-4F7E-A4AB-DEF5531C9F9C
