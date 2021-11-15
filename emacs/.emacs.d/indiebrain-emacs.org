@@ -3643,7 +3643,7 @@ manual for more on the matter):
   (setq indiebrain-vc-git-log-edit-show-commit-count 10)
   (setq indiebrain-vc-shell-output "*indiebrain-vc-output*")
   (setq indiebrain-vc-patch-output-dirs (list "~/" "~/Desktop/"))
-  (add-to-list' log-edit-headers-alist '("Amend"))
+  (add-to-list 'log-edit-headers-alist '("Amend"))
 
   ;; This refashions log view and log edit buffers
   (indiebrain-vc-git-setup-mode 1)
