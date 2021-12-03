@@ -1157,6 +1157,7 @@ if ! [ -x "$(command -v brew)" ]; then
 fi
 brew update
 brew tap homebrew/cask-versions
+brew tap brew tap d12frosted/emacs-plus
 #+end_src
 ****** Additional macOS packages
 :PROPERTIES:
@@ -1196,7 +1197,7 @@ available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
 binary_packages="
-    emacs-nightly
+    emacs-plus@29
     firefox-developer-edition
     gpg-suite
     iterm2
@@ -1217,6 +1218,10 @@ And now we're ready to ensure that each of the packages are installed.
 on macOS hosts, we use homebrew to install packages.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
+if [ "$( brew list emacs)" == "" ]; then
+    brew uninstall emacs
+fi
+
 for package in $packages; do
     if [ "$( brew list -1 | grep $package )" == "" ]; then
         echo "installing $package"
