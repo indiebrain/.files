@@ -443,31 +443,7 @@ disabling =spring= globally.
 DISABLE_SPRING=1
 #+end_src
 
-**** Overcommit
-:PROPERTIES:
-:CUSTOM_ID: h:02f87061-1ddb-4400-a7f4-98c9d732bf07
-:END:
-
-The overcommit ruby gem installs and runs git pre-commit hooks which
-check thing like:
-
-1. are the application dependnecies up to date?
-2. are there any database migrations which aren't present in the schema
-   definition?
-
-These hooks are run on every commit. This sounds like a wonderfully
-useful tool, however in practice this make the process of creating a git
-commit take at least 10 seconds while ruby loads and executes the hooks.
-This is untenable and discourages frequent commits. What's more the
-overcommit gem does not play well with non-cli git tools - such as the
-Magit emacs package. This configuration globally disables the overcommit
-gem.
-
-#+begin_src sh
-export OVERCOMMIT_DISABLE=1
-#+end_src
-
-**** Change the home directory of golang code
+**** Golang
 :PROPERTIES:
 :CUSTOM_ID: h:0c66473f-3ddd-4e02-8c90-a02bd762d7a7
 :END:
