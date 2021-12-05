@@ -406,7 +406,7 @@ __git_prompt() {
 }
 PROMPT_COMMAND=__git_prompt
 #+end_src
-**** Initialize the asdf runtime version manager
+**** ASDF-VM
 :PROPERTIES:
 :CUSTOM_ID: h:422d73f5-f683-424e-b209-e2869bbe43ff
 :END:
@@ -424,7 +424,7 @@ completions into the shell.
 [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
 #+end_src
 
-**** Globally disable the spring application prelaoder
+**** Spring - the Ruby preloader
 :PROPERTIES:
 :CUSTOM_ID: h:38009432-321f-4864-a816-672fbc0fa0e6
 :END:
