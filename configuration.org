@@ -480,15 +480,22 @@ configuration instructs =go= that its new home is =$HOME/Developer=.
 export GOPATH=$HOME/Developer/go
 export PATH=$PATH:$GOPATH/bin
 #+end_src
-**** Disable Homebrew telemetry tracking
+**** Homebrew
 :PROPERTIES:
 :CUSTOM_ID: h:d29b130f-47f9-420f-8f86-dbd57cc2f466
 :END:
 
-Homebrew client captures metrics about its host and usage. No, sir; do not want.
+When Homebrew is present, this bit makes the =brew= program available to
+the shell. Additionally, the =brew=program collects captures metrics
+about its host and usage. Setting the =HOMEBREW_NO_ANALYTICS= environment
+variable stops the client from collecting these metrics.
 
 #+begin_src sh
-export HOMEBREW_NO_ANALYTICS=1
+if [[ -f "${HOMEBREW_PREFIX}/bin/brew" ]]
+   then
+       eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+       export HOMEBREW_NO_ANALYTICS=1
+fi
 #+end_src
 
 *** Configuration for login shells

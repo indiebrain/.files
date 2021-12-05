@@ -13,7 +13,8 @@ function ensure_package_manager() {
     if [ "$PLATFORM" == "Darwin" ] && ! [ -x "$(command -v brew)" ]
     then
     echo "Installing Homebrew..."
-    /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
     brew update
     elif [ "$PLATFORM" == "Linux" ] && [ -x "$(command -v apt)" ]
     then
