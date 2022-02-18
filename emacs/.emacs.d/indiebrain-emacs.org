@@ -966,55 +966,48 @@ capability.
 
 All we do here is set up Orderless. The =orderless= completion style is
 appended to the minibuffer's customisation option for =completion-styles=.
-That is defined in Minibuffer configurations and extras.
+That is defined in [[#h:813B4DC2-EB36-4825-90EE-299CA53A9AD1][Minibuffer configurations and extras]].
 
 My =indiebrain-orderless.el= contains the few minor tweaks I introduce (full
 code further below).
 
-1. It defines three style dispatchers. Those are single characters that
-   acquire a special meaning while at the end of a given input:
+My =indiebrain-orderless.el= contains the few minor tweaks I introduce (full
+code further below).  It defines three style dispatchers. Those are
+single characters that acquire a special meaning while at the end of a
+given input:
 
-   - With the equals sign appended to a sequence of characters, we call
-     =indiebrain-orderless-literal-dispatcher= which instructs orderless to match
-     that sequence as a literal string.
++ With the equals sign appended to a sequence of characters, we call
+  =indiebrain-orderless-literal-dispatcher= which instructs orderless to match
+  that sequence as a literal string.
 
-   - A comma at the end of a string of characters treats that group as
-     an initialism, per =indiebrain-orderless-initialism-dispatcher=.
++ A comma at the end of a string of characters treats that group as
+  an initialism, per =indiebrain-orderless-initialism-dispatcher=.
 
-   - While a tilde (=indiebrain-orderless-flex-dispatcher=) makes it makes it a
-     flex match.
++ While a tilde (=indiebrain-orderless-flex-dispatcher=) makes it a flex match.
 
-2. =indiebrain-orderless-with-styles= is a function that changes the default
-   pattern-matching styles on a per-command basis. The idea is to use a
-   certain style for most completion sessions, but prioritise an
-   alternative when needed. I use this with some Consult commands
-   (Enhanced minibuffer commands (consult.el and indiebrain-consult.el)). The
-   =indiebrain-orderless-default-styles= and =indiebrain-orderless-alternative-styles=
-   variables are designed for this particular task.
 
 #+begin_src emacs-lisp
-(indiebrain-emacs-builtin-package 'indiebrain-orderless
-  (setq indiebrain-orderless-default-styles
-    '(orderless-prefixes
-      orderless-strict-leading-initialism
-      orderless-regexp))
-  (setq indiebrain-orderless-alternative-styles
-    '(orderless-literal
-      orderless-prefixes
-      orderless-strict-leading-initialism
-      orderless-regexp)))
-
+;;; Orderless completion style (and indiebrain-orderless.el)
 (indiebrain-emacs-elpa-package 'orderless
   (setq orderless-component-separator " +")
-  (setq orderless-matching-styles indiebrain-orderless-default-styles)
+  ;; NOTE 2022-02-06: I made some major changes and this list may need
+  ;; to be refined further. Remember to check my `completion-styles'
+  ;; and the `completion-category-overrides'.
+  (setq orderless-matching-styles
+        '( orderless-prefixes orderless-strict-leading-initialism
+           orderless-flex orderless-regexp))
   (setq orderless-style-dispatchers
-    '(indiebrain-orderless-literal-dispatcher
-      indiebrain-orderless-initialism-dispatcher
-      indiebrain-orderless-flex-dispatcher))
+        '(indiebrain-orderless-literal-dispatcher
+          indiebrain-orderless-initialism-dispatcher
+          indiebrain-orderless-flex-dispatcher))
+
   ;; SPC should never complete: use it for `orderless' groups.
+  ;; The `?' is a regexp construct.
   (let ((map minibuffer-local-completion-map))
     (define-key map (kbd "SPC") nil)
     (define-key map (kbd "?") nil)))
+
+(indiebrain-emacs-builtin-package 'indiebrain-orderless)
 #+end_src
 
 These are the contents of the =indiebrain-orderless.el= library (get the
