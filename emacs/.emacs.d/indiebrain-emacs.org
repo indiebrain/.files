@@ -567,7 +567,7 @@ check the [[https://protesilaos.com/modus-themes-changelog/][Change Log of the M
 
   (add-hook 'modus-themes-after-load-theme-hook #'indiebrain/modus-themes-custom-faces)
 
-  ;; Enable the theme at startup.  This is done after loading the files.
+  ;; Enable the theme at startup. This is done after loading the files.
   ;; You only need `modus-themes-load-operandi' for the light theme or
   ;; `modus-themes-load-vivendi' for the dark one.
   ;; (modus-themes-load-operandi)
@@ -1111,7 +1111,7 @@ results I am most likely interested in, based on previous selections.
 #+begin_src emacs-lisp
 (indiebrain-emacs-builtin-package 'minibuffer
   ;; NOTE 2021-12-01: I am adding `basic' because it works better as a
-  ;; default for some contexts.  Read:
+  ;; default for some contexts. Read:
   ;; <https://debbugs.gnu.org/cgi/bugreport.cgi?bug=50387>.
   (setq completion-styles
         '(basic substring initials flex partial-completion orderless))
@@ -1145,7 +1145,7 @@ results I am most likely interested in, based on previous selections.
 
   (setq echo-keystrokes 0.25)           ; from the C source code
 
-  ;; Do not allow the cursor to move inside the minibuffer prompt.  I
+  ;; Do not allow the cursor to move inside the minibuffer prompt. I
   ;; got this from the documentation of Daniel Mendler's Vertico
   ;; package: <https://github.com/minad/vertico>.
   (setq minibuffer-prompt-properties
@@ -1176,7 +1176,7 @@ results I am most likely interested in, based on previous selections.
 
   ;; You can place the Completions' buffer wherever you want, by
   ;; following the syntax of `display-buffer-alist' (check elsewhere in
-  ;; this file).  For example, try this:
+  ;; this file). For example, try this:
 
   ;; (setq mct-display-buffer-action
   ;;       (quote ((display-buffer-reuse-window
@@ -7252,7 +7252,7 @@ not keep it running while I am away).
 Overview of the rollowing =desktop= settings:
 
 - Enable the mode that saves the "desktop", instructing it to load a
-  small number of buffers at launch (=desktop-restore-eager=).  The
+  small number of buffers at launch (=desktop-restore-eager=). The
   remainder of the buffer list will be loaded lazily.
 - Now we must tell it where to store the files it generates and how
   often it should save. Concerning the latter, the default is to store
@@ -7304,7 +7304,7 @@ Overview of the rollowing =desktop= settings:
 :CUSTOM_ID: h:5E6FFCFA-74BC-47A6-9799-CEBEDA82AFB9
 :END:
 
-Keeps a record of actions involving the minibuffer.  This is of
+Keeps a record of actions involving the minibuffer. This is of
 paramount importance to a fast and efficient workflow involving any
 completion framework that leverages the built-in mechanisms.
 
@@ -7512,8 +7512,8 @@ its users).
 :END:
 
 The =indiebrain/= prefix in some unpackaged symbols works as a namespace that
-captures all my custom, yet-to-be-reviewed code.  These can be functions
-or variables.  The utility of this prefix is two-fold:
+captures all my custom, yet-to-be-reviewed code. These can be functions
+or variables. The utility of this prefix is two-fold:
 
 - It informs others that this symbol is not part of core Emacs or some
   other package. Otherwise it can be difficult to understand why
