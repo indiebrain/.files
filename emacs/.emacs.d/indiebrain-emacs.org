@@ -675,62 +675,93 @@ customization options). We call this a "mixed font" setup: the easiest
 way to get to it is to enable =variable-pitch-mode=.
 
 #+begin_src emacs-lisp
-(indiebrain-emacs-builtin-package 'indiebrain-fonts
-  ;; This is defined in Emacs C code: it belongs to font settings.
-  (setq x-underline-at-descent-line t)
+  ;;; Font configurations (indiebrain-fonts.el)
+  (indiebrain-emacs-builtin-package 'indiebrain-fonts
+    ;; This is defined in Emacs C code: it belongs to font settings.
+    (setq x-underline-at-descent-line t)
 
-  ;; Make sure to read the `indiebrain-fonts-typeface-sets-alist' doc string,
-  ;; as it explains what those property lists should contain.
-  (setq indiebrain-fonts-typeface-sets-alist
-    '((laptop . ( :fixed-pitch-family "Hack"
-              :fixed-pitch-regular-weight normal
-              :fixed-pitch-heavy-weight bold
-              :fixed-pitch-height 125
-              :fixed-pitch-line-spacing 1
-              :variable-pitch-family "Helvetica"
-              :variable-pitch-height 0.9
-              :variable-pitch-regular-weight normal))
+    ;; And this is for Emacs28.
+    (setq-default text-scale-remap-header-line t)
 
-      (desktop . ( :fixed-pitch-family "Hack"
-               :fixed-pitch-regular-weight normal
+    ;; Make sure to read the `indiebrain-fonts-typeface-sets-alist' doc string,
+    ;; as it explains what those property lists should contain.
+    ;;
+    ;; These are all open fonts. I rely on personal forks:
+    ;;
+    ;; - Hack: https://gitlab.com/indiebrain/hack-font-mod
+    ;; - Iosevka Comfy: https://github.com/indiebrain/iosevka-comfy
+    ;; - Fira https://github.com/indiebrain/fira
+    ;;
+    (setq indiebrain-fonts-typeface-sets-alist
+      '((small . ( :fixed-pitch-family "Hack"
+               :fixed-pitch-regular-weight regular
                :fixed-pitch-heavy-weight bold
-               :fixed-pitch-height 125
-               :fixed-pitch-line-spacing nil
-               :variable-pitch-family "Helvetica"
-               :variable-pitch-height 0.9
+               :fixed-pitch-height 75
+               :fixed-pitch-line-spacing 1
+               :variable-pitch-family "Fira Sans"
+               :variable-pitch-height 1.05
                :variable-pitch-regular-weight normal))
 
-      (presentation . ( :fixed-pitch-family "Hack"
-                :fixed-pitch-regular-weight normal
-                :fixed-pitch-heavy-weight bold
-                :fixed-pitch-height 150
-                :fixed-pitch-line-spacing nil
-                :variable-pitch-family "Helvetica"
-                :variable-pitch-height 1.0
-                :variable-pitch-regular-weight normal))))
+        (small-alt . ( :fixed-pitch-family "Iosevka Comfy"
+               :fixed-pitch-regular-weight regular
+               :fixed-pitch-heavy-weight extrabold
+               :fixed-pitch-height 80
+               :fixed-pitch-line-spacing 1
+               :variable-pitch-family "Fira Sans"
+               :variable-pitch-height 1.0
+               :variable-pitch-regular-weight normal))
 
-  ;; The value of `indiebrain-fonts-laptop-desktop-keys-list' becomes '(laptop
-  ;; desktop) based on the car of the first two cons cells found in
-  ;; `indiebrain-fonts-typeface-sets-alist'. The assumption is that those
-  ;; contain sets from smaller to larger display types.
-  (setq indiebrain-fonts-laptop-desktop-keys-list
-    (indiebrain-fonts-laptop-desktop-keys))
+        (regular . ( :fixed-pitch-family "Iosevka Comfy"
+             :fixed-pitch-regular-weight regular
+             :fixed-pitch-heavy-weight extrabold
+             :fixed-pitch-height 100
+             :fixed-pitch-line-spacing nil
+             :variable-pitch-family "Fira Sans"
+             :variable-pitch-height 1.0
+             :variable-pitch-regular-weight normal))
 
-  ;; This is the breakpoint, in pixels, for determining whether we are
-  ;; on the small or large screen layout. The number here is my
-  ;; laptop's screen width, while it expands beyond that when I connect
-  ;; it to an external monitor (how I normally set it up on my desk).
-  (setq indiebrain-fonts-max-small-resolution-width 1366)
+        (large . ( :fixed-pitch-family "Iosevka Comfy"
+               :fixed-pitch-regular-weight semilight
+               :fixed-pitch-heavy-weight bold
+               :fixed-pitch-height 135
+               :fixed-pitch-line-spacing nil
+               :variable-pitch-family "Fira Sans"
+               :variable-pitch-height 1.0
+               :variable-pitch-regular-weight normal))
 
-  ;; And this just sets the right font depending on whether my laptop is
-  ;; connected to an external monitor or not.
-  (indiebrain-fonts-fonts-per-monitor)
+        (large-alt . ( :fixed-pitch-family "Hack"
+               :fixed-pitch-regular-weight normal
+               :fixed-pitch-heavy-weight bold
+               :fixed-pitch-height 130
+               :fixed-pitch-line-spacing nil
+               :variable-pitch-family "Fira Sans"
+               :variable-pitch-height 1.05
+               :variable-pitch-regular-weight normal))))
 
-  ;; See theme section for this hook and also read the doc string of
-  ;; `indiebrain-fonts-restore-last'.
-  (add-hook 'modus-themes-after-load-theme-hook #'indiebrain-fonts-restore-last)
+    ;; The value of `indiebrain-fonts--laptop-desktop-keys-list' becomes '(small
+    ;; regular) based on the car of the first two cons cells found in
+    ;; `indiebrain-fonts-typeface-sets-alist'. The assumption is that those
+    ;; contain sets from smaller to larger display types.
+    (setq indiebrain-fonts--laptop-desktop-keys-list
+      (indiebrain-fonts--laptop-desktop-keys))
 
-  (define-key global-map (kbd "C-c f") #'indiebrain-fonts-set-fonts))
+    ;; This is the breakpoint, in pixels, for determining whether we are
+    ;; on the small or large screen layout. The number here is my
+    ;; laptop's screen width, while it expands beyond that when I connect
+    ;; it to an external monitor (how I normally set it up on my desk).
+    (setq indiebrain-fonts-max-small-resolution-width 1366)
+
+    ;; And this just sets the right font depending on whether my laptop is
+    ;; connected to an external monitor or not.
+    (indiebrain-fonts-fonts-per-monitor)
+
+    ;; See theme section for this hook and also read the doc string of
+    ;; `indiebrain-fonts-restore-last'.
+    (add-hook 'modus-themes-after-load-theme-hook #'indiebrain-fonts-restore-last)
+
+    (let ((map global-map))
+      (define-key map (kbd "C-c f") #'indiebrain-fonts-set-fonts)
+      (define-key map (kbd "C-c F") #'indiebrain-fonts-set-default-font)))
 #+end_src
 
 This is the source code of =indiebrain-fonts.el= (you can always find the file
