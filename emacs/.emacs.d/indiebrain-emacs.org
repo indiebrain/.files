@@ -477,7 +477,7 @@ check the [[https://protesilaos.com/modus-themes-changelog/][Change Log of the M
         ;; default), or a list of properties that may include any of those
         ;; symbols: `straight-underline', `text-also', `background',
         ;; `intense' OR `faint'.
-        modus-themes-lang-checkers 'intense
+        modus-themes-lang-checkers '(intense)
 
         ;; Options for `modus-themes-mode-line' are either nil, or a list
         ;; that can combine any of `3d' OR `moody', `borderless',
