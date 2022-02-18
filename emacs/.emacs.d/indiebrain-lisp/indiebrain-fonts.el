@@ -34,38 +34,48 @@
   "Font-related configurations for my dotemacs."
   :group 'font)
 
-;; NOTE: "Hack" and "Iosevka Comfy" are personal builds of Hack and
-;; Iosevka respectively:
+;; NOTE: These are all open fonts. I rely on personal forks:
 ;;
-;; 1. https://github.com/indiebrain/hack-font-mod
-;; 2. https://github.com/indiebrain/iosevka-comfy
+;; - Hack: <https://gitlab.com/indiebrain/hack-font-mod>
+;; - Iosevka Comfy: <https://github.com/indiebrain/iosevka-comfy>
+;; - Fira https://github.com/indiebrain/fira
+;;
 (defcustom indiebrain-fonts-typeface-sets-alist
-  '((laptop  . ( :fixed-pitch-family "Hack"
-                 :fixed-pitch-regular-weight normal
+  '((small . ( :fixed-pitch-family "Hack"
+               :fixed-pitch-regular-weight regular
+               :fixed-pitch-heavy-weight bold
+               :fixed-pitch-height 75
+               :fixed-pitch-line-spacing 1
+               :variable-pitch-family "FiraGO"
+               :variable-pitch-height 1.05
+               :variable-pitch-regular-weight normal))
+
+    (regular . ( :fixed-pitch-family "Hack"
+                 :fixed-pitch-regular-weight regular
                  :fixed-pitch-heavy-weight bold
-                 :fixed-pitch-height 80
-                 :fixed-pitch-line-spacing 1
-                 :variable-pitch-family "Helvetica"
-                 :variable-pitch-height 1.0
+                 :fixed-pitch-height 90
+                 :fixed-pitch-line-spacing nil
+                 :variable-pitch-family "FiraGO"
+                 :variable-pitch-height 1.05
                  :variable-pitch-regular-weight normal))
 
-    (desktop . ( :fixed-pitch-family "Hack"
-                 :fixed-pitch-regular-weight normal
-                 :fixed-pitch-heavy-weight bold
-                 :fixed-pitch-height 100
-                 :fixed-pitch-line-spacing 1
-                 :variable-pitch-family "Helvetica"
-                 :variable-pitch-height 0.9
-                 :variable-pitch-regular-weight normal))
+    (large . ( :fixed-pitch-family "Source Code Pro"
+               :fixed-pitch-regular-weight normal
+               :fixed-pitch-heavy-weight bold
+               :fixed-pitch-height 130
+               :fixed-pitch-line-spacing nil
+               :variable-pitch-family "Noto Serif"
+               :variable-pitch-height 1.0
+               :variable-pitch-regular-weight normal))
 
-    (video   . ( :fixed-pitch-family "Hack"
-                 :fixed-pitch-regular-weight light
-                 :fixed-pitch-heavy-weight semi-bold
-                 :fixed-pitch-height 150
-                 :fixed-pitch-line-spacing 1
-                 :variable-pitch-family "Helvetica"
-                 :variable-pitch-height 1.0
-                 :variable-pitch-regular-weight normal)))
+    (large-alt . ( :fixed-pitch-family "Iosevka Comfy"
+                   :fixed-pitch-regular-weight book
+                   :fixed-pitch-heavy-weight extrabold
+                   :fixed-pitch-height 135
+                   :fixed-pitch-line-spacing nil
+                   :variable-pitch-family "Noto Sans"
+                   :variable-pitch-height 1.0
+                   :variable-pitch-regular-weight normal)))
   "Alist of desired typeface properties.
 
 The car of each cons cell is an arbitrary key that broadly
@@ -107,11 +117,11 @@ properties:
 It is recommended that the order of the cons cells follows from
 the smallest to largest font heights, to simplify the process of
 identifying the set that belongs to the small and larger display
-respectively (see code of `indiebrain-fonts-laptop-desktop-keys')."
+respectively (see code of `indiebrain-fonts--laptop-desktop-keys')."
   :group 'indiebrain-fonts
   :type 'alist)
 
-(defun indiebrain-fonts-laptop-desktop-keys ()
+(defun indiebrain-fonts--laptop-desktop-keys ()
   "List laptop and desktop fontsets.
 The elements of the list are the cars of the first two cons cells
 of `indiebrain-fonts-laptop-desktop-keys-list'"
@@ -119,14 +129,14 @@ of `indiebrain-fonts-laptop-desktop-keys-list'"
     (list (nth 0 sets) (nth 1 sets))))
 
 (defcustom indiebrain-fonts-laptop-desktop-keys-list
-  (indiebrain-fonts-laptop-desktop-keys) ; '(laptop desktop)
+  (indiebrain-fonts--laptop-desktop-keys)
   "Symbols for `indiebrain-fonts-fonts-per-monitor'.
 This is a list whose first item denotes the smallest desirable
 entry in `indiebrain-fonts-typeface-sets-alist' for use on a laptop or
 just smaller monitor, while the second points to a larger
 display's key in that same alist.
 
-The helper function `indiebrain-fonts-laptop-desktop-keys' picks the
+The helper function `indiebrain-fonts--laptop-desktop-keys' picks the
 first two entries in `indiebrain-fonts-typeface-sets-alist'."
   :group 'indiebrain-fonts
   :type 'list)
@@ -140,8 +150,7 @@ fonts, else nth 0, are applied."
   :group 'indiebrain-fonts
   :type 'integer)
 
-(defvar indiebrain-fonts-font-display-hist '()
-  "History of inputs for display-related font associations.")
+;;;; Helper functions
 
 (defun indiebrain-fonts--set-face-attribute (face family &optional weight height)
   "Set FACE font to FAMILY, with optional HEIGHT and WEIGHT."
@@ -152,56 +161,138 @@ fonts, else nth 0, are applied."
     ;; ;; Hence why the following fails.  Keeping it for posterity...
     ;; (set-face-attribute face nil :family family :weight w :height h)
     (if (eq (face-attribute face :weight) w)
-          (internal-set-lisp-face-attribute face :family family 0)
+        (internal-set-lisp-face-attribute face :family family 0)
       (internal-set-lisp-face-attribute face :weight w 0)
       (internal-set-lisp-face-attribute face :family family 0)
       (internal-set-lisp-face-attribute face :weight w 0))
     (internal-set-lisp-face-attribute face :height h 0)))
 
+;;;; Set preset families
+
+(defvar indiebrain-fonts--font-display-hist '()
+  "History of inputs for display-related font associations.")
+
 (defun indiebrain-fonts--set-fonts-prompt ()
-  "Promp for font set (used by `indiebrain-fonts-set-fonts')."
-  (let ((def (nth 1 indiebrain-fonts-font-display-hist)))
+  "Prompt for font set (used by `indiebrain-fonts-set-fonts')."
+  (let ((def (nth 1 indiebrain-fonts--font-display-hist)))
     (completing-read
      (format "Select font set for DISPLAY [%s]: " def)
      (mapcar #'car indiebrain-fonts-typeface-sets-alist)
-     nil t nil 'indiebrain-fonts-font-display-hist def)))
+     nil t nil 'indiebrain-fonts--font-display-hist def)))
 
 (defvar indiebrain-fonts-set-typeface-hook nil
-  "Hook that runs after `indiebrain-fonts-set-fonts'.")
+  "Hook that runs after setting fonts.")
 
 (defvar indiebrain-fonts--current-spec nil
   "Current font set in `indiebrain-fonts-typeface-sets-alist'.")
 
 ;;;###autoload
 (defun indiebrain-fonts-set-fonts (display)
-  "Set fonts based on font set assossiated with DISPLAY.
+  "Set fonts based on font set associated with DISPLAY.
 
 DISPLAY is a symbol that represents the car of a cons cell in
 `indiebrain-fonts-typeface-sets-alist'."
   (interactive (list (indiebrain-fonts--set-fonts-prompt)))
-  (if window-system
-      (let* ((fonts (if (stringp display) (intern display) display))
-             (properties (alist-get fonts indiebrain-fonts-typeface-sets-alist))
-             (fixed-pitch-family (plist-get properties :fixed-pitch-family))
-             (fixed-pitch-height (plist-get properties :fixed-pitch-height))
-             (fixed-pitch-regular-weight (plist-get properties :fixed-pitch-regular-weight))
-             (fixed-pitch-heavy-weight (plist-get properties :fixed-pitch-heavy-weight))
-             (fixed-pitch-line-spacing (plist-get properties :fixed-pitch-line-spacing))
-             (variable-pitch-family (plist-get properties :variable-pitch-family))
-             (variable-pitch-height (plist-get properties :variable-pitch-height))
-             (variable-pitch-regular-weight (plist-get properties :variable-pitch-regular-weight)))
-        (indiebrain-fonts--set-face-attribute
-         'default fixed-pitch-family fixed-pitch-regular-weight fixed-pitch-height)
-        (indiebrain-fonts--set-face-attribute
-         'fixed-pitch fixed-pitch-family fixed-pitch-regular-weight)
-        (indiebrain-fonts--set-face-attribute
-         'variable-pitch variable-pitch-family variable-pitch-regular-weight variable-pitch-height)
-        (set-face-attribute 'bold nil :weight fixed-pitch-heavy-weight)
-        (setq-default line-spacing fixed-pitch-line-spacing)
-        (add-to-history 'indiebrain-fonts-font-display-hist (format "%s" display))
-        (setq indiebrain-fonts--current-spec (format "%s" display))
-        (run-hooks 'indiebrain-fonts-set-typeface-hook))
-    (error "Not running a graphical Emacs; cannot set fonts")))
+  (when window-system
+    (let* ((fonts (if (stringp display) (intern display) display))
+           (properties (alist-get fonts indiebrain-fonts-typeface-sets-alist))
+           (fixed-pitch-family (plist-get properties :fixed-pitch-family))
+           (fixed-pitch-height (plist-get properties :fixed-pitch-height))
+           (fixed-pitch-regular-weight (plist-get properties :fixed-pitch-regular-weight))
+           (fixed-pitch-heavy-weight (plist-get properties :fixed-pitch-heavy-weight))
+           (fixed-pitch-line-spacing (plist-get properties :fixed-pitch-line-spacing))
+           (variable-pitch-family (plist-get properties :variable-pitch-family))
+           (variable-pitch-height (plist-get properties :variable-pitch-height))
+           (variable-pitch-regular-weight (plist-get properties :variable-pitch-regular-weight)))
+      (indiebrain-fonts--set-face-attribute
+       'default fixed-pitch-family fixed-pitch-regular-weight fixed-pitch-height)
+      (indiebrain-fonts--set-face-attribute
+       'fixed-pitch fixed-pitch-family fixed-pitch-regular-weight)
+      (indiebrain-fonts--set-face-attribute
+       'variable-pitch variable-pitch-family variable-pitch-regular-weight variable-pitch-height)
+      (set-face-attribute 'bold nil :weight fixed-pitch-heavy-weight)
+      (setq-default line-spacing fixed-pitch-line-spacing)
+      (add-to-history 'indiebrain-fonts--font-display-hist (format "%s" display))
+      (setq indiebrain-fonts--current-spec (format "%s" display))
+      (run-hooks 'indiebrain-fonts-set-typeface-hook))))
+
+;;;; Set default only
+
+(defvar indiebrain-fonts--system-typeface-hist ()
+  "Minibuffer history for `indiebrain-fonts--system-typefaces-prompt'.")
+
+(defun indiebrain-fonts--monospace-family-list (&optional frame)
+  "Return a list of available monospace font family on FRAME."
+  (seq-uniq
+   (seq-map
+    (lambda (fam)
+      (symbol-name (aref fam 0)))
+    (seq-filter
+     (lambda (fam)
+       (aref fam 5))
+     (x-family-fonts nil frame)))))
+
+(defun indiebrain-fonts--system-typefaces-prompt (family-list-func)
+  "Select installed fonts generated by FAMILY-LIST-FUNC."
+  (let ((def (or (nth 1 indiebrain-fonts--system-typeface-hist) "Monospace")))
+    (completing-read
+     (format "Select typeface [%s]: " def)
+     (funcall family-list-func)
+     nil t nil 'indiebrain-fonts--system-typeface-hist def)))
+
+(defvar indiebrain-fonts--font-weights
+  '( thin ultralight extralight light semilight regular medium
+     semibold bold heavy extrabold ultrabold)
+  "List of font weights.")
+
+(defvar indiebrain-fonts--font-weight-hist ()
+  "Minibuffer history for `indiebrain-fonts--font-weight-prompt'.")
+
+(defun indiebrain-fonts--font-weight-prompt ()
+  "Select weight from `indiebrain-fonts--font-weights'."
+  (let ((def (or (car indiebrain-fonts--font-weight-hist) 'regular)))
+    (intern
+     (completing-read
+      (format "Select font weight [%s]: " def)
+      indiebrain-fonts--font-weights
+      nil t nil 'indiebrain-fonts--font-weight-hist def))))
+
+(defvar indiebrain-fonts--font-height-hist ()
+  "Minibuffer history for `indiebrain-fonts--font-weight-prompt'.")
+
+(defvar indiebrain-fonts--font-heights
+  '(80 85 90 95 100 105 110 120 130 140 150 160 170 180)
+  "Non-exhuastive list of font heights.")
+
+(defun indiebrain-fonts--font-height-prompt ()
+  "Select height from `indiebrain-fonts--font-heights'."
+  (let ((def (or (car indiebrain-fonts--font-height-hist) 100)))
+    ;; FIXME 2022-01-24: the `string-to-number' and `number-to-string'
+    ;; roundabout feels wrong.  Can't we complete against numbers
+    ;; directly?
+    (string-to-number
+     ;; `read-number' does not support completion...
+     (completing-read
+      (format "Select font height [%s]: " def)
+      (mapcar #'number-to-string indiebrain-fonts--font-heights)
+      nil nil nil 'indiebrain-fonts--font-height-hist def))))
+
+;;;###autoload
+(defun indiebrain-fonts-set-default-font (font weight height)
+  "Change `default' face family to FONT with WEIGHT and HEIGHT.
+When called interactively, if prefix argument is non-nil, then list only
+monospaced fonts.
+To pick a preset, use `indiebrain-fonts-set-fonts' instead."
+  (interactive
+   (list (if current-prefix-arg
+             (indiebrain-fonts--system-typefaces-prompt #'indiebrain-fonts--monospace-family-list)
+           (indiebrain-fonts--system-typefaces-prompt #'font-family-list))
+         (indiebrain-fonts--font-weight-prompt)
+         (indiebrain-fonts--font-height-prompt)))
+  (indiebrain-fonts--set-face-attribute 'default font weight height)
+  (run-hooks 'indiebrain-fonts-set-typeface-hook))
+
+;;;; Automatic font adjustments
 
 (defun indiebrain-fonts-restore-last ()
   "Restore last fontset.
@@ -210,8 +301,8 @@ typographic properties.  For example, when switching themes the
 :weight of the `bold' face will be set to whatever the theme
 specifies, typically 'bold', which is not what we always have on
 our end."
-  (let ((ultimate (nth 0 indiebrain-fonts-font-display-hist))
-        (penultimate (nth 1 indiebrain-fonts-font-display-hist)))
+  (let ((ultimate (nth 0 indiebrain-fonts--font-display-hist))
+        (penultimate (nth 1 indiebrain-fonts--font-display-hist)))
     (if (string= ultimate indiebrain-fonts--current-spec)
         (indiebrain-fonts-set-fonts ultimate)
       (indiebrain-fonts-set-fonts penultimate))))
