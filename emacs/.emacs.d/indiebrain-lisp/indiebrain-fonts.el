@@ -36,9 +36,11 @@
 
 ;; NOTE: These are all open fonts. I rely on personal forks:
 ;;
-;; - Hack: <https://gitlab.com/indiebrain/hack-font-mod>
+;; - Hack: <https://github.com/indiebrain/hack-font-mod>
 ;; - Iosevka Comfy: <https://github.com/indiebrain/iosevka-comfy>
-;; - Fira https://github.com/indiebrain/fira
+;; - Fira:  <https://github.com/indiebrain/fira>
+;; - Noto: <https://github.com/indiebrain/noto-fonts>
+;; - Source Code: <https://github.com/indiebrain/source-code-pro>
 ;;
 (defcustom indiebrain-fonts-typeface-sets-alist
   '((small . ( :fixed-pitch-family "Hack"
