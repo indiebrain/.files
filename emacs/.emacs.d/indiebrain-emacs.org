@@ -1516,7 +1516,7 @@ try.
     (define-key map (kbd "M-s M-l") #'indiebrain-consult-line)))
 #+end_src
 
-Here is =indiebrian-consult.el= (part of [[https://gitlab.com/protesilaos/dotfiles][my dotfiles' repo]]):
+Here is =indiebrian-consult.el= (part of [[https://github.com/indiebrain/.files][my dotfiles' repo]]):
 
 #+include: indiebrian-lisp/indiebrian-consult.el src emacs-lisp :tangle no
 
@@ -1675,7 +1675,7 @@ following block with the package configurations:
   (indiebrain-embark-setup-packages 1))
 #+end_src
 
-This is =indiebrain-embark.el= (part of [[https://gitlab.com/protesilaos/dotfiles][my dotfiles' repo]]):
+This is =indiebrain-embark.el= (part of [[https://github.com/indiebrain/.files][my dotfiles' repo]]):
 
 #+include: indiebrain-lisp/indiebrain-embark.el src emacs-lisp :tangle no
 
