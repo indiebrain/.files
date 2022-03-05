@@ -1740,21 +1740,22 @@ referenced in the source code below this configuration block):
 - [[https://www.manueluberti.eu/emacs/2020/11/21/flymake-projects/][Restricting Flymake to my projects]] (2020-11-21)
 
 #+begin_src emacs-lisp
+;;; Projects (project.el and prot-project.el)
 (indiebrain-emacs-builtin-package 'project
   ;; ;; Use this for Emacs 27 (I am on 28)
   ;; (add-to-list 'indiebrain-emacs-ensure-install 'project)
   (setq project-switch-commands
-    '((?f "File" project-find-file)
-      (?s "Subdir" indiebrain-project-find-subdir)
-      (?g "Grep" project-find-regexp)
-      (?d "Dired" project-dired)
-      (?b "Buffer" project-switch-to-buffer)
-      (?q "Query replace" project-query-replace-regexp)
-      (?t "Tag switch" indiebrain-project-retrieve-tag)
-      (?m "Magit" indiebrain-project-magit-status)
-      (?v "VC dir" project-vc-dir)
-      (?l "Log VC" indiebrain-project-commit-log)
-      (?e "Eshell" project-eshell)))
+        '((?f "File" project-find-file)
+          (?s "Subdir" indiebrain-project-find-subdir)
+          (?g "Grep" project-find-regexp)
+          (?d "Dired" project-dired)
+          (?b "Buffer" project-switch-to-buffer)
+          (?q "Query replace" project-query-replace-regexp)
+          (?t "Tag switch" indiebrain-project-retrieve-tag)
+          (?m "Magit" indiebrain-project-magit-status)
+          (?v "VC dir" project-vc-dir)
+          (?l "Log VC" indiebrain-project-commit-log)
+          (?e "Eshell" project-eshell)))
   (define-key global-map (kbd "C-x p q") #'project-query-replace-regexp)) ; C-x p is `project-prefix-map'
 
 (indiebrain-emacs-builtin-package 'indiebrain-project
