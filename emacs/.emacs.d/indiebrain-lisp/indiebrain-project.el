@@ -28,7 +28,6 @@
 ;; <https://github.com/indiebrain/.files/>.
 
 ;;; Code:
-
 (require 'cl-lib)
 (require 'project)
 (require 'indiebrain-common)
@@ -208,7 +207,7 @@ Basically switches to a new branch or tag."
   "Run `magit-status' on project."
   (interactive)
   (let* ((pr (project-current t))
-         (dir (cdr pr)))
+         (dir (first (last pr))))
     (magit-status dir)))
 
 (defun indiebrain-project--max-line ()
@@ -235,11 +234,11 @@ Optional N integer overrides that variable's value."
                 (locate-dominating-file "." ".git")
                 default-directory))
         (modes (indiebrain-common-minor-modes-active)))
-    (if (and (eq buffer-read-only nil)
+    (if (and (null buffer-read-only)
              (member pr known-projects)
              (not (indiebrain-project--large-file-p))
              (not (member 'org-src-mode modes))
-             (not (eq buffer-file-truename nil)))
+             (not (null buffer-file-truename)))
         (flymake-mode 1)
       (flymake-mode -1))))
 
