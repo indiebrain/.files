@@ -467,10 +467,33 @@ about its host and usage. Setting the =HOMEBREW_NO_ANALYTICS= environment
 variable stops the client from collecting these metrics.
 
 #+begin_src sh
+PLATFORM="$(uname)"
+if [ "$PLATFORM" == "Darwin" ]
+then
+    HOST_ARCHITECTURE="$(uname -a)"
+    if [[ ${HOST_ARCHITECTURE} == *"x86" ]]
+    then
+        export HOMEBREW_PREFIX="/usr/local";
+        export HOMEBREW_CELLAR="/usr/local/Cellar";
+        export HOMEBREW_REPOSITORY="/usr/local/Homebrew";
+        export PATH="/usr/local/bin:/usr/local/sbin${PATH+:$PATH}";
+        export MANPATH="/usr/local/share/man${MANPATH+:$MANPATH}:";
+        export INFOPATH="/usr/local/share/info:${INFOPATH:-}";
+    elif [[ ${HOST_ARCHITECTURE} == *"arm"* ]]
+    then
+        export HOMEBREW_PREFIX="/opt/homebrew";
+        export HOMEBREW_CELLAR="/opt/homebrew/Cellar";
+        export HOMEBREW_REPOSITORY="/opt/homebrew/Homebrew";
+        export PATH="/opt/homebrew/bin:/opt/homebrew/sbin${PATH+:$PATH}";
+        export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:";
+        export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}";
+    fi
+fi
+
 if [[ -f "${HOMEBREW_PREFIX}/bin/brew" ]]
-   then
-       eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
-       export HOMEBREW_NO_ANALYTICS=1
+then
+    eval "\$(${HOMEBREW_PREFIX}/bin/brew shellenv)"
+    export HOMEBREW_NO_ANALYTICS=1
 fi
 #+end_src
 
@@ -1141,6 +1164,7 @@ fi
 brew update
 brew tap homebrew/cask-versions
 brew tap d12frosted/emacs-plus
+brew update
 #+end_src
 ****** Additional macOS packages
 :PROPERTIES:
@@ -1180,7 +1204,7 @@ available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
 binary_packages="
-    emacs-plus@29
+    d12frosted/emacs-plus/emacs-plus@29
     firefox-developer-edition
     gpg-suite
     iterm2
@@ -1201,7 +1225,7 @@ And now we're ready to ensure that each of the packages are installed.
 on macOS hosts, we use homebrew to install packages.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-if [ "$( brew list emacs)" == "" ]; then
+if [ "$( brew list emacs)" != "" ]; then
     brew uninstall emacs
 fi
 
@@ -1237,9 +1261,9 @@ we'll use Homebrew to install a recent version of =GNU Bash= and make sure
 it's our default shell.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-if [ -z $(grep /usr/local/bin/bash /etc/shells) ]
+if [ -z $(grep ${HOMEBREW_PREFIX}/bin/bash /etc/shells) ]
 then
-    sudo bash -c "echo /usr/local/bin/bash >> /etc/shells"
+    sudo bash -c "echo ${HOMEBREW_PREFIX}/bin/bash >> /etc/shells"
 fi
 #+end_src
 
@@ -1248,11 +1272,11 @@ the affect of loading the newly generated bash configuration which makes
 installing things like =asdf= a bit easier.
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-if [[ "$(echo $SHELL)" != "/usr/local/bin/bash" ]]
+if [[ "$(echo $SHELL)" != "${HOMEBREW_PREFIX}/bin/bash" ]]
 then
     echo "bash is not the current shell, changing shell..."
-    chsh -s /usr/local/bin/bash 2>/dev/null
-    /usr/local/bin/bash
+    chsh -s ${HOMEBREW_PREFIX}/bin/bash 2>/dev/null
+    ${HOMEBREW_PREFIX}/bin/bash
     source $HOME/.bashrc
 fi
 #+end_src
