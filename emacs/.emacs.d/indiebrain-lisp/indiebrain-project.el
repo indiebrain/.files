@@ -207,7 +207,7 @@ Basically switches to a new branch or tag."
   "Run `magit-status' on project."
   (interactive)
   (let* ((pr (project-current t))
-         (dir (first (last pr))))
+         (dir (cdr pr)))
     (magit-status dir)))
 
 (defun indiebrain-project--max-line ()
