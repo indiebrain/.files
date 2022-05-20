@@ -497,6 +497,14 @@ then
 fi
 #+end_src
 
+**** Ripgrep
+
+Configure the path to the custom Ripgrep configuration.
+
+#+begin_src sh
+[ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+#+end_src
+
 *** Configuration for login shells
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./bash/.bash_profile

@@ -1,0 +1,23 @@
+# Don't let ripgrep vomit really long lines to my terminal, and show a preview.
+--max-columns=150
+--max-columns-preview
+
+# Add 'web' type.
+--type-add
+web:*.{html,css,js}*
+
+# Add 'minitest' type.
+--type-add
+minitest:*_test.{rb}*
+
+# Add 'rspec' type.
+--type-add
+rspec:*_spec.{rb}*
+
+# Add 'graphql' type.
+--type-add
+graphql:*.{graphql}*
+
+# Add 'sorbet' type.
+--type-add
+sorbet:*.{rbi}*
