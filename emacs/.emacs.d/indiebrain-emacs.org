@@ -7041,7 +7041,7 @@ instances of the Caddy web server.
 (indiebrain-emacs-elpa-package 'caddyfile-mode)
 #+end_src
 
-*** Docker (dockerfile-mode and docker-tramp)
+*** Docker (dockerfile-mode)
 :PROPERTIES:
 :CUSTOM_ID: h:2461A489-4BE5-4C9D-B00A-C1B37EF6F1CE
 :END:
@@ -7067,22 +7067,8 @@ perform syntax highlighting. Additionally, it provides a wrapper around
 the =docker= client command-line interface. This makes it possible to
 perform =docker= commands from directly inside Emacs. Such as:
 
-Use =docker-tramp= to allow editing of files inside running containers.
-When building docker images there can be a high cost to productivity if
-one is to rebuild the container when testing out minor changes like
-tweaking a minor config setting. This allows us to open a tramp session
-in a running container see results more quickly than rebuilding the
-container every time. Caveat, unless those changes are preserved in a
-volume mount they disappear when the container exits so use docker-tramp
-with caution. To use docker-tramp to gain access to a container:
-
-#+begin_example
-C-x C-f /docker:<user>@<container-id>:<path-to-file> RET
-#+end_example
-
 #+begin_src emacs-lisp
 (indiebrain-emacs-elpa-package 'dockerfile-mode)
-(indiebrain-emacs-elpa-package 'docker-tramp)
 #+end_src
 
 *** golang (go-mode)
