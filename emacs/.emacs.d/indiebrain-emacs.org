@@ -5113,12 +5113,16 @@ to one or more tags. These are then written to a database. The Elisp
 part users should care about looks like this:
 
 
-#+begin_example
+#+begin_example elisp
 (setq elfeed-feeds
       '(("https://www.debian.org/News/news" technology linux distro)
-    ("https://www.ruby-lang.org/en/feeds/news.rss" technology programming)
-    ("https://www.fsf.org/static/fsforg/rss/news.xml" technology community)
-    ("https://aaronkuehler.com/rss.xml" personal)))
+        ("https://www.ruby-lang.org/en/feeds/news.rss" technology programming)
+        ("https://www.fsf.org/static/fsforg/rss/news.xml" technology community)
+        ("https://protesilaos.com/codelog.xml" prot technology programming emacs)
+        ("https://protesilaos.com/news.xml" prot news)
+        ("https://sachachua.com/blog/category/emacs/feed/" emacs news)
+        ("https://aaronkuehler.com/rss.xml" personal)))
+
 #+end_example
 
 I keep the actual list in a GPG-encrypted file (defined in the variable
