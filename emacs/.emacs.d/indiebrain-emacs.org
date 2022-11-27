@@ -1923,6 +1923,7 @@ cursor after the skeleton has been inserted.
 (indiebrain-emacs-builtin-package 'abbrev
   (setq abbrev-file-name (locate-user-emacs-file "abbrevs"))
   (setq only-global-abbrevs nil)
+  (setq save-abbrevs 'silently)
 
   ;;;;;;;;;;;;;;;;;;;;;;
   ;; simple skeletons ;;
