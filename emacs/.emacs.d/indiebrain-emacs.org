@@ -1670,6 +1670,8 @@ following block with the package configurations:
     (define-key map (kbd ".") #'embark-find-definition)
     (define-key map (kbd "k") #'describe-keymap)))
 
+(indiebrain-emacs-elpa-package 'embark-consult)
+
 (indiebrain-emacs-builtin-package 'indiebrain-embark
   (indiebrain-embark-keymaps 1)
   (indiebrain-embark-setup-packages 1))
