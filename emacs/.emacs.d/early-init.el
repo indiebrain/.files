@@ -1,6 +1,6 @@
 ;;; early-init.el --- Emacs Early Initialization     -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022  Aaron
+;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
 ;; Author: Aaron <aaron.kuehler@gmail.com>
 ;; Keywords: internal
