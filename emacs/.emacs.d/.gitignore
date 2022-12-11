@@ -23,6 +23,7 @@ desktop
 elfeed/*
 elpa/*
 feeds.el.gpg
+fontaine-latest-state.eld
 forge-database.sqlite
 history
 ido.last
