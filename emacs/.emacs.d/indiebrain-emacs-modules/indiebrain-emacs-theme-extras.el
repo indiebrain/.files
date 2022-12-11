@@ -16,11 +16,11 @@
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -54,8 +54,8 @@
   ;; a specific colour: `pulsar-pulse-line-red' is one of them.
   (add-hook 'next-error-hook #'pulsar-pulse-line-red)
 
-  ;; pulsar does not define any key bindings.  This is just my personal
-  ;; preference.  Remember to read the manual on the matter.  Evaluate:
+  ;; pulsar does not define any key bindings. This is just my personal
+  ;; preference. Remember to read the manual on the matter. Evaluate:
   ;;
   ;; (info "(elisp) Key Binding Conventions")
   (let ((map global-map))
@@ -100,7 +100,7 @@
 ;;; Line numbers and relevant indicators (indiebrain-sideline.el)
 (indiebrain-emacs-builtin-package 'indiebrain-sideline
   (require 'display-line-numbers)
-  ;; Set absolute line numbers.  A value of "relative" is also useful.
+  ;; Set absolute line numbers. A value of "relative" is also useful.
   (setq display-line-numbers-type 'relative)
   ;; Those two variables were introduced in Emacs 27.1
   (setq display-line-numbers-major-tick 0)

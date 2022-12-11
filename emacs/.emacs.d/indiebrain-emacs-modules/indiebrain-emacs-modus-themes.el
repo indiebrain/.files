@@ -16,11 +16,11 @@
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
@@ -99,7 +99,7 @@
         modus-themes-prompts '(background intense gray)
 
         ;; The `modus-themes-completions' is an alist that reads three
-        ;; keys: `matches', `selection', `popup'.  Each accepts a nil
+        ;; keys: `matches', `selection', `popup'. Each accepts a nil
         ;; value (or empty list) or a list of properties that can include
         ;; any of the following (for WEIGHT read further below):
         ;;
@@ -109,7 +109,7 @@
         ;; `t' - applies to any key not explicitly referenced (check docs)
         ;;
         ;; WEIGHT is a symbol such as `semibold', `light', or anything
-        ;; covered in `modus-themes-weights'.  Bold is used in the absence
+        ;; covered in `modus-themes-weights'. Bold is used in the absence
         ;; of an explicit WEIGHT.
         modus-themes-completions
         '((matches . (semibold))
@@ -151,8 +151,8 @@
   (modus-themes-load-themes)
 
   ;; A simple check to load the desired theme at startup based on what
-  ;; the global preference for GNOME is.  If such preference is not
-  ;; registered, it just loads `modus-operandi'.  Check my dotfiles for
+  ;; the global preference for GNOME is. If such preference is not
+  ;; registered, it just loads `modus-operandi'. Check my dotfiles for
   ;; the shell script called "delight", which handles system-wide theme
   ;; switching (as I bind the `modus-themes-toggle' to <f5>, delight is
   ;; bound to s-<f5> in the desktop's own custom key bindings).

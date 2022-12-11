@@ -14,15 +14,15 @@
 
 ;; This program is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
-;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+;; along with this program. If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 
-;; Common commands for Emacs:
+;; Common, custom commands for Emacs.
 ;;
 ;; See my full configuration: https://github.com/indiebrain/.files/
 
@@ -103,7 +103,7 @@ Also see `indiebrain-simple-focus-help-buffers'."
 
 REGION is added to the contents to the new buffer.
 
-Use the current buffer's major mode by default.  With optional
+Use the current buffer's major mode by default. With optional
 MODE use that major mode instead."
   (let* ((major (or mode major-mode))
          (string (format "Scratch buffer for: %s\n\n" major))
@@ -132,13 +132,13 @@ With optional ARG as a prefix argument (\\[universal-argument]),
 use `indiebrain-simple-scratch-buffer-default-mode'.
 
 With ARG as a double prefix argument, prompt for a major mode
-with completion.  Candidates are derivatives of `text-mode' or
+with completion. Candidates are derivatives of `text-mode' or
 `prog-mode'.
 
 If region is active, copy its contents to the new scratch
 buffer.
 
-Buffers are named as *MAJOR-MODE scratch*.  If one already exists
+Buffers are named as *MAJOR-MODE scratch*. If one already exists
 for the given MAJOR-MODE, any text is appended to it."
   (interactive "P")
   (let* ((default-mode indiebrain-simple-scratch-buffer-default-mode)
@@ -174,8 +174,8 @@ for the given MAJOR-MODE, any text is appended to it."
 ;;;###autoload
 (defun indiebrain-simple-new-line-below (&optional arg)
   "Create an empty line below the current one.
-Move the point to the absolute beginning.  Adapt indentation by
-passing optional prefix ARG (\\[universal-argument]).  Also see
+Move the point to the absolute beginning. Adapt indentation by
+passing optional prefix ARG (\\[universal-argument]). Also see
 `indiebrain-simple-new-line-above'."
   (interactive "P")
   (end-of-line)
@@ -186,7 +186,7 @@ passing optional prefix ARG (\\[universal-argument]).  Also see
 ;;;###autoload
 (defun indiebrain-simple-new-line-above (&optional arg)
   "Create an empty line above the current one.
-Move the point to the absolute beginning.  Adapt indentation by
+Move the point to the absolute beginning. Adapt indentation by
 passing optional prefix ARG (\\[universal-argument])."
   (interactive "P")
   (let ((indent (or arg nil)))
@@ -203,7 +203,7 @@ passing optional prefix ARG (\\[universal-argument])."
 (defun indiebrain-simple-copy-line-or-region (&optional arg)
   "Kill-save the current line or active region.
 With optional ARG (\\[universal-argument]) duplicate the target
-instead.  When region is active, also apply context-aware
+instead. When region is active, also apply context-aware
 indentation while duplicating."
   (interactive "P")
   (unless mark-ring                  ; needed when entering a new buffer
@@ -280,7 +280,7 @@ This command can then be followed by the standard
 ;;;###autoload
 (defun indiebrain-simple-insert-pair (pair &optional count)
   "Insert PAIR from `indiebrain-simple-insert-pair-alist'.
-Operate on the symbol at point.  If the region is active, use it
+Operate on the symbol at point. If the region is active, use it
 instead.
 
 With optional COUNT (either as a natural number from Lisp or a
@@ -377,8 +377,8 @@ CHAR."
 
 (defmacro indiebrain-simple-transpose (name scope &optional doc)
   "Macro to produce transposition functions.
-NAME is the function's symbol.  SCOPE is the text object to
-operate on.  Optional DOC is the function's docstring.
+NAME is the function's symbol. SCOPE is the text object to
+operate on. Optional DOC is the function's docstring.
 
 Transposition over an active region will swap the object at
 mark (region beginning) with the one at point (region end)"
@@ -413,7 +413,7 @@ mark (region beginning) with the one at point (region end)"
 ;;;###autoload
 (defun indiebrain-simple-transpose-chars ()
   "Always transposes the two characters before point.
-There is no 'dragging' the character forward.  This is the
+There is no 'dragging' the character forward. This is the
 behaviour of `transpose-chars' when point is at the end of the
 line."
   (interactive)
@@ -429,7 +429,7 @@ with the one at point (region end).
 
 Otherwise, and while inside a sentence, this behaves as the
 built-in `transpose-words', dragging forward the word behind the
-point.  The difference lies in its behaviour at the end or
+point. The difference lies in its behaviour at the end or
 beginning of a line, where it will always transpose the word at
 point with the one behind or ahead of it (effectively the
 last/first two words)."
@@ -449,7 +449,7 @@ last/first two words)."
 
 (defmacro indiebrain-simple-mark (name object &optional docstring)
   "Produce function for marking small syntactic constructs.
-NAME is how the function should be called.  OBJECT is its scope.
+NAME is how the function should be called. OBJECT is its scope.
 Optional DOCSTRING describes the resulting function.
 
 This is a slightly modified version of the built-in `mark-word'."
@@ -487,7 +487,7 @@ This is a slightly modified version of the built-in `mark-word'."
 This function is a slightly modified version of the built-in
 `mark-word', that I intend to use only in special circumstances,
 such as when recording a keyboard macro where precision is
-required.  For a general purpose utility, use `indiebrain-simple-mark-symbol'
+required. For a general purpose utility, use `indiebrain-simple-mark-symbol'
 instead.")
 
 (indiebrain-simple-mark
@@ -495,7 +495,7 @@ instead.")
  "symbol"
  "Mark the whole symbol at point.
 With optional ARG, mark the current symbol and any remaining
-ARGth symbols away from point.  A negative argument moves
+ARGth symbols away from point. A negative argument moves
 backward. Repeated invocations of this command mark the next
 symbol in the direction originally specified.
 
@@ -517,21 +517,21 @@ Just a convenient backward-looking `mark-sexp'."
 A do-what-I-mean wrapper for `indiebrain-simple-mark-sexp-backward',
 `mark-sexp', and `indiebrain-simple-mark-symbol'.
 
-When point is over a symbol, mark the entirety of it.  Regular
+When point is over a symbol, mark the entirety of it. Regular
 words are interpreted as symbols when an actual symbol is not
 present.
 
 For balanced expressions, a backward match will happen when point
-is to the right of the closing delimiter.  A forward match is the
+is to the right of the closing delimiter. A forward match is the
 fallback condition and should work when point is before a
 balanced expression, with or without whitespace in between it an
 the opening delimiter.
 
 Optional ARG will mark a total of ARGth objects while counting
-the current one (so 3 would be 1+2 more).  A negative count moves
+the current one (so 3 would be 1+2 more). A negative count moves
 the mark backward (though that would invert the backward-moving
 sexp matching of `indiebrain-simple-mark-sexp-backward', so be mindful of
-where the point is).  Repeated invocations of this command
+where the point is). Repeated invocations of this command
 incrementally mark objects in the direction originally
 specified."
   (interactive "P")
@@ -561,8 +561,8 @@ direction (negative is forward due to this being a
   "Unfill paragraph or, when active, the region.
 Join all lines in region delimited by BEG and END, if active,
 while respecting any empty lines (so multiple paragraphs are not
-joined, just unfilled).  If no region is active, operate on the
-paragraph.  The idea is to produce the opposite effect of both
+joined, just unfilled). If no region is active, operate on the
+paragraph. The idea is to produce the opposite effect of both
 `fill-paragraph' and `fill-region'."
   (interactive "r")
   (let ((fill-column most-positive-fixnum))
@@ -622,7 +622,7 @@ If narrowing is in effect, widen the view."
 (defun indiebrain-simple-forward-page-dwim (&optional count)
   "Move to next or COUNTth page forward.
 If buffer is narrowed to the page, keep the effect while
-performing the motion.  Always move point to the beginning of the
+performing the motion. Always move point to the beginning of the
 narrowed page."
   (interactive "p")
   (if (buffer-narrowed-p)
@@ -634,7 +634,7 @@ narrowed page."
 (defun indiebrain-simple-backward-page-dwim (&optional count)
   "Move to previous or COUNTth page backward.
 If buffer is narrowed to the page, keep the effect while
-performing the motion.  Always move point to the beginning of the
+performing the motion. Always move point to the beginning of the
 narrowed page."
   (interactive "p")
   (if (buffer-narrowed-p)
@@ -666,7 +666,7 @@ END, representing the point and mark."
 ;;;###autoload
 (define-minor-mode indiebrain-simple-monocle
   "Toggle between multiple windows and single window.
-This is the equivalent of maximising a window.  Tiling window
+This is the equivalent of maximising a window. Tiling window
 managers such as DWM, BSPWM refer to this state as 'monocle'."
   :lighter " -M-"
   :global nil
@@ -750,8 +750,8 @@ Do not try to make a new directory or anything fancy."
 ;;;###autoload
 (defun indiebrain-simple-swap-window-buffers (counter)
   "Swap states of live buffers.
-With two windows, transpose their buffers.  With more windows,
-perform a clockwise rotation.  Do not alter the window layout.
+With two windows, transpose their buffers. With more windows,
+perform a clockwise rotation. Do not alter the window layout.
 Just move the buffers around.
 
 With COUNTER as a prefix argument, do the rotation
