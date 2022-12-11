@@ -3,7 +3,6 @@
 ;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
 ;; Author: Aaron <aaron.kuehler@gmail.com>
-;; Keywords: internal
 ;; URL: https://github.com/indiebrain/.files/
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
@@ -172,5 +171,8 @@ member of `indiebrain-emacs-omit-packages'."
   ('ef (require 'indiebrain-emacs-ef-themes))
   ('modus (require 'indiebrain-emacs-modus-themes))
   ('stadard (require 'indiebrain-emacs-standard-themes)))
+
 (require 'indiebrain-emacs-theme-extras)
+(require 'indiebrain-emacs-font)
+
 ;;; init.el ends here

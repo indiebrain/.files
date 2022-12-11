@@ -3,7 +3,6 @@
 ;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
 ;; Author: Aaron <aaron.kuehler@gmail.com>
-;; Keywords: themes, interface
 ;; URL: https://github.com/indiebrain/.files/
 ;; Version: 0.1.0
 ;; Package-Requires: ((emacs "28.1"))
