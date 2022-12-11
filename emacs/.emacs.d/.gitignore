@@ -18,6 +18,7 @@ autosaves
 backup
 basic-init.el
 configuration.el
+cursory-latest-state.eld
 desktop
 elfeed/*
 elpa/*

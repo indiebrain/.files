@@ -40,7 +40,7 @@
 ;; indiebrain-emacs-pre-custom.el and indiebrain-emacs-post-custom.el
 
 (defcustom indiebrain-emacs-load-theme-family 'modus
-  "Set of themse to load.
+  "Set of themes to load.
 Valid values are the symbols of 'ef', 'modus', and 'standard',
 which reference the 'ef-themes', 'modus-themes', and
 'standard-themes' respectively.
@@ -168,23 +168,9 @@ member of `indiebrain-emacs-omit-packages'."
 
 (require 'indiebrain-emacs-essentials)
 
-;; (pcase indiebrain-emacs-load-theme-family
-;;   ('ef (require 'indiebrain-emacs-ef-themes))
-;;   ('modus (require 'indiebrain-emacs-modus-themes))
-;;   ('stadard (require 'indiebrain-emacs-standard-themes)))
-
-
-(provide 'init)
+(pcase indiebrain-emacs-load-theme-family
+  ('ef (require 'indiebrain-emacs-ef-themes))
+  ('modus (require 'indiebrain-emacs-modus-themes))
+  ('stadard (require 'indiebrain-emacs-standard-themes)))
+(require 'indiebrain-emacs-theme-extras)
 ;;; init.el ends here
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages '(exec-path-from-shell)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
