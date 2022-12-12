@@ -179,5 +179,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-search)
 (require 'indiebrain-emacs-dired)             ; dired and ibuffer
 (require 'indiebrain-emacs-window)
+(require 'indiebrain-emacs-vc)               ; git, diff, and related
 
 ;;; init.el ends here
