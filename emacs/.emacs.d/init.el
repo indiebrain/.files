@@ -181,5 +181,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-window)
 (require 'indiebrain-emacs-vc)               ; git, diff, and related
 (require 'indiebrain-emacs-shell)             ; e?shell, man, proced, pass
+(require 'indiebrain-emacs-write)             ; denote, logos, etc.
 
 ;;; init.el ends here
