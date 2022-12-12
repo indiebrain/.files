@@ -180,5 +180,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-dired)             ; dired and ibuffer
 (require 'indiebrain-emacs-window)
 (require 'indiebrain-emacs-vc)               ; git, diff, and related
+(require 'indiebrain-emacs-shell)             ; e?shell, man, proced, pass
 
 ;;; init.el ends here
