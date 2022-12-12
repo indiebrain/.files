@@ -27,6 +27,8 @@ fontaine-latest-state.eld
 forge-database.sqlite
 history
 ido.last
+indiebrain-emacs-post-custom.el
+indiebrain-emacs-pre-custom.el
 network-security.data
 org-roam.db
 projectile-bookmarks.eld
@@ -36,4 +38,5 @@ session*
 tramp
 transient*
 url*
+user-emacs.el
 var/*
