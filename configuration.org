@@ -479,6 +479,16 @@ Configure the path to the custom Ripgrep configuration.
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 #+end_src
 
+**** Shopify  Development Tooling
+
+#+begin_src sh
+# load dev, but only if present and the shell is interactive
+if [[ -f /opt/dev/dev.sh ]] && [[ $- == *i* ]]; then
+  source /opt/dev/dev.sh
+fi
+
+[[ -f /opt/dev/sh/chruby/chruby.sh ]] && type chruby >/dev/null 2>&1 || chruby () { source /opt/dev/sh/chruby/chruby.sh; chruby "$@"; }
+#+end_src
 *** Configuration for login shells
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./bash/.bash_profile
@@ -697,6 +707,12 @@ export HISTFILESIZE=10000000
 export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
 #+end_src
 
+**** Shopify  Development Tooling
+
+#+begin_src sh
+if [[ -f /opt/dev/dev.sh ]]; then source /opt/dev/dev.sh; fi
+#+end_src
+
 ** ASDF Version manager
 :PROPERTIES:
 :CUSTOM_ID: h:4bbe11ff-56d2-477e-a7b9-ded04597fba3
@@ -873,7 +889,7 @@ for working on my employer's repositories.
 [user]
     name = Aaron Kuehler
     email = aaron.kuehler@shopify.com
-    signingkey = FB12DE8A350E08534FD864389FB7E68BA7D8D52B
+    signingkey = 23CD393BB3DFDC660FC7FD63B7035B7518A8DB25
 
 [core]
     commitGraph = true
@@ -898,7 +914,10 @@ for working on my employer's repositories.
     insteadOf = ssh://git@github.com/shopify/
 
 [gpg]
-    program = /nix/var/nix/gcroots/dev-profiles/dev-support-dev-profile/bin/gpg-auto-pin
+    program = /opt/dev/bin/gpg-auto-pin
+
+[commit]
+    gpgSign = true
 #+end_src
 
 *** Global ignore file
