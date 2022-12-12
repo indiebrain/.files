@@ -177,5 +177,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-modeline)
 (require 'indiebrain-emacs-completion)
 (require 'indiebrain-emacs-search)
+(require 'indiebrain-emacs-dired)             ; dired and ibuffer
 
 ;;; init.el ends here
