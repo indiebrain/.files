@@ -185,5 +185,24 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-org)               ; org, calendar, appt
 (require 'indiebrain-emacs-langs)
 (require 'indiebrain-emacs-web)               ; eww, elfeed, rcirc
+(require 'indiebrain-emacs-conveniences)
+(require 'indiebrain-emacs-history)
+
+(setq safe-local-variable-values
+      '((org-hide-leading-stars . t)
+        (org-hide-macro-markers . t)))
+
+;; For those who use my dotfiles and need an easy way to write their
+;; own extras on top of what I already load.  The file must exist at
+;; ~/.emacs.d/user-emacs.el OR ~/.emacs.d/indiebrain-emacs-post-custom.el
+;;
+;; The purpose of the "post customizations" is to make tweaks to what
+;; I already define, such as to change the default theme.  See above
+;; for the `indiebrain-emacs-pre-custom.el' to make changes BEFORE loading
+;; any of my other configurations.
+(when-let* ((file (or (locate-user-emacs-file "user-emacs.el")
+                      (locate-user-emacs-file "indiebrain-emacs-post-custom.el")))
+            ((file-exists-p file)))
+  (load-file file))
 
 ;;; init.el ends here
