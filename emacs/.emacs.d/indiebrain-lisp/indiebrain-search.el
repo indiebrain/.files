@@ -327,7 +327,5 @@ Also see `indiebrain-search-occur-todo-keywords'."
      (lambda (mode) (format "*indiebrain-search-git-%s for '%s'" mode regexp))
      t)))
 
-
-
 (provide 'indiebrain-search)
 ;;; indiebrain-search.el ends here

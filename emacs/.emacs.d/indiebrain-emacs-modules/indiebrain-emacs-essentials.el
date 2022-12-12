@@ -236,6 +236,5 @@ minibuffer completion."
     (define-key map (kbd "C-c t r") #'tmr-remove)
     (define-key map (kbd "C-c t R") #'tmr-remove-finished)))
 
-
 (provide 'indiebrain-emacs-essentials)
 ;;; indiebrain-emacs-essentials.el ends here

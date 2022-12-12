@@ -93,4 +93,4 @@ function.  Then you can control the buffer's specifics via
 (advice-add #'ispell-display-buffer :override #'indiebrain-spell-ispell-display-buffer)
 
 (provide 'indiebrain-spell)
-;;; indiebrain-bookmark.el ends here
+;;; indiebrain-spell.el ends here

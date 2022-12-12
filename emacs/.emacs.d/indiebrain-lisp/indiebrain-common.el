@@ -1,7 +1,5 @@
 ;;; indiebrain-common.el --- Common functions used across my Emacs configuration  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022  Aaron
-
 ;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
 ;; Author: Aaron <aaron.kuehler@gmail.com>
@@ -59,6 +57,14 @@
 Copy of variable `browse-url-button-regexp'.")
 
 (autoload 'auth-source-search "auth-source")
+
+;;;###autoload
+(defun indiebrain-common-auth-get-field (host prop)
+  "Find PROP in `auth-sources' for HOST entry."
+  (when-let ((source (auth-source-search :host host)))
+    (if (eq prop :secret)
+       (funcall (plist-get (car source) prop))
+      (plist-get (flatten-list source) prop))))
 
 (provide 'indiebrain-common)
 ;;; indiebrain-common.el ends here

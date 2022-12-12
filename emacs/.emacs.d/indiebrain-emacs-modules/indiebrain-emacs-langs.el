@@ -1,4 +1,4 @@
-;;; indiebrain-emacs-vc.el --- Configuration for language specific modes  -*- lexical-binding: t; -*-
+;;; indiebrain-emacs-langs.el --- Configuration for language specific modes  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 

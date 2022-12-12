@@ -1,11 +1,11 @@
 ;;; indiebrain-tab.el --- Tab bar extensions for my Emacs configuration  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020-2022  Protesilaos Stavrou
+;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
-;; Author: Protesilaos Stavrou <info@protesilaos.com>
-;; URL: https://protesilaos.com/emacs/dotemacs
+;; Author: Aaron <aaron.kuehler@gmail.com>
+;; URL: https://github.com/indiebrain/.files/
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((emacs "28.1"))
 
 ;; This file is NOT part of GNU Emacs.
 

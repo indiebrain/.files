@@ -1,4 +1,4 @@
-;;; indiebrain-emacs-vc.el --- Configuration for org-mode  -*- lexical-binding: t; -*-
+;;; indiebrain-emacs-org.el --- Configuration for org-mode  -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2012-2022  Aaron Kuehler <aaron.kuehler@gmail.com>
 
