@@ -184,5 +184,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-write)             ; denote, logos, etc.
 (require 'indiebrain-emacs-org)               ; org, calendar, appt
 (require 'indiebrain-emacs-langs)
+(require 'indiebrain-emacs-web)               ; eww, elfeed, rcirc
 
 ;;; init.el ends here

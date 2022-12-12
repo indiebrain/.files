@@ -252,4 +252,4 @@ CUSTOM_ID of the entry is returned."
    (lambda () (indiebrain-org--id-get (point) t))))
 
 (provide 'indiebrain-org)
-;;; indiebrain-emacs-org.el ends here
+;;; indiebrain-org.el ends here

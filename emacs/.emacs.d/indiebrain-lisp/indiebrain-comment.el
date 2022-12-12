@@ -135,4 +135,4 @@ specified by `indiebrain-comment-timestamp-format-verbose'."
       (insert (concat " " string))))))
 
 (provide 'indiebrain-comment)
-;;; indiebrain-bookmark.el ends here
+;;; indiebrain-comment.el ends here
