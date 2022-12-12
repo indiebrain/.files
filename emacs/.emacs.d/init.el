@@ -183,5 +183,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-shell)             ; e?shell, man, proced, pass
 (require 'indiebrain-emacs-write)             ; denote, logos, etc.
 (require 'indiebrain-emacs-org)               ; org, calendar, appt
+(require 'indiebrain-emacs-langs)
 
 ;;; init.el ends here
