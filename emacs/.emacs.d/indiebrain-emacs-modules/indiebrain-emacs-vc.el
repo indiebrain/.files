@@ -28,6 +28,18 @@
 
 ;;; Code:
 
+;;; Projects (project.el)
+
+(indiebrain-emacs-builtin-package 'project
+  (setopt project-switch-commands
+          '((project-find-file "Find file")
+            (project-find-regexp "Find regexp")
+            (project-find-dir "Find directory")
+            (project-vc-dir "VC-Dir")
+            (project-shell "Shell")
+            (project-eshell "Eshell")))
+  (define-key global-map (kbd "C-x p <delete>") #'project-forget-project))
+
 ;;; Diff-mode (and indiebrain-diff.el extensions)
 (indiebrain-emacs-builtin-package 'diff-mode
   (setq diff-default-read-only t)
