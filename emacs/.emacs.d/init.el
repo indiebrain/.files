@@ -176,5 +176,6 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-font)
 (require 'indiebrain-emacs-modeline)
 (require 'indiebrain-emacs-completion)
+(require 'indiebrain-emacs-search)
 
 ;;; init.el ends here

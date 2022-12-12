@@ -32,6 +32,33 @@
 
 ;;; Code:
 
+;;;###autoload
+(defun indiebrain-common-truncate-lines-silently ()
+  "Toggle line truncation without printing messages."
+  (let ((inhibit-message t))
+    (toggle-truncate-lines t)))
+
+(defvar indiebrain-common-url-regexp
+  (concat
+   "\\b\\(\\(www\\.\\|\\(s?https?\\|ftp\\|file\\|gopher\\|"
+   "nntp\\|news\\|telnet\\|wais\\|mailto\\|info\\):\\)"
+   "\\(//[-a-z0-9_.]+:[0-9]*\\)?"
+   (let ((chars "-a-z0-9_=#$@~%&*+\\/[:word:]")
+         (punct "!?:;.,"))
+     (concat
+      "\\(?:"
+      ;; Match paired parentheses, e.g. in Wikipedia URLs:
+      ;; http://thread.gmane.org/47B4E3B2.3050402@gmail.com
+      "[" chars punct "]+" "(" "[" chars punct "]+" ")"
+      "\\(?:" "[" chars punct "]+" "[" chars "]" "\\)?"
+      "\\|"
+      "[" chars punct "]+" "[" chars "]"
+      "\\)"))
+   "\\)")
+  "Regular expression that matches URLs.
+Copy of variable `browse-url-button-regexp'.")
+
+(autoload 'auth-source-search "auth-source")
 
 (provide 'indiebrain-common)
 ;;; indiebrain-common.el ends here
