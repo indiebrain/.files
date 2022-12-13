@@ -98,7 +98,16 @@
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
   (define-key flyspell-mode-map (kbd "C-;") nil)
-  (define-key ctl-x-x-map "s" #'flyspell-mode)) ; C-x x s
+  (define-key ctl-x-x-map "s" #'flyspell-mode)
+
+  ;; Enable spell checking in buffers where the major mode derives
+  ;; from text-mode (IE most buffers where prose heavy editing is taking place).
+  (add-hook 'text-mode-hook #'flyspell-mode)
+
+  ;; Enable spell checking of comments in buffers where the major mode
+  ;; derives from prog-mode (IE most buffers where code editing is
+  ;; taking place.)
+  (add-hook 'prog-mode-hook #'flyspell-prog-mode)) ; C-x x s
 
 (indiebrain-emacs-builtin-package 'indiebrain-spell
   (setq indiebrain-spell-dictionaries
