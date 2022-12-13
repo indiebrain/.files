@@ -12,12 +12,25 @@ repository]] for details.
 
 * Notes
 
-This configuration is compatible with Emacs 28+ and uses =org-babel=
-to maintain a Literate Style configuration.
+This configuration is compatible with Emacs 29+. 
 
-Initialization is performed in [[./early-init.el][early-init.el]] and [[./init.el][init.el]]. The bulk of
-documentation and configuration is in the [[./indiebrain-emacs.org][indiebrain-emacs.org]].
+I used to generate my emacs configuration from a "Literate" style
+=org-mode= file. This iteration focuses more on a modular approach
+toward maintaining my configuration. 
 
-Since version 24, Emacs has inforporated the ELPA package manager as
-core functionality. The configuration makes heavy use of the =package=
-library.
+[[./early-init.el][early-init.el]] is responsible for configuration which must happen
+before Emacs itself initializes. Typeically one would find
+configuration of the builtin =package= management module, startup
+behavior, and anything else which must happen before the "user" level
+configuration is loaded.
+
+A module is meant to represent some concern or role in the Emacs
+environment; a group of related packages / libraries working in
+concert to achieve some higher order goal. Each module is responsible
+for configuring the packages and libraries used to fufil its role.
+[[./init.el][init.el]] uses =require= to load each module when Emacs is initialized.
+
+I alter or enahance the behavior of Emacs' builtin packages, or a
+package I install from a package archive. Usually these extensions can
+be cound in the [[./indiebrain-lisp][indiebrain-lisp]] directory.
+
