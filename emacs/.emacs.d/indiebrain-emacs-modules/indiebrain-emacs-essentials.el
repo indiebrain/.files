@@ -39,7 +39,6 @@
 ;;; Common auxiliary functions (indiebrain-common.el)
 (indiebrain-emacs-builtin-package 'indiebrain-common)
 
-
 ;;; Common custom functions (indiebrain-simple.el)
 (indiebrain-emacs-builtin-package 'indiebrain-simple
   (setq indiebrain-simple-insert-pair-alist
