@@ -178,6 +178,9 @@
 ;;; Newline characters for file ending
 (setq mode-require-final-newline 'visit-save)
 
+;;; Cleanup superfluous whitespace when a buffer is saved
+(add-hook 'before-save-hook #'whitespace-cleanup)
+
 ;;; Go to last change
 (indiebrain-emacs-elpa-package 'goto-last-change
   (define-key global-map (kbd "C-z") #'goto-last-change))
