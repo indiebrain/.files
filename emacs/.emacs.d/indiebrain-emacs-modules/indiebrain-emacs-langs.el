@@ -284,6 +284,12 @@
 (indiebrain-emacs-elpa-package 'cargo
   (add-hook 'rust-mode-hook #'cargo-minor-mode))
 
+;;;; TypeScript (typescript-mode)
+(indiebrain-emacs-elpa-package 'typescript-mode
+  (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
+  (setq typescript-indent-level 2)
+  (setq typescript-indent-switch-clauses t))
+
 ;;;; Web / HTML (web-mode)
 (indiebrain-emacs-elpa-package 'web-mode
   (setq web-mode-markup-indent-offset 2)
