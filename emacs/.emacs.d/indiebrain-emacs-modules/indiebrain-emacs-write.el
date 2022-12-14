@@ -59,6 +59,7 @@
   (let ((map global-map))
     (define-key map (kbd "C-c n n") #'denote)
     (define-key map (kbd "C-c n N") #'denote-type)
+    (define-key map (kbd "C-c n o") #'denote-open-or-create)
     (define-key map (kbd "C-c n d") #'denote-date)
     (define-key map (kbd "C-c n s") #'denote-subdirectory)
     ;; If you intend to use Denote with a variety of file types, it is
