@@ -59,10 +59,6 @@
 (setq-default scroll-margin 0)
 (setq-default next-screen-context-lines 0)
 
-;;; Delete selection
-(indiebrain-emacs-builtin-package 'delsel
-  (add-hook 'after-init-hook #'delete-selection-mode))
-
 ;;; Tooltips (tooltip-mode)
 (indiebrain-emacs-builtin-package 'tooltip
   (setq tooltip-delay 0.5)

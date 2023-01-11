@@ -152,7 +152,7 @@
 
 ;;; Delete selection
 (indiebrain-emacs-builtin-package 'delsel
-  (add-hook 'after-init-hook #'delete-selection-mode))
+  (delete-selection-mode 1))
 
 ;;; Tooltips (tooltip-mode)
 (indiebrain-emacs-builtin-package 'tooltip
