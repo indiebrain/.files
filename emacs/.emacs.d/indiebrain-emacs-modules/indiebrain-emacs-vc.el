@@ -38,6 +38,7 @@
             (project-vc-dir "VC-Dir")
             (project-shell "Shell")
             (project-eshell "Eshell")))
+  (setq project-vc-ignores '("*.rbi"))
   (define-key global-map (kbd "C-x p <delete>") #'project-forget-project))
 
 ;;; Diff-mode (and indiebrain-diff.el extensions)
