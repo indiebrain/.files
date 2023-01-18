@@ -76,7 +76,7 @@
            ;; I keep all properties for didactic purposes, but most can be
            ;; omitted. See the fontaine manual for the technicalities:
            ;; <https://protesilaos.com/emacs/fontaine>.
-           :default-family "Iosevka Comfy"
+           :default-family "Iosevka Comfy Wide"
            :default-weight regular
            :default-height 100
            :fixed-pitch-family nil ; falls back to :default-family
