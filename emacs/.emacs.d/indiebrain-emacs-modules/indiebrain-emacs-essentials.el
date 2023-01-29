@@ -248,5 +248,9 @@ minibuffer completion."
     (define-key map (kbd "M-# r") #'substitute-target-above-point)
     (define-key map (kbd "M-# d") #'substitute-target-in-defun)
     (define-key map (kbd "M-# b") #'substitute-target-in-buffer)))
+
+(indiebrain-emacs-elpa-package 'super-save
+  (super-save-mode 1))
+
 (provide 'indiebrain-emacs-essentials)
 ;;; indiebrain-emacs-essentials.el ends here
