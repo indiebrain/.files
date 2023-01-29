@@ -238,5 +238,15 @@ minibuffer completion."
     (define-key map (kbd "C-c t r") #'tmr-remove)
     (define-key map (kbd "C-c t R") #'tmr-remove-finished)))
 
+;;; Substitute - search/replace enhancements
+(indiebrain-emacs-elpa-package 'substitute
+  (setq substitute-highlight t)
+  (add-hook 'substitute-post-replace-hook #'substitute-report-operation)
+
+  (let ((map global-map))
+    (define-key map (kbd "M-# s") #'substitute-target-below-point)
+    (define-key map (kbd "M-# r") #'substitute-target-above-point)
+    (define-key map (kbd "M-# d") #'substitute-target-in-defun)
+    (define-key map (kbd "M-# b") #'substitute-target-in-buffer)))
 (provide 'indiebrain-emacs-essentials)
 ;;; indiebrain-emacs-essentials.el ends here
