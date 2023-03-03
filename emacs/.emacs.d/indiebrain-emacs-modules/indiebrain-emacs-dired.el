@@ -42,6 +42,7 @@
   ;;       "-AGFhlv --group-directories-first --time-style=long-iso")
   (setq dired-listing-switches
         "-AGFhlv")
+  (setq dired-use-ls-dired nil)
   (setq dired-dwim-target t)
   (setq dired-auto-revert-buffer #'dired-directory-changed-p) ; also see `dired-do-revert-buffer'
   (setq dired-make-directory-clickable t) ; Emacs 29.1
