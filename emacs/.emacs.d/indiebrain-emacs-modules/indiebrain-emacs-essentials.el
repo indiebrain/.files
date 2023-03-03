@@ -198,20 +198,20 @@
   (add-hook 'after-init-hook #'repeat-mode))
 
 ;;; Emoji input
-(indiebrain-emacs-builtin-package 'emoji
-  (defun indiebrain/emoji-insert (&optional transient)
-    "Thin wrapper for `emoji-insert' and `emoji-search'.
-When called with optional TRANSIENT as a prefix argument, use the
-transient interface (transient.el), else pick an emoji with
-minibuffer completion."
-    (interactive "P")
-    (let ((cmd (if transient 'emoji-insert 'emoji-search)))
-      (call-interactively cmd)))
-
-  ;; The default key bindings for Emoji are behind the C-x 8 e prefix.
-  ;; Meanwhile, F2 does something useless in my workflow.
-  ;; (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert)
-  (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert))
+;; (indiebrain-emacs-builtin-package 'emoji
+;;   (defun indiebrain/emoji-insert (&optional transient)
+;;     "Thin wrapper for `emoji-insert' and `emoji-search'.
+;; When called with optional TRANSIENT as a prefix argument, use the
+;; transient interface (transient.el), else pick an emoji with
+;; minibuffer completion."
+;;     (interactive "P")
+;;     (let ((cmd (if transient 'emoji-insert 'emoji-search)))
+;;       (call-interactively cmd)))
+;;
+;;   ;; The default key bindings for Emoji are behind the C-x 8 e prefix.
+;;   ;; Meanwhile, F2 does something useless in my workflow.
+;;   ;; (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert)
+;;   (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert))
 
 ;;; Make Custom UI code disposable
 (indiebrain-emacs-builtin-package 'cus-edit
