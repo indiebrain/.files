@@ -34,7 +34,7 @@
 (indiebrain-emacs-builtin-package 'isearch
   (setq search-highlight t)
   (setq search-whitespace-regexp ".*?")
-  (setq isearch-lax-whitespace t)
+  (setq isearch-lax-whitespace nil)
   (setq isearch-regexp-lax-whitespace nil)
   (setq isearch-lazy-highlight t)
   ;; All of the following variables were introduced in Emacs 27.1.
