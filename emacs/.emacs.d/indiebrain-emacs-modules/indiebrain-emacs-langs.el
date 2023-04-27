@@ -196,6 +196,15 @@
 (indiebrain-emacs-builtin-package 'so-long
   (global-so-long-mode 1))
 
+;;;; Language Servers (lsp-mode)
+(indiebrain-emacs-elpa-package 'lsp-mode
+  (setopt lsp-ruby-lsp-use-bundler t)
+
+  (add-hook 'typescript-mode-hook #'lsp-deferred)
+  (add-hook 'ruby-mode-hook #'lsp-deferred))
+
+(indiebrain-emacs-elpa-package 'lsp-ui)
+
 ;;; Language specific settings
 
 ;;;; Caddy server (caddyfile-mode)
