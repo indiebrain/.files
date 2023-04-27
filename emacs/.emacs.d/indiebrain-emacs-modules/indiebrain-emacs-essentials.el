@@ -218,26 +218,6 @@
   ;; Disable the damn thing
   (setq custom-file (make-temp-file "emacs-custom-")))
 
-;;; TMR May Ring (tmr is used to set timers)
-(indiebrain-emacs-elpa-package 'tmr
-  (setq tmr-notification-urgency 'normal
-        tmr-description-list 'tmr-description-history)
-
-  ;; You do not need these if you install the package.
-  (require 'tmr-notification)
-  (require 'tmr-tabulated)
-
-  (let ((map global-map))
-    (define-key map (kbd "C-c t t") #'tmr)
-    (define-key map (kbd "C-c t T") #'tmr-with-description)
-    (define-key map (kbd "C-c t l") #'tmr-tabulated-view) ; "list timers" mnemonic
-    (define-key map (kbd "C-c t c") #'tmr-clone)
-    (define-key map (kbd "C-c t k") #'tmr-cancel)
-    (define-key map (kbd "C-c t s") #'tmr-reschedule)
-    (define-key map (kbd "C-c t e") #'tmr-edit-description)
-    (define-key map (kbd "C-c t r") #'tmr-remove)
-    (define-key map (kbd "C-c t R") #'tmr-remove-finished)))
-
 ;;; Substitute - search/replace enhancements
 (indiebrain-emacs-elpa-package 'substitute
   (setq substitute-highlight t)
