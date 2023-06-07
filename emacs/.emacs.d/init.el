@@ -180,13 +180,11 @@ member of `indiebrain-emacs-omit-packages'."
 (require 'indiebrain-emacs-dired)             ; dired and ibuffer
 (require 'indiebrain-emacs-window)
 (require 'indiebrain-emacs-vc)               ; git, diff, and related
-(require 'indiebrain-emacs-shell)             ; e?shell, man, proced, pass
 (require 'indiebrain-emacs-write)             ; denote, logos, etc.
 (require 'indiebrain-emacs-org)               ; org, calendar, appt
 (require 'indiebrain-emacs-langs)
 (require 'indiebrain-emacs-web)               ; eww, elfeed, rcirc
 (require 'indiebrain-emacs-conveniences)
-(require 'indiebrain-emacs-history)
 
 (setq safe-local-variable-values
       '((org-hide-leading-stars . t)
