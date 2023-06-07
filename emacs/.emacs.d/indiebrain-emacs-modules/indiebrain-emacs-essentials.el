@@ -232,5 +232,30 @@
 (indiebrain-emacs-elpa-package 'super-save
   (super-save-mode 1))
 
+;;; Shell (M-x shell)
+(indiebrain-emacs-elpa-package 'shell
+  (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
+  (setq ansi-color-for-comint-mode t)
+  (setq shell-input-autoexpand 'input)
+  (setq shell-highlight-undef-enable t) ; Emacs 29.1
+  (setq shell-has-auto-cd nil) ; Emacs 29.1
+  (setq shell-get-old-input-include-continuation-lines t) ; Emacs 30.1
+  (setq shell-kill-buffer-on-exit t) ; Emacs 29.1
+  (setq-default comint-scroll-to-bottom-on-input t)
+  (setq-default comint-scroll-to-bottom-on-output nil)
+  (setq-default comint-input-autoexpand 'input)
+  (setq comint-prompt-read-only t)
+  (setq comint-buffer-maximum-size 9999)
+  (setq comint-completion-autolist t)
+
+  (define-key global-map (kbd "<f1>") #'shell) ; I don't use F1 for help commands
+
+  (let ((map shell-mode-map))
+    (define-key map (kbd "<up>") #'comint-previous-input)
+    (define-key map (kbd "<down>") #'comint-next-input)
+    (define-key map (kbd "C-c C-k") #'comint-clear-buffer)
+    (define-key map (kbd "C-c C-w") #'comint-write-output)))
+
+
 (provide 'indiebrain-emacs-essentials)
 ;;; indiebrain-emacs-essentials.el ends here

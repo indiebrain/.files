@@ -181,25 +181,25 @@
     (define-key map (kbd "C-c C-w") 'elfeed-tube-mpv-where)))
 
 ;;; Rcirc (IRC client)
-(indiebrain-emacs-builtin-package 'rcirc
-  (setq rcirc-server-alist
-        `(("irc.libera.chat"
-           :channels ("#emacs""#org-mode" "#rcirc" "#sr.ht")
-           :port 6697 :encryption tls
-           :password ,(indiebrain-common-auth-get-field "libera" :secret))))
-
-  (setq rcirc-prompt "%t> ") ; Read the docs or use (customize-set-variable 'rcirc-prompt "%t> ")
-
-  (setq rcirc-default-nick "indiebrain"
-        rcirc-default-user-name rcirc-default-nick
-        rcirc-default-full-name "Aaron Kuehler")
-
-  ;; NOTE 2021-11-28: Is there a canonical way to disable this?
-  (setq rcirc-timeout-seconds most-positive-fixnum)
-
-  (rcirc-track-minor-mode 1)
-
-  (define-key global-map (kbd "C-c i") #'irc))
+;; (indiebrain-emacs-builtin-package 'rcirc
+;;   (setq rcirc-server-alist
+;;         `(("irc.libera.chat"
+;;            :channels ("#emacs""#org-mode" "#rcirc" "#sr.ht")
+;;            :port 6697 :encryption tls
+;;            :password ,(indiebrain-common-auth-get-field "libera" :secret))))
+;;
+;;   (setq rcirc-prompt "%t> ") ; Read the docs or use (customize-set-variable 'rcirc-prompt "%t> ")
+;;
+;;   (setq rcirc-default-nick "indiebrain"
+;;         rcirc-default-user-name rcirc-default-nick
+;;         rcirc-default-full-name "Aaron Kuehler")
+;;
+;;   ;; NOTE 2021-11-28: Is there a canonical way to disable this?
+;;   (setq rcirc-timeout-seconds most-positive-fixnum)
+;;
+;;   (rcirc-track-minor-mode 1)
+;;
+;;   (define-key global-map (kbd "C-c i") #'irc))indiebrain-common-auth-get-field
 
 (provide 'indiebrain-emacs-web)
 ;;; indiebrain-emacs-org.el ends here
