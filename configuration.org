@@ -471,6 +471,14 @@ variable stops the client from collecting these metrics.
 export HOMEBREW_NO_ANALYTICS=1
 #+end_src
 
+**** Podman
+
+Point "docker*" commands at the Podman VM in MacOS.
+
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bashrc" "no")
+export DOCKER_HOST='unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock'
+#+end_src
+
 **** Ripgrep
 
 Configure the path to the custom Ripgrep configuration.
@@ -1361,72 +1369,58 @@ team's nodejs team's keyring.
 bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
 #+end_src
 
-***** Install docker
+***** Install podman
 :PROPERTIES:
 :CUSTOM_ID: h:7a582257-aa77-436f-a282-71502853fdcd
 :END:
 
-Ensure that docker is installed. On macOS hosts, we use [[https://brew.sh/][Homebrew]] to
-install docker:
+Ensure that podman is installed. On macOS hosts, we use [[https://brew.sh/][Homebrew]] to
+install podman:
 
 #+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
-if [ $(which docker) ]; then
-    echo "Docker is already installed"
+if [ $(which podman) ]; then
+    echo "Podman is already installed"
 else
-    brew install --cask docker
+    brew install podman podman-compose podman-desktop
 fi
 #+end_src
 
 While on GNU/Linux hosts, we assume we're using my favorite distro -
-Debian - and use the [[https://wiki.debian.org/aptitude][aptitude package manager]] to install docker.
+Debian - and use the [[https://wiki.debian.org/aptitude][aptitude package manager]] to install podman.
 
 #+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
-if [ $(which docker) ]
+if [ $(which podman) ]
 then
-    echo "Docker is already installed"
+    echo "Podman is already installed"
 else
-    echo "installing docker"
-    sudo apt-get remove docker docker-engine docker.io containerd runc
+    echo "installing podman"
     sudo apt-get update
-    sudo apt-get install \
-         apt-transport-https \
-         ca-certificates \
-         curl \
-         gnupg2 \
-         software-properties-common
-
-    curl -fssl https://download.docker.com/linux/debian/gpg | sudo apt-key add -
-    sudo add-apt-repository \
-         "deb [arch=amd64] https://download.docker.com/linux/debian \
-         $(lsb_release -cs) \
-         stable"
-    sudo apt-get update
-    sudo apt install -y docker-ce docker-ce-cli containerd.io
-    sudo groupadd docker
-    sudo usermod -ag docker $USER
-    newgrp docker
+    sudo apt install -y podman
 fi
 #+end_src
 
-***** Install docker-compose
+***** Install podman-compose
 :PROPERTIES:
 :CUSTOM_ID: h:4593f03e-2c1b-47d0-9a1d-ab429f199e8b
 :END:
 
-Ensures that docker-compose is present and ready to use. On macOS this
-comes bundled in the Homebrew cask version of docker, so there's nothing
-for us to do. However on GNU/Linux hosts we need to do some additional
-steps to get everything up and running.
+Ensures that podman-compose is present and ready to use.
+
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./scripts/bin/initial-host-setup" "no")
+if [ $(which podman-compose) ]; then
+    echo "podman-compose is already installed"
+else
+    brew install podman-compose
+fi
+#+end_src
 
 #+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./scripts/bin/initial-host-setup" "no")
-if [ $(which docker-compose) ]
+if [ $(which podman-compose) ]
 then
-    echo "installing docker-compose..."
-    sudo curl -l "https://github.com/docker/compose/releases/download/1.24.1/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-    sudo chmod +x /usr/local/bin/docker-compose
-    sudo curl -l https://raw.githubusercontent.com/docker/compose/1.24.1/contrib/completion/bash/docker-compose -o /etc/bash_completion.d/docker-compose
+    echo "podman-compose already installed. skipping..."
 else
-    echo "docker-compose already installed. skipping..."
+    echo "installing podman-compose..."
+    pip3 --user install podman-compose
 fi
 #+end_src
 
