@@ -149,7 +149,8 @@
 
   (modus-themes-load-theme 'modus-vivendi)
 
-  (define-key global-map (kbd "<f5>") #'modus-themes-toggle))
+  (indiebrain-emacs-keybind global-map
+    "<f5>" #'modus-themes-toggle))
 
 (provide 'indiebrain-emacs-modus-themes)
 

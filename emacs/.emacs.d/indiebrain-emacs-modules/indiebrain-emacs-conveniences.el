@@ -28,14 +28,14 @@
 
 ;;; Code:
 
-(let ((map ctl-x-x-map))
-  (define-key map "e" #'eval-buffer)
-  (define-key map "f" #'follow-mode)  ; override `font-lock-update'
-  (define-key map "r" #'rename-uniquely))
+(indiebrain-emacs-keybind ctl-x-x-map
+  "e" #'eval-buffer
+  "f" #'follow-mode  ; override `font-lock-update'
+  "r" #'rename-uniquely)
 
 (with-eval-after-load 'org
-  (define-key ctl-x-x-map "i" #'indiebrain-org-id-headlines)
-  (define-key ctl-x-x-map "h" #'indiebrain-org-ox-html))
+  "i" #'indiebrain-org-id-headlines
+  "h" #'indiebrain-org-ox-html)
 
 ;;; Mouse wheel behaviour
 (indiebrain-emacs-builtin-package 'mouse
@@ -50,7 +50,8 @@
   (setq mouse-wheel-progressive-speed t)
   (setq mouse-wheel-follow-mouse t)
   (add-hook 'after-init-hook #'mouse-wheel-mode)
-  (define-key global-map (kbd "C-M-<mouse-3>") #'tear-off-window))
+  (indiebrain-emacs-keybind global-map
+    "C-M-<mouse-3>" #'tear-off-window))
 
 ;;; Scrolling behaviour
 ;; These four come from the C source code.
@@ -84,7 +85,8 @@
 
 ;;; Go to last change
 (indiebrain-emacs-elpa-package 'goto-last-change
-  (define-key global-map (kbd "C-z") #'goto-last-change))
+  (indiebrain-emacs-keybind global-map
+    "C-z" #'goto-last-change))
 
 ;;; Repeatable key chords (repeat-mode)
 (indiebrain-emacs-builtin-package 'repeat
@@ -98,12 +100,12 @@
                             (setq custom-file (make-temp-file "emacs-custom-")))
 
 (indiebrain-emacs-elpa-package 'osm
-  (let ((map global-map))
-    (define-key map (kbd "C-c O h") #'osm-home)
-    (define-key map (kbd "C-c O s") #'osm-search)
-    (define-key map (kbd "C-c O t") #'osm-server)
-    (define-key map (kbd "C-c O g") #'osm-goto)
-    (define-key map (kbd "C-c O j") #'osm-bookmark-jump))
+  (indiebrain-emacs-keybind global-map
+    "C-c O h" #'osm-home
+    "C-c O s" #'osm-search
+    "C-c O t" #'osm-server
+    "C-c O g" #'osm-goto
+    "C-c O j" #'osm-bookmark-jump)
 
   ;; Load Org link support
   (with-eval-after-load 'org

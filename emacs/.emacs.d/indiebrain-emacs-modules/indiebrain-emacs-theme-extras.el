@@ -58,9 +58,9 @@
   ;; preference. Remember to read the manual on the matter. Evaluate:
   ;;
   ;; (info "(elisp) Key Binding Conventions")
-  (let ((map global-map))
-    (define-key map (kbd "C-x l") #'pulsar-pulse-line) ; override `count-lines-page'
-    (define-key map (kbd "C-x L") #'pulsar-highlight-dwim))) ; or use `pulsar-highlight-line'
+  (indiebrain-emacs-keybind global-map
+    "C-x l" #'pulsar-pulse-line
+    "C-x L" #'pulsar-highlight-dwim))
 
 ;;; LIN - enhance hl-line-mode in selection UIs
 ;;
@@ -120,10 +120,10 @@
 
   (add-hook 'prog-mode-hook #'indiebrain-sideline-mode)
 
-  (let ((map global-map))
-    (define-key map (kbd "<f6>") #'indiebrain-sideline-negative-space-toggle)
-    (define-key map (kbd "<f7>") #'indiebrain-sideline-mode)
-    (define-key map (kbd "C-c z") #'delete-trailing-whitespace)))
+  (indiebrain-emacs-keybind global-map
+    "<f6>" #'indiebrain-sideline-negative-space-toggle
+    "<f7>" #'indiebrain-sideline-mode
+    "C-c z" #'delete-trailing-whitespace))
 
 ;;; Fringe mode
 (indiebrain-emacs-builtin-package 'fringe
@@ -163,7 +163,8 @@
 
   ;; We have to use the "point" mnemonic, because C-c c is often the
   ;; suggested binding for `org-capture' and is the one I use as well.
-  (define-key global-map (kbd "C-c p") #'cursory-set-preset))
+  (indiebrain-emacs-keybind global-map
+    "C-c p" #'cursory-set-preset))
 
 (provide 'indiebrain-emacs-theme-extras)
 ;;; indiebrain-emacs-theme-extras.el ends here

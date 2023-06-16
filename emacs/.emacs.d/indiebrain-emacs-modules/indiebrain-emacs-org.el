@@ -348,23 +348,23 @@
       (add-hook hook #'pulsar-recenter-middle)
       (add-hook hook #'pulsar-reveal-entry)))
 
-  (let ((map global-map))
-    (define-key map (kbd "C-c a") #'org-agenda)
-    (define-key map (kbd "C-c c") #'org-capture)
-    (define-key map (kbd "C-c l") #'org-store-link)
-    (define-key map (kbd "C-c o") #'org-open-at-point-global))
-  (let ((map org-mode-map))
+  (indiebrain-emacs-keybind global-map
+    "C-c a" #'org-agenda
+    "C-c c" #'org-capture
+    "C-c l" #'org-store-link
+    "C-c o" #'org-open-at-point-global)
+  (indiebrain-emacs-keybind org-mode-map
     ;; I don't like that Org binds one zillion keys, so if I want one
     ;; for something more important, I disable it from here.
-    (define-key map (kbd "C-'") nil)
-    (define-key map (kbd "C-,") nil)
-    (define-key map (kbd "M-;") nil)
-    (define-key map (kbd "<C-return>") nil)
-    (define-key map (kbd "<C-S-return>") nil)
-    (define-key map (kbd "C-M-S-<right>") nil)
-    (define-key map (kbd "C-M-S-<left>") nil)
-    (define-key map (kbd "C-c M-l") #'org-insert-last-stored-link)
-    (define-key map (kbd "C-c C-M-l") #'org-toggle-link-display)))
+    "C-'" nil
+    "C-," nil
+    "M-;" nil
+    "<C-return>" nil
+    "<C-S-return>" nil
+    "C-M-S-<right>" nil
+    "C-M-S-<left>" nil
+    "C-c M-l" #'org-insert-last-stored-link
+    "C-c C-M-l" #'org-toggle-link-display))
 
 ;;; Custom extensions (indiebrain-org.el)
 (indiebrain-emacs-builtin-package 'indiebrain-org
@@ -387,11 +387,12 @@
 
   ;; I bind `org-agenda' to C-c a, so this one puts me straight into my
   ;; custom block agenda.
-  (define-key global-map (kbd "C-c A") (lambda () (interactive) (org-agenda nil "A")))
+  (indiebrain-emacs-keybind global-map
+    "C-c A" (lambda () (interactive) (org-agenda nil "A")))
 
-  (let ((map ctl-x-x-map))
-    (define-key map "i" #'indiebrain-org-id-headlines)
-    (define-key map "h" #'indiebrain-org-ox-html))
+  (indiebrain-emacs-keybind ctl-x-x-map
+    "i" #'indiebrain-org-id-headlines
+    "h" #'indiebrain-org-ox-html)
 
   (add-to-list 'org-capture-templates
                '("j" "Music suggestion (jukebox)" entry

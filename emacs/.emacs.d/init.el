@@ -159,6 +159,24 @@ member of `indiebrain-emacs-omit-packages'."
   `(add-to-list 'lisp-imenu-generic-expression
                 (list "Packages" ,indiebrain-emacs-package-form-regexp 2)))
 
+(defmacro indiebrain-emacs-keybind (keymap &rest definitions)
+  "Expand key binding DEFINITIONS for the given KEYMAP.
+DEFINITIONS is a sequence of string and command pairs."
+  (declare (indent 1))
+  (unless (zerop (% (length definitions) 2))
+    (error "Uneven number of key+command pairs"))
+  (let ((keys (seq-filter #'stringp definitions))
+        ;; We do accept nil as a definition: it unsets the given key.
+        (commands (seq-remove #'stringp definitions)))
+    `(when-let (((keymapp ,keymap))
+                (map ,keymap))
+       ,@(mapcar
+          (lambda (pair)
+            (unless (and (null (car pair))
+                         (null (cdr pair)))
+              `(define-key map (kbd ,(car pair)) ,(cdr pair))))
+          (cl-mapcar #'cons keys commands)))))
+
 ;; For those who follow my dotfiles and need a way to add their own
 ;; configuration on top of what's defined in my configuration. The file
 ;; must exist at ~/.emacs.d/indiebrain-emacs-pre-custom.el

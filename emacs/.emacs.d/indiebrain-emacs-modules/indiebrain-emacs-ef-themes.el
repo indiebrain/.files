@@ -45,6 +45,7 @@
           (t . (variable-pitch 1.1))))
 
   ;; The `ef-themes' provide lots of themes. Use f5 to interactively select which theme to load
-  (define-key global-map (kbd "<f5>") #'ef-themes-select))
+  (indiebrain-emacs-keybind global-mode
+    "<f5>" #'ef-themes-select))
 
 ;;; indiebrain-emacs-ef-themes.el ends here
