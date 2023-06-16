@@ -33,29 +33,27 @@
 
 ;;; Code:
 
-(setq frame-resize-pixelwise t)
-
-;; Prevent frame resizing during initialization
-(setq frame-inhibit-implied-resize t)
+;; Set default frame size
+(unless (eq window-system nil)
+  (dolist (var '(default-frame-alist initial-frame-alist))
+    (add-to-list var '(width . (text-pixels . 1200)))
+    (add-to-list var '(height . (text-pixels . 900)))
+    (add-to-list var '(scroll-bar-width  . 12))))
 
 ;; Disable GUI elements
 (menu-bar-mode -1)
-(tool-bar-mode -1)
 (scroll-bar-mode -1)
+(tool-bar-mode -1)
 
-;; Set default frame size
-(dolist (var '(default-frame-alist initial-frame-alist))
-  (add-to-list var '(width . (text-pixels . 1200)))
-  (add-to-list var '(height . (text-pixels . 900))))
-
-;; Disable default "help"-ful messages
-(setq inhibit-splash-screen t)
-(setq use-dialog-box t) ; only for mouse events
-(setq use-file-dialog nil)
-(setq inhibit-startup-echo-area-message user-login-name) ; read the docstring
-(setq inhibit-startup-screen t)
-(setq inhibit-startup-buffer-menu t)
-
+(setq frame-resize-pixelwise t
+      frame-inhibit-implied-resize t
+      use-dialog-box t ; only for mouse events, which I seldom use
+      use-file-dialog nil
+      inhibit-splash-screen t
+      inhibit-startup-screen t
+      inhibit-x-resources t
+      inhibit-startup-echo-area-message user-login-name ; read the docstring
+      inhibit-startup-buffer-menu t)
 
 ;; Initialize installed packages
 (setq package-enable-at-startup t)
@@ -63,6 +61,4 @@
 ;; Allow package loading from the package cache
 (defvar package-quickstart)
 (setq package-quickstart t)
-
-(setq native-comp-async-report-warnings-errors 'silent)
 ;;; early-init.el ends here
