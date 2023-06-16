@@ -60,6 +60,7 @@
           (agenda-structure . (variable-pitch light 1.8))
           (t . (variable-pitch 1.1))))
 
-  (define-key global-map (kbd "<f5>") #'standard-themes-toggle))
+  (indiebrain-emacs-keybind global-map
+    "<f5>" #'standard-themes-toggle))
 
 ;;; indiebrain-emacs-standard-themes.el ends here

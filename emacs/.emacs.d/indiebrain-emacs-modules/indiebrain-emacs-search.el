@@ -49,16 +49,17 @@
   (setq lazy-highlight-no-delay-length 3)
   (setq isearch-wrap-pause t)
 
-  (define-key minibuffer-local-isearch-map (kbd "M-/") #'isearch-complete-edit)
-  (let ((map isearch-mode-map))
-    (define-key map (kbd "C-g") #'isearch-cancel) ; instead of `isearch-abort'
-    (define-key map (kbd "M-/") #'isearch-complete)))
+  (indiebrain-emacs-keybind minibuffer-local-isearch-map
+    "M-/" #'isearch-complete-edit)
+  (indiebrain-emacs-keybind isearch-mode-map
+    "C-g" #'isearch-cancel ; instead of `isearch-abort'
+    "M-/" #'isearch-complete))
 
 (indiebrain-emacs-builtin-package 'replace
   (setq list-matching-lines-jump-to-current-line nil)
   (add-hook 'occur-mode-hook #'hl-line-mode)
   (add-hook 'occur-mode-hook #'indiebrain-common-truncate-lines-silently) ; from `indiebrain-common.el'
-  (define-key occur-mode-map (kbd "t") #'toggle-truncate-lines))
+  (indiebrain-emacs-keybind occur-mode-map "t" #'toggle-truncate-lines))
 
 (indiebrain-emacs-builtin-package 'grep)
 
@@ -72,22 +73,22 @@
         (concat "TODO\\|FIXME\\|NOTE\\|REVIEW\\|XXX\\|KLUDGE"
                 "\\|HACK\\|WARN\\|WARNING\\|DEPRECATED\\|BUG"))
 
-  (let ((map global-map))
-    (define-key map (kbd "M-s %") #'indiebrain-search-isearch-replace-symbol)
-    (define-key map (kbd "M-s M-%") #'indiebrain-search-replace-markup) ; see `indiebrain-search-markup-replacements'
-    (define-key map (kbd "M-s M-<") #'indiebrain-search-isearch-beginning-of-buffer)
-    (define-key map (kbd "M-s M->") #'indiebrain-search-isearch-end-of-buffer)
-    (define-key map (kbd "M-s g") #'indiebrain-search-grep)
-    (define-key map (kbd "M-s u") #'indiebrain-search-occur-urls)
-    (define-key map (kbd "M-s t") #'indiebrain-search-occur-todo-keywords)
-    (define-key map (kbd "M-s M-t") #'indiebrain-search-grep-todo-keywords) ; With C-u it runs `indiebrain-search-git-grep-todo-keywords'
-    (define-key map (kbd "M-s M-o") #'indiebrain-search-occur-outline)
-    (define-key map (kbd "M-s M-u") #'indiebrain-search-occur-browse-url))
-  (let ((map isearch-mode-map))
-    (define-key map (kbd "<up>") #'indiebrain-search-isearch-repeat-backward)
-    (define-key map (kbd "<down>") #'indiebrain-search-isearch-repeat-forward)
-    (define-key map (kbd "<backspace>") #'indiebrain-search-isearch-abort-dwim)
-    (define-key map (kbd "<C-return>") #'indiebrain-search-isearch-other-end)))
+  (indiebrain-emacs-keybind global-map
+    "M-s %" #'indiebrain-search-isearch-replace-symbol
+    "M-s M-%" #'indiebrain-search-replace-markup ; see `indiebrain-search-markup-replacements'
+    "M-s M-<" #'indiebrain-search-isearch-beginning-of-buffer
+    "M-s M->" #'indiebrain-search-isearch-end-of-buffer
+    "M-s g" #'indiebrain-search-grep
+    "M-s u" #'indiebrain-search-occur-urls
+    "M-s t" #'indiebrain-search-occur-todo-keywords
+    "M-s M-t" #'indiebrain-search-grep-todo-keywords ; With C-u it runs `indiebrain-search-git-grep-todo-keywords'
+    "M-s M-o" #'indiebrain-search-occur-outline
+    "M-s M-u" #'indiebrain-search-occur-browse-url)
+  (indiebrain-emacs-keybind isearch-mode-map
+    "<up>" #'indiebrain-search-isearch-repeat-backward
+    "<down>" #'indiebrain-search-isearch-repeat-forward
+    "<backspace>" #'indiebrain-search-isearch-abort-dwim
+    "<C-return>" #'indiebrain-search-isearch-other-end))
 
 ;;; Test regular expressions (re-builder)
 (indiebrain-emacs-builtin-package 're-builder
@@ -97,10 +98,10 @@
 (indiebrain-emacs-elpa-package 'wgrep
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t)
-  (let ((map grep-mode-map))
-    (define-key map (kbd "e") #'wgrep-change-to-wgrep-mode)
-    (define-key map (kbd "C-x C-q") #'wgrep-change-to-wgrep-mode)
-    (define-key map (kbd "C-c C-c") #'wgrep-finish-edit)))
+  (indiebrain-emacs-keybind grep-mode-map
+    "e" #'wgrep-change-to-wgrep-mode
+    "C-x C-q" #'wgrep-change-to-wgrep-mode
+    "C-c C-c" #'wgrep-finish-edit))
 
 ;;; Cross-references (xref.el)
 (indiebrain-emacs-builtin-package 'xref

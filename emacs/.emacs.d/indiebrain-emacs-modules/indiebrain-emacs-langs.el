@@ -42,18 +42,18 @@
   (setq comment-fill-column nil)
   (setq comment-multi-line t)
   (setq comment-style 'multi-line)
-  (let ((map global-map))
-    (define-key map (kbd "C-:") #'comment-kill)         ; C-S-;
-    (define-key map (kbd "M-;") #'comment-indent)))
+  (indiebrain-emacs-keybind global-map
+    "C-:" #'comment-kill         ; C-S-;
+    "M-;" #'comment-indent))
 
 (indiebrain-emacs-builtin-package 'indiebrain-comment
   (setq indiebrain-comment-comment-keywords
         '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
   (setq indiebrain-comment-timestamp-format-concise "%F")
   (setq indiebrain-comment-timestamp-format-verbose "%F %T %z")
-  (let ((map global-map))
-    (define-key map (kbd "C-;") #'indiebrain-comment-comment-dwim)
-    (define-key map (kbd "C-x C-;") #'indiebrain-comment-timestamp-keyword)))
+  (indiebrain-emacs-keybind global-map
+    "C-;" #'indiebrain-comment-comment-dwim
+    "C-x C-;" #'indiebrain-comment-timestamp-keyword))
 
 ;;; Configure 'electric' behaviour
 (indiebrain-emacs-builtin-package 'electric
@@ -97,8 +97,10 @@
   (setq flyspell-issue-welcome-flag nil)
   (setq ispell-program-name "aspell")
   (setq ispell-dictionary "en_US")
-  (define-key flyspell-mode-map (kbd "C-;") nil)
-  (define-key ctl-x-x-map "s" #'flyspell-mode)
+  (indiebrain-emacs-keybind flyspell-mode-map
+    "C-;" nil)
+  (indiebrain-emacs-keybind ctl-x-x-map
+    "s" #'flyspell-mode)
 
   ;; Enable spell checking in buffers where the major mode derives
   ;; from text-mode (IE most buffers where prose heavy editing is taking place).
@@ -118,9 +120,9 @@
   ;; `indiebrain-spell-ispell-display-buffer'.  Then refer to the
   ;; `display-buffer-alist' for the relevant entry.
 
-  (let ((map global-map))
-    (define-key map (kbd "M-$") #'indiebrain-spell-spell-dwim)
-    (define-key map (kbd "C-M-$") #'indiebrain-spell-change-dictionary)))
+  (indiebrain-emacs-keybind global-map
+    "M-$" #'indiebrain-spell-spell-dwim
+    "C-M-$" #'indiebrain-spell-change-dictionary))
 
 ;;; Dictionary
 (indiebrain-emacs-builtin-package 'dictionary
@@ -128,7 +130,7 @@
           dictionary-default-popup-strategy "lev" ; read doc string
           dictionary-create-buttons nil
           dictionary-use-single-buffer t)
-  (define-key global-map (kbd "C-c d") #'dictionary-search))
+  (indiebrain-emacs-keybind global-map "C-c d" #'dictionary-search))
 
 ;;; Flymake
 (indiebrain-emacs-builtin-package 'flymake
@@ -164,13 +166,14 @@
 
   (add-hook 'emacs-lisp-mode-hook #'indiebrain/flymake-mode-in-my-projects)
 
-  (define-key ctl-x-x-map "m" #'flymake-mode) ; C-x x m
-  (let ((map flymake-mode-map))
-    (define-key map (kbd "C-c ! s") #'flymake-start)
-    (define-key map (kbd "C-c ! d") #'flymake-show-buffer-diagnostics) ; Emacs28
-    (define-key map (kbd "C-c ! D") #'flymake-show-project-diagnostics) ; Emacs28
-    (define-key map (kbd "C-c ! n") #'flymake-goto-next-error)
-    (define-key map (kbd "C-c ! p") #'flymake-goto-prev-error)))
+  (indiebrain-emacs-keybind ctl-x-x-map
+    "m" #'flymake-mode) ; C-x x m
+  (indiebrain-emacs-keybind flymake-mode-map
+    "C-c ! s" #'flymake-start
+    "C-c ! d" #'flymake-show-buffer-diagnostics ; Emacs28
+    "C-c ! D" #'flymake-show-project-diagnostics ; Emacs28
+    "C-c ! n" #'flymake-goto-next-error
+    "C-c ! p" #'flymake-goto-prev-error))
 
 ;;;; Flymake + Shellcheck
 (indiebrain-emacs-elpa-package 'flymake-shellcheck
@@ -274,8 +277,8 @@
   (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode)))
 
 (indiebrain-emacs-builtin-package 'indiebrain-langs-ruby
-  (let ((map ruby-mode-map))
-    (define-key map (kbd "C-c C-c") 'xmp)))
+  (indiebrain-emacs-keybind ruby-mode-map
+    "C-c C-c" 'xmp))
 
 (indiebrain-emacs-elpa-package 'ruby-end)
 

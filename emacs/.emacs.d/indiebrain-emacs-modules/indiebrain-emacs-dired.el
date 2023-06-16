@@ -55,7 +55,7 @@
   ;; In Emacs 29 there is a binding for `repeat-mode' which let you
   ;; repeat C-x C-j just by following it up with j.  For me, this is a
   ;; problem as j calls `dired-goto-file', which I often use.
-  (define-key dired-jump-map (kbd "j") nil))
+  (indiebrain-emacs-keybind dired-jump-map "j" nil))
 
 (indiebrain-emacs-builtin-package 'dired-aux
   (setq dired-isearch-filenames 'dwim)
@@ -63,10 +63,10 @@
   (setq dired-vc-rename-file t)
   (setq dired-do-revert-buffer (lambda (dir) (not (file-remote-p dir))))
 
-  (let ((map dired-mode-map))
-    (define-key map (kbd "C-+") #'dired-create-empty-file)
-    (define-key map (kbd "M-s f") #'nil)
-    (define-key map (kbd "C-x v v") #'dired-vc-next-action)))
+  (indiebrain-emacs-keybind dired-mode-map
+    "C-+" #'dired-create-empty-file
+    "M-s f" #'nil
+    "C-x v v" #'dired-vc-next-action))
 
 (indiebrain-emacs-builtin-package 'dired-x
   (setq dired-clean-up-buffers-too t)
@@ -74,7 +74,7 @@
   (setq dired-x-hands-off-my-keys t)
   (setq dired-bind-man nil)
   (setq dired-bind-info nil)
-  (define-key dired-mode-map (kbd "I") #'dired-info))
+  (indiebrain-emacs-keybind dired-mode-map "I" #'dired-info))
 
 (indiebrain-emacs-builtin-package 'indiebrain-dired
   (setq indiebrain-dired-image-viewers '("feh" "sxiv"))
@@ -89,21 +89,21 @@
 
   (add-hook 'dired-mode-hook #'indiebrain-dired-setup-imenu)
 
-  (let ((map dired-mode-map))
-    (define-key map (kbd "i") #'indiebrain-dired-insert-subdir) ; override `dired-maybe-insert-subdir'
-    (define-key map (kbd "/") #'indiebrain-dired-limit-regexp)
-    (define-key map (kbd "C-c C-l") #'indiebrain-dired-limit-regexp)
-    (define-key map (kbd "M-n") #'indiebrain-dired-subdirectory-next)
-    (define-key map (kbd "C-c C-n") #'indiebrain-dired-subdirectory-next)
-    (define-key map (kbd "M-p") #'indiebrain-dired-subdirectory-previous)
-    (define-key map (kbd "C-c C-p") #'indiebrain-dired-subdirectory-previous)
-    (define-key map (kbd "M-s G") #'indiebrain-dired-grep-marked-files))) ; M-s g is `indiebrain-search-grep'
+  (indiebrain-emacs-keybind dired-mode-map
+    "i" #'indiebrain-dired-insert-subdir ; override `dired-maybe-insert-subdir'
+    "/" #'indiebrain-dired-limit-regexp
+    "C-c C-l" #'indiebrain-dired-limit-regexp
+    "M-n" #'indiebrain-dired-subdirectory-next
+    "C-c C-n" #'indiebrain-dired-subdirectory-next
+    "M-p" #'indiebrain-dired-subdirectory-previous
+    "C-c C-p" #'indiebrain-dired-subdirectory-previous
+    "M-s G" #'indiebrain-dired-grep-marked-files)) ; M-s g is `indiebrain-search-grep'
 
 (indiebrain-emacs-elpa-package 'dired-subtree
   (setq dired-subtree-use-backgrounds nil)
-  (let ((map dired-mode-map))
-    (define-key map (kbd "<tab>") #'dired-subtree-toggle)
-    (define-key map (kbd "<backtab>") #'dired-subtree-remove))) ; S-TAB
+  (indiebrain-emacs-keybind dired-mode-map
+    "<tab>" #'dired-subtree-toggle
+    "<backtab>" #'dired-subtree-remove)) ; S-TAB
 
 (indiebrain-emacs-builtin-package 'wdired
   (setq wdired-allow-to-change-permissions t)
@@ -116,8 +116,8 @@
   (setq image-dired-thumb-margin 2)
   (setq image-dired-thumb-relief 0)
   (setq image-dired-thumbs-per-row 4)
-  (define-key image-dired-thumbnail-mode-map
-    (kbd "<return>") #'image-dired-thumbnail-display-external))
+  (indiebrain-emacs-keybind image-dired-thumbnail-mode-map
+    "<return>" #'image-dired-thumbnail-display-external))
 
 ;;; dired-like mode for the trash (trashed.el)
 (indiebrain-emacs-elpa-package 'trashed
@@ -150,13 +150,13 @@
   (setq ibuffer-saved-filter-groups nil)
   (setq ibuffer-old-time 48)
   (add-hook 'ibuffer-mode-hook #'hl-line-mode)
-  (define-key global-map (kbd "C-x C-b") #'ibuffer)
-  (let ((map ibuffer-mode-map))
-    (define-key map (kbd "* f") #'ibuffer-mark-by-file-name-regexp)
-    (define-key map (kbd "* g") #'ibuffer-mark-by-content-regexp) ; "g" is for "grep"
-    (define-key map (kbd "* n") #'ibuffer-mark-by-name-regexp)
-    (define-key map (kbd "s n") #'ibuffer-do-sort-by-alphabetic)  ; "sort name" mnemonic
-    (define-key map (kbd "/ g") #'ibuffer-filter-by-content)))
+  (indiebrain-emacs-keybind global-map "C-x C-b" #'ibuffer)
+  (indiebrain-emacs-keybind ibuffer-mode-map
+    "* f" #'ibuffer-mark-by-file-name-regexp
+    "* g" #'ibuffer-mark-by-content-regexp ; "g" is for "grep"
+    "* n" #'ibuffer-mark-by-name-regexp
+    "s n" #'ibuffer-do-sort-by-alphabetic  ; "sort name" mnemonic
+    "/ g" #'ibuffer-filter-by-content))
 
 (provide 'indiebrain-emacs-dired)
 ;;; indiebrain-emacs-dired.el ends here

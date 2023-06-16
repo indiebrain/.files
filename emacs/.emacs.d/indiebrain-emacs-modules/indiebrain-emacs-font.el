@@ -105,12 +105,14 @@
   (dolist (hook '(modus-themes-after-load-theme-hook ef-themes-post-load-hook))
     (add-hook hook #'fontaine-apply-current-preset))
 
-  (define-key global-map (kbd "C-c f") #'fontaine-set-preset)
-  (define-key global-map (kbd "C-c F") #'fontaine-set-face-font))
+  (indiebrain-emacs-keybind global-map
+    "C-c f" #'fontaine-set-preset
+    "C-c F" #'fontaine-set-face-font))
 
 ;;; `variable-pitch-mode' setup
 
-(define-key ctl-x-x-map (kbd "v") #'variable-pitch-mode)
+(indiebrain-emacs-keybind ctl-x-x-map
+  "v" #'variable-pitch-mode)
 
 (defun indiebrain/enable-variable-pitch ()
   (unless (or (derived-mode-p 'mhtml-mode 'nxml-mode 'yaml-mode)

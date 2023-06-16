@@ -63,70 +63,70 @@
         help-window-select t
         next-error-recenter '(4)) ; center of the window
   ;; General commands
-  (let ((map global-map))
-    (define-key map (kbd "<insert>") nil)
-    (define-key map (kbd "C-z") nil)
-    (define-key map (kbd "C-x C-z") nil)
-    (define-key map (kbd "C-h h") nil)
-    (define-key map (kbd "M-`") nil)
-    (define-key map (kbd "C-h .") #'indiebrain-simple-describe-symbol) ; overrides `display-local-help'
-    (define-key map (kbd "C-h K") #'describe-keymap) ; overrides `Info-goto-emacs-key-command-node'
-    (define-key map (kbd "C-h c") #'describe-char) ; overrides `describe-key-briefly'
-    (define-key map (kbd "C-c s") #'indiebrain-simple-scratch-buffer)
+  (indiebrain-emacs-keybind global-map
+    "<insert>" nil
+    "C-z" nil
+    "C-x C-z" nil
+    "C-h h" nil
+    "M-`" nil
+    "C-h ." #'indiebrain-simple-describe-symbol ; overrides `display-local-help'
+    "C-h K" #'describe-keymap ; overrides `Info-goto-emacs-key-command-node'
+    "C-h c" #'describe-char ; overrides `describe-key-briefly'
+    "C-c s" #'indiebrain-simple-scratch-buffer
 
     ;; Commands for lines
-    (define-key map (kbd "M-o") #'delete-blank-lines)   ; alias for C-x C-o
-    (define-key map (kbd "M-k") #'indiebrain-simple-kill-line-backward)
-    (define-key map (kbd "C-S-w") #'indiebrain-simple-copy-line-or-region)
-    (define-key map (kbd "C-S-y") #'indiebrain-simple-yank-replace-line-or-region)
-    (define-key map (kbd "M-SPC") #'cycle-spacing)
-    (define-key map (kbd "C-S-n") #'indiebrain-simple-multi-line-next)
-    (define-key map (kbd "C-S-p") #'indiebrain-simple-multi-line-prev)
-    (define-key map (kbd "<C-return>") #'indiebrain-simple-new-line-below)
-    (define-key map (kbd "<C-S-return>") #'indiebrain-simple-new-line-above)
+    "M-o" #'delete-blank-lines   ; alias for C-x C-o
+    "M-k" #'indiebrain-simple-kill-line-backward
+    "C-S-w" #'indiebrain-simple-copy-line-or-region
+    "C-S-y" #'indiebrain-simple-yank-replace-line-or-region
+    "M-SPC" #'cycle-spacing
+    "C-S-n" #'indiebrain-simple-multi-line-next
+    "C-S-p" #'indiebrain-simple-multi-line-prev
+    "<C-return>" #'indiebrain-simple-new-line-below
+    "<C-S-return>" #'indiebrain-simple-new-line-above
 
     ;; Commands for text insertion or manipulation
-    (define-key map (kbd "C-=") #'indiebrain-simple-insert-date)
-    (define-key map (kbd "C-<") #'indiebrain-simple-escape-url)
-    (define-key map (kbd "C-'") #'indiebrain-simple-insert-pair)
-    (define-key map (kbd "M-'") #'indiebrain-simple-insert-pair)
-    (define-key map (kbd "M-\\") #'indiebrain-simple-delete-pair-dwim)
-    (define-key map (kbd "<C-M-backspace>") #'backward-kill-sexp)
-    (define-key map (kbd "M-c") #'capitalize-dwim)
-    (define-key map (kbd "M-l") #'downcase-dwim)        ; "lower" case
-    (define-key map (kbd "M-u") #'upcase-dwim)
+    "C-=" #'indiebrain-simple-insert-date
+    "C-<" #'indiebrain-simple-escape-url
+    "C-'" #'indiebrain-simple-insert-pair
+    "M-'" #'indiebrain-simple-insert-pair
+    "M-\\" #'indiebrain-simple-delete-pair-dwim
+    "<C-M-backspace>" #'backward-kill-sexp
+    "M-c" #'capitalize-dwim
+    "M-l" #'downcase-dwim        ; "lower" case
+    "M-u" #'upcase-dwim
 
     ;; Commands for object transposition
-    (define-key map (kbd "C-t") #'indiebrain-simple-transpose-chars)
-    (define-key map (kbd "C-x C-t") #'indiebrain-simple-transpose-lines)
-    (define-key map (kbd "C-S-t") #'indiebrain-simple-transpose-paragraphs)
-    (define-key map (kbd "C-x M-t") #'indiebrain-simple-transpose-sentences)
-    (define-key map (kbd "C-M-t") #'indiebrain-simple-transpose-sexps)
-    (define-key map (kbd "M-t") #'indiebrain-simple-transpose-words)
+    "C-t" #'indiebrain-simple-transpose-chars
+    "C-x C-t" #'indiebrain-simple-transpose-lines
+    "C-S-t" #'indiebrain-simple-transpose-paragraphs
+    "C-x M-t" #'indiebrain-simple-transpose-sentences
+    "C-M-t" #'indiebrain-simple-transpose-sexps
+    "M-t" #'indiebrain-simple-transpose-words
 
     ;; Commands for marking objects
-    (define-key map (kbd "M-@") #'indiebrain-simple-mark-word)       ; replaces `mark-word'
-    (define-key map (kbd "C-M-SPC") #'indiebrain-simple-mark-construct-dwim)
-    (define-key map (kbd "C-M-d") #'indiebrain-simple-downward-list)
+    "M-@" #'indiebrain-simple-mark-word       ; replaces `mark-word'
+    "C-M-SPC" #'indiebrain-simple-mark-construct-dwim
+    "C-M-d" #'indiebrain-simple-downward-list
 
     ;; Commands for paragraphs
-    (define-key map (kbd "M-Q") #'indiebrain-simple-unfill-region-or-paragraph)
+    "M-Q" #'indiebrain-simple-unfill-region-or-paragraph
 
     ;; Commands for windows and pages
-    (define-key map (kbd "C-x n k") #'indiebrain-simple-delete-page-delimiters)
-    (define-key map (kbd "C-x M") #'indiebrain-simple-monocle)
-    (define-key map (kbd "C-x M-r") #'indiebrain-simple-swap-window-buffers)
+    "C-x n k" #'indiebrain-simple-delete-page-delimiters
+    "C-x M" #'indiebrain-simple-monocle
+    "C-x M-r" #'indiebrain-simple-swap-window-buffers
 
     ;; Commands for windows and pages
-    (define-key map (kbd "C-x n k") #'indiebrain-simple-delete-page-delimiters)
-    (define-key map (kbd "C-x M") #'indiebrain-simple-monocle)
-    (define-key map (kbd "C-x M-r") #'indiebrain-simple-swap-window-buffers)))
+    "C-x n k" #'indiebrain-simple-delete-page-delimiters
+    "C-x M" #'indiebrain-simple-monocle
+    "C-x M-r" #'indiebrain-simple-swap-window-buffers))
 
 ;;; Keymap for buffers (Emacs28)
-(let ((map ctl-x-x-map))
-  (define-key map "e" #'eval-buffer)
-  (define-key map "f" #'follow-mode)  ; override `font-lock-update'
-  (define-key map "r" #'rename-uniquely))
+(indiebrain-emacs-keybind ctl-x-x-map
+  "e" #'eval-buffer
+  "f" #'follow-mode  ; override `font-lock-update'
+  "r" #'rename-uniquely)
 
 ;;; Mouse wheel behavior
 (indiebrain-emacs-builtin-package 'mouse
@@ -141,7 +141,8 @@
         mouse-wheel-progressive-speed t
         mouse-wheel-follow-mouse t)
   (add-hook 'after-init-hook #'mouse-wheel-mode)
-  (define-key global-map (kbd "C-M-<mouse-3>") #'tear-off-window))
+  (indiebrain-emacs-keybind global-map
+    "C-M-<mouse-3>" #'tear-off-window))
 
 ;;; Scrolling behavior
 ;; These four come from the C source code.
@@ -182,7 +183,8 @@
 
 ;;; Go to last change
 (indiebrain-emacs-elpa-package 'goto-last-change
-  (define-key global-map (kbd "C-z") #'goto-last-change))
+  (indiebrain-emacs-keybind global-map
+    "C-z" #'goto-last-change))
 
 ;;; Repeatable key chords (repeat-mode)
 (indiebrain-emacs-builtin-package 'repeat
@@ -197,22 +199,6 @@
         set-mark-command-repeat-pop t)
   (add-hook 'after-init-hook #'repeat-mode))
 
-;;; Emoji input
-;; (indiebrain-emacs-builtin-package 'emoji
-;;   (defun indiebrain/emoji-insert (&optional transient)
-;;     "Thin wrapper for `emoji-insert' and `emoji-search'.
-;; When called with optional TRANSIENT as a prefix argument, use the
-;; transient interface (transient.el), else pick an emoji with
-;; minibuffer completion."
-;;     (interactive "P")
-;;     (let ((cmd (if transient 'emoji-insert 'emoji-search)))
-;;       (call-interactively cmd)))
-;;
-;;   ;; The default key bindings for Emoji are behind the C-x 8 e prefix.
-;;   ;; Meanwhile, F2 does something useless in my workflow.
-;;   ;; (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert)
-;;   (define-key global-map (kbd "<f2>") #'indiebrain/emoji-insert))
-
 ;;; Make Custom UI code disposable
 (indiebrain-emacs-builtin-package 'cus-edit
   ;; Disable the damn thing
@@ -223,11 +209,11 @@
   (setq substitute-highlight t)
   (add-hook 'substitute-post-replace-hook #'substitute-report-operation)
 
-  (let ((map global-map))
-    (define-key map (kbd "M-# s") #'substitute-target-below-point)
-    (define-key map (kbd "M-# r") #'substitute-target-above-point)
-    (define-key map (kbd "M-# d") #'substitute-target-in-defun)
-    (define-key map (kbd "M-# b") #'substitute-target-in-buffer)))
+  (indiebrain-emacs-keybind global-map
+    "M-# s" #'substitute-target-below-point
+    "M-# r" #'substitute-target-above-point
+    "M-# d" #'substitute-target-in-defun
+    "M-# b" #'substitute-target-in-buffer))
 
 (indiebrain-emacs-elpa-package 'super-save
   (super-save-mode 1))
@@ -248,13 +234,14 @@
   (setq comint-buffer-maximum-size 9999)
   (setq comint-completion-autolist t)
 
-  (define-key global-map (kbd "<f1>") #'shell) ; I don't use F1 for help commands
+  (indiebrain-emacs-keybind global-map
+    "<f1>" #'shell) ; I don't use F1 for help commands
 
-  (let ((map shell-mode-map))
-    (define-key map (kbd "<up>") #'comint-previous-input)
-    (define-key map (kbd "<down>") #'comint-next-input)
-    (define-key map (kbd "C-c C-k") #'comint-clear-buffer)
-    (define-key map (kbd "C-c C-w") #'comint-write-output)))
+  (indiebrain-emacs-keybind shell-mode-map
+    "<up>" #'comint-previous-input
+    "<down>" #'comint-next-input
+    "C-c C-k" #'comint-clear-buffer
+    "C-c C-w" #'comint-write-output))
 
 
 (provide 'indiebrain-emacs-essentials)

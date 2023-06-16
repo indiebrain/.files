@@ -82,11 +82,16 @@
   ;; '("chromium" "--headless" "--dump-dom")
   (setq eww-retrieve-command nil)
 
-  (define-key eww-link-keymap (kbd "v") nil) ; stop overriding `eww-view-source'
-  (define-key eww-mode-map (kbd "L") #'eww-list-bookmarks)
-  (define-key dired-mode-map (kbd "E") #'eww-open-file) ; to render local HTML files
-  (define-key eww-buffers-mode-map (kbd "d") #'eww-bookmark-kill)   ; it actually deletes
-  (define-key eww-bookmark-mode-map (kbd "d") #'eww-bookmark-kill)) ; same
+  (indiebrain-emacs-keybind eww-link-keymap
+    "v" nil) ; stop overriding `eww-view-source'
+  (indiebrain-emacs-keybind eww-mode-map
+    "L" #'eww-list-bookmarks)
+  (indiebrain-emacs-keybind dired-mode-map
+    "E" #'eww-open-file) ; to render local HTML files
+  (indiebrain-emacs-keybind eww-buffers-mode-map
+    "d" #'eww-bookmark-kill)   ; it actually deletes
+  (indiebrain-emacs-keybind eww-bookmark-mode-map
+    "d" #'eww-bookmark-kill)) ; same
 
 (indiebrain-emacs-elpa-package 'elpher)    ; NOTE 2021-07-24: work-in-progress
 
@@ -99,23 +104,24 @@
   (add-hook 'indiebrain-eww-history-mode-hook #'hl-line-mode)
 
   (define-prefix-command 'indiebrain-eww-map)
-  (define-key global-map (kbd "C-c w") 'indiebrain-eww-map)
-  (let ((map indiebrain-eww-map))
-    (define-key map (kbd "b") #'indiebrain-eww-visit-bookmark)
-    (define-key map (kbd "e") #'indiebrain-eww-browse-dwim)
-    (define-key map (kbd "s") #'indiebrain-eww-search-engine))
-  (let ((map eww-mode-map))
-    (define-key map (kbd "B") #'indiebrain-eww-bookmark-page)
-    (define-key map (kbd "D") #'indiebrain-eww-download-html)
-    (define-key map (kbd "F") #'indiebrain-eww-find-feed)
-    (define-key map (kbd "H") #'indiebrain-eww-list-history)
-    (define-key map (kbd "b") #'indiebrain-eww-visit-bookmark)
-    (define-key map (kbd "e") #'indiebrain-eww-browse-dwim)
-    (define-key map (kbd "o") #'indiebrain-eww-open-in-other-window)
-    (define-key map (kbd "E") #'indiebrain-eww-visit-url-on-page)
-    (define-key map (kbd "J") #'indiebrain-eww-jump-to-url-on-page)
-    (define-key map (kbd "R") #'indiebrain-eww-readable)
-    (define-key map (kbd "Q") #'indiebrain-eww-quit)))
+  (indiebrain-emacs-keybind global-map
+    "C-c w" 'indiebrain-eww-map)
+  (indiebrain-emacs-keybind indiebrain-eww-map
+    "b" #'indiebrain-eww-visit-bookmark
+    "e" #'indiebrain-eww-browse-dwim
+    "s" #'indiebrain-eww-search-engine)
+  (indiebrain-emacs-keybind eww-mode-map
+    "B" #'indiebrain-eww-bookmark-page
+    "D" #'indiebrain-eww-download-html
+    "F" #'indiebrain-eww-find-feed
+    "H" #'indiebrain-eww-list-history
+    "b" #'indiebrain-eww-visit-bookmark
+    "e" #'indiebrain-eww-browse-dwim
+    "o" #'indiebrain-eww-open-in-other-window
+    "E" #'indiebrain-eww-visit-url-on-page
+    "J" #'indiebrain-eww-jump-to-url-on-page
+    "R" #'indiebrain-eww-readable
+    "Q" #'indiebrain-eww-quit))
 
 ;;; Elfeed feed/RSS reader
 (indiebrain-emacs-elpa-package 'elfeed
@@ -138,13 +144,14 @@
   (add-hook 'elfeed-show-mode-hook
             (lambda () (setq-local shr-width (current-fill-column))))
 
-  (define-key global-map (kbd "C-c e") #'elfeed)
-  (let ((map elfeed-search-mode-map))
-    (define-key map (kbd "w") #'elfeed-search-yank)
-    (define-key map (kbd "g") #'elfeed-update)
-    (define-key map (kbd "G") #'elfeed-search-update--force))
-  (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "w") #'elfeed-show-yank)))
+  (indiebrain-emacs-keybind global-map
+    "C-c e" #'elfeed)
+  (indiebrain-emacs-keybind elfeed-search-mode-map
+    "w" #'elfeed-search-yank
+    "g" #'elfeed-update
+    "G" #'elfeed-search-update--force)
+  (indiebrain-emacs-keybind elfeed-show-mode-map
+    "w" #'elfeed-show-yank))
 
 (with-eval-after-load 'elfeed
   (indiebrain-emacs-builtin-package 'indiebrain-elfeed
@@ -152,10 +159,11 @@
     (indiebrain-elfeed-fontify-tags)
     (add-hook 'elfeed-search-mode-hook #'indiebrain-elfeed-load-feeds)
 
-    (let ((map elfeed-search-mode-map))
-      (define-key map (kbd "s") #'indiebrain-elfeed-search-tag-filter)
-      (define-key map (kbd "+") #'indiebrain-elfeed-toggle-tag))
-    (define-key elfeed-show-mode-map (kbd "+") #'indiebrain-elfeed-toggle-tag)))
+    (indiebrain-emacs-keybind elfeed-search-mode-map
+      "s" #'indiebrain-elfeed-search-tag-filter
+      "+" #'indiebrain-elfeed-toggle-tag)
+    (indiebrain-emacs-keybind elfeed-show-mode-map
+      "+" #'indiebrain-elfeed-toggle-tag)))
 
 ;;; Elfeed extensions for watching videos (elfeed-tube)
 (indiebrain-emacs-elpa-package 'elfeed-tube
@@ -163,22 +171,23 @@
   ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
   (elfeed-tube-setup)
 
-  (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "F") #'elfeed-tube-fetch)
-    (define-key map [remap save-buffer] #'elfeed-tube-save))
-  (let ((map elfeed-search-mode-map))
-    (define-key map (kbd "F") #'elfeed-tube-fetch)
-    (define-key map [remap save-buffer] #'elfeed-tube-save)))
+  (indiebrain-emacs-keybind elfeed-show-mode-map
+    "F" #'elfeed-tube-fetch
+    "C-c C-s" #'elfeed-tube-save)
+  (indiebrain-emacs-keybind elfeed-search-mode-map
+    "F" #'elfeed-tube-fetch
+    "C-c C-s" #'elfeed-tube-save))
 
 (indiebrain-emacs-elpa-package 'mpv)
 
 (indiebrain-emacs-elpa-package 'elfeed-tube-mpv
-  (define-key elfeed-search-mode-map (kbd "v") 'elfeed-tube-mpv)
-  (let ((map elfeed-show-mode-map))
-    (define-key map (kbd "v") 'elfeed-tube-mpv)
-    (define-key map (kbd "C-c C-v") 'elfeed-tube-mpv)
-    (define-key map (kbd "C-c C-f") 'elfeed-tube-mpv-follow-mode)
-    (define-key map (kbd "C-c C-w") 'elfeed-tube-mpv-where)))
+  (indiebrain-emacs-keybind elfeed-search-mode-map
+    "v" 'elfeed-tube-mpv)
+  (indiebrain-emacs-keybind elfeed-show-mode-map
+    "v" 'elfeed-tube-mpv
+    "C-c C-v" 'elfeed-tube-mpv
+    "C-c C-f" 'elfeed-tube-mpv-follow-mode
+    "C-c C-w" 'elfeed-tube-mpv-where))
 
 ;;; Rcirc (IRC client)
 ;; (indiebrain-emacs-builtin-package 'rcirc
@@ -199,7 +208,8 @@
 ;;
 ;;   (rcirc-track-minor-mode 1)
 ;;
-;;   (define-key global-map (kbd "C-c i") #'irc))indiebrain-common-auth-get-field
+;;   (indiebrain-emacs-keybind global-map
+;;     "C-c i" #'irc))indiebrain-common-auth-get-field
 
 (provide 'indiebrain-emacs-web)
 ;;; indiebrain-emacs-org.el ends here

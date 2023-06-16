@@ -36,6 +36,19 @@
   (let ((inhibit-message t))
     (toggle-truncate-lines t)))
 
+;; Thanks to Omar Antolín Camarena for providing this snippet!
+;;;###autoload
+(defun indiebrain-common-completion-table (category candidates)
+  "Pass appropriate metadata CATEGORY to completion CANDIDATES.
+
+This is intended for bespoke functions that need to pass
+completion metadata that can then be parsed by other
+tools (e.g. `embark')."
+  (lambda (string pred action)
+    (if (eq action 'metadata)
+        `(metadata (category . ,category))
+      (complete-with-action action candidates string pred))))
+
 (defvar indiebrain-common-url-regexp
   (concat
    "\\b\\(\\(www\\.\\|\\(s?https?\\|ftp\\|file\\|gopher\\|"

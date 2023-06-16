@@ -48,9 +48,9 @@
 
   ;; SPC should never complete: use it for `orderless' groups.
   ;; The `?' is a regexp construct.
-  (let ((map minibuffer-local-completion-map))
-    (define-key map (kbd "SPC") nil)
-    (define-key map (kbd "?") nil)))
+  (indiebrain-emacs-keybind minibuffer-local-completion-map
+    "SPC" nil
+    "?" nil))
 
 (indiebrain-emacs-builtin-package 'indiebrain-orderless)
 
@@ -177,9 +177,9 @@
 
   (vertico-mode 1)
 
-  (let ((map vertico-map))
-    (define-key map (kbd "M-,") #'vertico-quick-insert)
-    (define-key map (kbd "M-.") #'vertico-quick-exit))
+  (indiebrain-emacs-keybind vertico-map
+    "M-," #'vertico-quick-insert
+    "M-." #'vertico-quick-exit)
 
   ;; This works with `file-name-shadow-mode'. When you are in a
   ;; sub-directory and use, say, `find-file' to go to your home '~/' or
@@ -224,25 +224,27 @@
 
   (require 'consult-imenu) ; the `imenu' extension is in its own file
 
-  (let ((map global-map))
-    (define-key map (kbd "C-x r b") #'consult-bookmark) ; override `bookmark-jump'
-    (define-key map (kbd "C-x M-:") #'consult-complex-command)
-    (define-key map (kbd "C-x M-m") #'consult-minor-mode-menu)
-    (define-key map (kbd "C-x M-k") #'consult-kmacro)
-    (define-key map [remap goto-line] #'consult-goto-line)
-    (define-key map (kbd "M-K") #'consult-keep-lines) ; M-S-k is similar to M-S-5 (M-%)
-    (define-key map (kbd "M-F") #'consult-focus-lines) ; same principle
-    (define-key map (kbd "M-s M-b") #'consult-buffer)
-    (define-key map (kbd "M-s M-f") #'consult-find)
-    (define-key map (kbd "M-s M-g") #'consult-grep)
-    (define-key map (kbd "M-s M-h") #'consult-history)
-    (define-key map (kbd "M-s M-i") #'consult-imenu)
-    (define-key map (kbd "M-s M-l") #'consult-line)
-    (define-key map (kbd "M-s M-m") #'consult-mark)
-    (define-key map (kbd "M-s M-s") #'consult-outline)
-    (define-key map (kbd "M-s M-y") #'consult-yank-pop)
-    (define-key map (kbd "C-x r r") #'consult-register)) ; Use the register's prefix
-  (define-key consult-narrow-map (kbd "?") #'consult-narrow-help)
+  (indiebrain-emacs-keybind global-map
+    "C-x r b" #'consult-bookmark ; override `bookmark-jump'
+    "C-x M-:" #'consult-complex-command
+    "C-x M-m" #'consult-minor-mode-menu
+    "C-x M-k" #'consult-kmacro
+    "M-g M-g" #'consult-goto-line
+    "M-K" #'consult-keep-lines ; M-S-k is similar to M-S-5 (M-%
+    "M-F" #'consult-focus-lines ; same principle
+    "M-s M-b" #'consult-buffer
+    "M-s M-f" #'consult-find
+    "M-s M-g" #'consult-grep
+    "M-s M-h" #'consult-history
+    "M-s M-i" #'consult-imenu
+    "M-s M-l" #'consult-line
+    "M-s M-m" #'consult-mark
+    "M-s M-s" #'consult-outline
+    "M-s M-y" #'consult-yank-pop
+    "C-x r r" #'consult-register) ; Use the register's prefix
+
+  (indiebrain-emacs-keybind consult-narrow-map
+    "?" #'consult-narrow-help)
 
   ;; see the `pulsar' package, which is configured in the
   ;; indiebrain-emacs-theme-extensions module:
@@ -262,7 +264,8 @@
   ;; Overrides `list-directory' in the `global-map', though I never used
   ;; that anyway.
   (dolist (map (list global-map minibuffer-local-filename-completion-map))
-    (define-key map (kbd "C-x C-d") #'consult-dir)))
+    (indiebrain-emacs-keybind map
+      "C-x C-d" #'consult-dir)))
 
 ;;; Extended minibuffer actions and more (embark.el and indiebrain-embark.el)
 (indiebrain-emacs-elpa-package 'embark
@@ -281,20 +284,22 @@
   (setq embark-mixed-indicator-both nil)
   (setq embark-mixed-indicator-delay 1.2)
   (setq embark-verbose-indicator-display-action nil)
- (define-key global-map (kbd "C-,") #'embark-act)
-  (define-key embark-collect-mode-map (kbd "C-,") #'embark-act)
-  (let ((map minibuffer-local-completion-map))
-    (define-key map (kbd "C-,") #'embark-act)
-    (define-key map (kbd "C->") #'embark-become))
-  (let ((map embark-region-map))
-    (define-key map (kbd "a") #'align-regexp)
-    (define-key map (kbd "i") #'epa-import-keys-region)
-    (define-key map (kbd "r") #'repunctuate-sentences) ; overrides `rot13-region'
-    (define-key map (kbd "s") #'sort-lines)
-    (define-key map (kbd "u") #'untabify))
-  (let ((map embark-symbol-map))
-    (define-key map (kbd ".") #'embark-find-definition)
-    (define-key map (kbd "k") #'describe-keymap)))
+  (indiebrain-emacs-keybind global-map
+    "C-," #'embark-act)
+  (indiebrain-emacs-keybind embark-collect-mode-map
+    "C-," #'embark-act)
+  (indiebrain-emacs-keybind minibuffer-local-completion-map
+    "C-," #'embark-act
+    "C->" #'embark-become)
+  (indiebrain-emacs-keybind embark-region-map
+    "a" #'align-regexp
+    "i" #'epa-import-keys-region
+    "r" #'repunctuate-sentences ; overrides `rot13-region'
+    "s" #'sort-lines
+    "u" #'untabify)
+  (indiebrain-emacs-keybind embark-symbol-map
+    "." #'embark-find-definition
+    "k" #'describe-keymap))
 
 ;; Needed for correct exporting while using Embark with Consult
 ;; commands.
@@ -313,13 +318,14 @@
 
 (indiebrain-emacs-builtin-package 'indiebrain-recentf
   (add-to-list 'recentf-keep 'indiebrain-recentf-keep-predicate)
-  (let ((map global-map))
-    (define-key map (kbd "C-x C-r") #'indiebrain-recentf-recent-files-or-dirs)))
+  (indiebrain-emacs-keybind global-map
+    "C-x C-r" #'indiebrain-recentf-recent-files-or-dirs))
 
 ;;; Corfu (in-buffer completion popup)
 (indiebrain-emacs-elpa-package 'corfu
   (global-corfu-mode 1)
-  (define-key corfu-map (kbd "<tab>") #'corfu-complete)
+  (indiebrain-emacs-keybind corfu-map
+    "<tab>" #'corfu-complete)
 
   ;; Adapted from Corfu's manual.
   (defun contrib/corfu-enable-always-in-minibuffer ()
@@ -355,13 +361,13 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (dolist (hook '(prog-mode-hook text-mode-hook))
     (add-hook hook 'contrib/tempel-setup-capf))
 
-  (let ((map global-map))
-    (define-key map (kbd "M-+") #'tempel-complete) ; Alternative: `tempel-expand'
-    (define-key map (kbd "M-*") #'tempel-insert))
-  (let ((map tempel-map))
-    (define-key map (kbd "RET") #'tempel-done)
-    (define-key map (kbd "C-p") #'tempel-previous)
-    (define-key map (kbd "C-n") #'tempel-next)))
+  (indiebrain-emacs-keybind global-map
+    "M-+" #'tempel-complete ; Alternative: `tempel-expand'
+    "M-*" #'tempel-insert)
+  (indiebrain-emacs-keybind tempel-map
+    "RET" #'tempel-done
+    "C-p" #'tempel-previous
+    "C-n" #'tempel-next))
 
 ;;; Enhance command-line completion (pcmpl-args)
 (indiebrain-emacs-elpa-package 'pcmpl-args)
@@ -377,9 +383,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (setq dabbrev-check-other-buffers t)
   (setq dabbrev-eliminate-newlines t)
   (setq dabbrev-upcase-means-case-search t)
-  (let ((map global-map))
-    (define-key map (kbd "M-/") #'dabbrev-expand)
-    (define-key map (kbd "C-x M-/") #'dabbrev-completion)))
+  (indiebrain-emacs-keybind global-map
+    "M-/" #'dabbrev-expand
+    "C-x M-/" #'dabbrev-completion))
 
 ;;; Abbreviations or Abbrevs
 (indiebrain-emacs-builtin-package 'abbrev
@@ -404,9 +410,9 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     (define-abbrev table "libreplanet" "LibrePlanet")
     (define-abbrev table "emacsconf" "EmacsConf"))
 
-  (let ((map global-map))
-    (define-key map (kbd "C-x a e") #'expand-abbrev) ; default, just here for visibility
-    (define-key map (kbd "C-x a u") #'unexpand-abbrev))
+  (indiebrain-emacs-keybind global-map
+    "C-x a e" #'expand-abbrev
+    "C-x a u" #'unexpand-abbrev)
 
   (dolist (hook '(text-mode-hook prog-mode-hook git-commit-mode-hook))
     (add-hook hook #'abbrev-mode)))
