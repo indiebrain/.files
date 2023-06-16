@@ -73,10 +73,19 @@ configuration during Emacs initialization.")
 (setq frame-title-format '("%b"))
 (setq ring-bell-function 'ignore)
 (setq use-short-answers t)
+(setq native-comp-async-report-warnings-errors 'silent) ; Emacs 28 with native compilation
+(setq native-compile-prune-cache t) ; Emacs 29
+(setq make-backup-files nil)
+(setq backup-inhibited nil) ; Not sure if needed, given `make-backup-files'
+(setq create-lockfiles nil)
+
+;; Ignore host-specific customization options.
+(setq custom-file (make-temp-file "emacs-custom-"))
 
 (put 'overwrite-mode 'disabled t)
 
-(setq initial-buffer-choice t) ; always start with *scratch*
+;; Always start with *scratch*
+(setq initial-buffer-choice t)
 
 
 ;;;; Packages
@@ -86,11 +95,10 @@ configuration during Emacs initialization.")
 
 (require 'package)
 
-;; All variables are for Emacs 28+
-(setq package-name-column-width 40)
-(setq package-version-column-width 14)
-(setq package-status-column-width 12)
-(setq package-archive-column-width 8)
+(setq package-quickstart t)
+
+(package-initialize)
+
 (add-hook 'package-menu-mode-hook #'hl-line-mode)
 
 (setq package-archives

@@ -55,10 +55,7 @@
       inhibit-startup-echo-area-message user-login-name ; read the docstring
       inhibit-startup-buffer-menu t)
 
-;; Initialize installed packages
-(setq package-enable-at-startup t)
+;; Do not initialise installed packages at this early stage.
+(setq package-enable-at-startup nil)
 
-;; Allow package loading from the package cache
-(defvar package-quickstart)
-(setq package-quickstart t)
 ;;; early-init.el ends here
