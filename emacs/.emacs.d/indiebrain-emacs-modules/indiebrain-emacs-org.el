@@ -31,7 +31,7 @@
 ;;; Org-mode (personal information manager)
 
 (indiebrain-emacs-builtin-package 'org
-  (setq org-directory (convert-standard-filename "~/.org"))
+  (setq org-directory (convert-standard-filename (file-name-concat indiebrain-emacs-synchronized-directory ".org")))
   (setq org-imenu-depth 7)
 ;;;; general settings
   (setq org-adapt-indentation nil)
@@ -147,8 +147,8 @@
 
 ;;;; agenda
 ;;;;; Basic agenda setup
-  (setq org-default-notes-file (thread-last org-directory (expand-file-name "notes.org")))
-  (setq org-agenda-files `(,org-directory "~/Documents"))
+  (setq org-default-notes-file (make-temp-file "emacs-org-notes-")) ; send it to oblivion
+  (setq org-agenda-files `(,org-directory ,denote-directory))
   (setq org-agenda-span 'week)
   (setq org-agenda-start-on-weekday 1)  ; Monday
   (setq org-agenda-confirm-kill t)
@@ -421,6 +421,7 @@
 
 ;;; Calendar
 (indiebrain-emacs-builtin-package 'calendar
+  (setq diary-file (file-name-concat org-directory "diary"))
   (setq calendar-mark-diary-entries-flag t)
   (setq calendar-mark-holidays-flag t)
   (setq calendar-mode-line-format nil)

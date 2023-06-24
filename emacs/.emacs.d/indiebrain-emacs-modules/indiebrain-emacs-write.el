@@ -39,7 +39,7 @@
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
 (indiebrain-emacs-elpa-package 'denote
   ;; Remember to check the doc strings of those variables.
-  (setq denote-directory (expand-file-name "~/.notes"))
+  (setq denote-directory (expand-file-name (file-name-concat indiebrain-emacs-synchronized-directory ".notes")))
   (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))
   (setq denote-infer-keywords t)
   (setq denote-sort-keywords t)

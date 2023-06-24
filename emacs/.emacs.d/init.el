@@ -57,6 +57,12 @@ configuration during Emacs initialization."
                  (const :tag "The 'standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
+(defcustom indiebrain-emacs-synchronized-directory
+  "~/Sync"
+  "A path which can be used to synchronize filesystem items."
+  :group 'indiebrain-emacs--expand-file-name
+  :type 'string)
+
 (defcustom indiebrain-emacs-omit-packages nil
   "List of package names to not load.
 This instrucs the relevant macros to not 'require' the given
