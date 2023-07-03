@@ -220,7 +220,9 @@
   (setq css-fontify-colors nil))
 
 ;;;; Docker (dockerfile-mode
-(indiebrain-emacs-elpa-package 'dockerfile-mode)
+(indiebrain-emacs-elpa-package 'dockerfile-mode
+  (add-to-list 'auto-mode-alist '("\\Dockerfile$" . dockerfile-mode))
+  (add-to-list 'auto-mode-alist '("\\Containerfile$" . dockerfile-mode)))
 
 ;;;; Go-lang (go-mode)
 (indiebrain-emacs-elpa-package 'go-mode
