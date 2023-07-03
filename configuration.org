@@ -141,7 +141,7 @@ This is useful if you have nested, frequently accessed directory
 hierarchies - for stowing work vs personal projects, for example.
 
 #+begin_src sh
-export CDPATH=".:$HOME/src/github.com/Shopify:$HOME/Developer"
+export CDPATH=".:$HOME/Developer/personal/:$HOME/Developer/work/"
 #+end_src
 
 **** Prompt
@@ -832,16 +832,23 @@ system. The following contains configuration which:
     email = aaron.kuehler@gmail.com
     signingkey = 9e3e4c59e2694215
 
+[diff]
+    algorithm = patience
+
 [github]
     user = indiebrain
     oauth-token =
 
-[includeIf "gitdir:~/src/github.com/Shopify/"]
+[includeIf "gitdir:~/Developer/work/"]
        path = ~/.work.gitconfig
 
 [core]
     excludesfile = ~/.gitignore_global
     commitGraph = true
+
+[remote "origin"]
+    tagopt = --no-tags
+    prune = true
 
 [color]
     ui = true
@@ -852,18 +859,17 @@ system. The following contains configuration which:
     db  = branch -d
     rclone = clone --recursive
 
+[commit]
+    gpgSign = true
+
+[gc]
+    writeCommitGraph = true
+
 [clean]
     requireforce = false
 
 [push]
     default = simple
-
-[remote "origin"]
-    tagopt = --no-tags
-    prune = true
-
-[commit]
-    gpgSign = true
 #+end_src
 
 *** Work specific configuration
@@ -879,34 +885,8 @@ for working on my employer's repositories.
 
 #+begin_src conf
 [user]
-    name = Aaron Kuehler
-    email = aaron.kuehler@shopify.com
-    signingkey = FB12DE8A350E08534FD864389FB7E68BA7D8D52B
-
-[core]
-    commitGraph = true
-
-[credential]
-    helper =
-    helper = store --file /opt/dev/var/private/git_credential_store
-
-[diff]
-    algorithm = patience
-
-[gc]
-    writeCommitGraph = true
-
-[protocol]
-    version = 2
-
-[url "https://github.com/Shopify/"]
-    insteadOf = git@github.com:Shopify/
-    insteadOf = git@github.com:shopify/
-    insteadOf = ssh://git@github.com/Shopify/
-    insteadOf = ssh://git@github.com/shopify/
-
-[gpg]
-    program = /nix/var/nix/gcroots/dev-profiles/dev-support-dev-profile/bin/gpg-auto-pin
+    email =
+    signingkey =
 #+end_src
 
 *** Global ignore file
