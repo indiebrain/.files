@@ -31,16 +31,17 @@
 ;;; Code:
 
 ;;; Read environment variables
-(indiebrain-emacs-elpa-package 'exec-path-from-shell
+(indiebrain-emacs-package exec-path-from-shell
+  (:install t)
   (setq exec-path-from-shell-variables
         '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
   (exec-path-from-shell-initialize))
 
 ;;; Common auxiliary functions (indiebrain-common.el)
-(indiebrain-emacs-builtin-package 'indiebrain-common)
+(indiebrain-emacs-package indiebrain-common)
 
 ;;; Common custom functions (indiebrain-simple.el)
-(indiebrain-emacs-builtin-package 'indiebrain-simple
+(indiebrain-emacs-package indiebrain-simple
   (setq indiebrain-simple-insert-pair-alist
         '(("' Single quote"        . (39 39))     ; ' '
           ("\" Double quotes"      . (34 34))     ; " "
@@ -129,7 +130,7 @@
   "r" #'rename-uniquely)
 
 ;;; Mouse wheel behavior
-(indiebrain-emacs-builtin-package 'mouse
+(indiebrain-emacs-package mouse
   ;; In Emacs 27+, use Control + mouse wheel to scale text.
   (setq mouse-wheel-scroll-amount
         '(1
@@ -152,11 +153,11 @@
               next-screen-context-lines 0)
 
 ;;; Delete selection
-(indiebrain-emacs-builtin-package 'delsel
+(indiebrain-emacs-package delsel
   (delete-selection-mode 1))
 
 ;;; Tooltips (tooltip-mode)
-(indiebrain-emacs-builtin-package 'tooltip
+(indiebrain-emacs-package tooltip
   (setq tooltip-delay 0.5
         tooltip-short-delay 0.5
         x-gtk-use-system-tooltips nil
@@ -168,7 +169,7 @@
   (add-hook 'after-init-hook #'tooltip-mode))
 
 ;;; Auto revert mode
-(indiebrain-emacs-builtin-package 'autorevert
+(indiebrain-emacs-package autorevert
   (setq auto-revert-verbose t)
   (add-hook 'after-init-hook #'global-auto-revert-mode))
 
@@ -182,12 +183,13 @@
 (add-hook 'before-save-hook #'whitespace-cleanup)
 
 ;;; Go to last change
-(indiebrain-emacs-elpa-package 'goto-last-change
+(indiebrain-emacs-package goto-last-change
+  (:install t)
   (indiebrain-emacs-keybind global-map
     "C-z" #'goto-last-change))
 
 ;;; Repeatable key chords (repeat-mode)
-(indiebrain-emacs-builtin-package 'repeat
+(indiebrain-emacs-package repeat
   (setq repeat-on-final-keystroke t
         repeat-exit-timeout 5
         repeat-exit-key "<escape>"
@@ -200,12 +202,13 @@
   (add-hook 'after-init-hook #'repeat-mode))
 
 ;;; Make Custom UI code disposable
-(indiebrain-emacs-builtin-package 'cus-edit
+(indiebrain-emacs-package cus-edit
   ;; Disable the damn thing
   (setq custom-file (make-temp-file "emacs-custom-")))
 
 ;;; Substitute - search/replace enhancements
-(indiebrain-emacs-elpa-package 'substitute
+(indiebrain-emacs-package substitute
+  (:install t)
   (setq substitute-highlight t)
   (add-hook 'substitute-post-replace-hook #'substitute-report-operation)
 
@@ -215,11 +218,13 @@
     "M-# d" #'substitute-target-in-defun
     "M-# b" #'substitute-target-in-buffer))
 
-(indiebrain-emacs-elpa-package 'super-save
+(indiebrain-emacs-package super-save
+  (:install t)
   (super-save-mode 1))
 
 ;;; Shell (M-x shell)
-(indiebrain-emacs-elpa-package 'shell
+(indiebrain-emacs-package shell
+  (:install t)
   (setq shell-command-prompt-show-cwd t) ; Emacs 27.1
   (setq ansi-color-for-comint-mode t)
   (setq shell-input-autoexpand 'input)

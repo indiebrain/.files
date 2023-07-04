@@ -31,7 +31,7 @@
 ;;; Code:
 
 ;;; Isearch, occur, grep, and extras (indiebrain-search.el)
-(indiebrain-emacs-builtin-package 'isearch
+(indiebrain-emacs-package isearch
   (setq search-highlight t)
   (setq search-whitespace-regexp ".*?")
   (setq isearch-lax-whitespace nil)
@@ -55,15 +55,15 @@
     "C-g" #'isearch-cancel ; instead of `isearch-abort'
     "M-/" #'isearch-complete))
 
-(indiebrain-emacs-builtin-package 'replace
+(indiebrain-emacs-package replace
   (setq list-matching-lines-jump-to-current-line nil)
   (add-hook 'occur-mode-hook #'hl-line-mode)
   (add-hook 'occur-mode-hook #'indiebrain-common-truncate-lines-silently) ; from `indiebrain-common.el'
   (indiebrain-emacs-keybind occur-mode-map "t" #'toggle-truncate-lines))
 
-(indiebrain-emacs-builtin-package 'grep)
+(indiebrain-emacs-package grep)
 
-(indiebrain-emacs-builtin-package 'indiebrain-search
+(indiebrain-emacs-package indiebrain-search
   (setq indiebrain-search-outline-regexp-alist
         '((emacs-lisp-mode . "^\\((\\|;;;+ \\)")
           (org-mode . "^\\(\\*+ +\\|#\\+[Tt][Ii][Tt][Ll][Ee]:\\)")
@@ -91,11 +91,12 @@
     "<C-return>" #'indiebrain-search-isearch-other-end))
 
 ;;; Test regular expressions (re-builder)
-(indiebrain-emacs-builtin-package 're-builder
+(indiebrain-emacs-package re-builder
   (setq reb-re-syntax 'read))
 
 ;;; wgrep (writable grep)
-(indiebrain-emacs-elpa-package 'wgrep
+(indiebrain-emacs-package wgrep
+  (:install t)
   (setq wgrep-auto-save-buffer t)
   (setq wgrep-change-readonly-file t)
   (indiebrain-emacs-keybind grep-mode-map
@@ -104,7 +105,7 @@
     "C-c C-c" #'wgrep-finish-edit))
 
 ;;; Cross-references (xref.el)
-(indiebrain-emacs-builtin-package 'xref
+(indiebrain-emacs-package xref
   ;; All those have been changed for Emacs 28
   (setq xref-show-definitions-function #'xref-show-definitions-completing-read) ; for M-.
   (setq xref-show-xrefs-function #'xref-show-definitions-buffer) ; for grep and the like
@@ -116,14 +117,14 @@
          (t 'grep))))
 
 ;;; Built-in bookmarking framework (bookmark.el and indiebrain-bookmark.el)
-(indiebrain-emacs-builtin-package 'bookmark
+(indiebrain-emacs-package bookmark
   (setq bookmark-use-annotations nil)
   (setq bookmark-automatically-show-annotations t)
   (setq bookmark-set-fringe-mark t) ; Emacs28
 
   (add-hook 'bookmark-bmenu-mode-hook #'hl-line-mode))
 
-(indiebrain-emacs-builtin-package 'indiebrain-bookmark
+(indiebrain-emacs-package indiebrain-bookmark
   (indiebrain-bookmark-extra-keywords 1))
 
 (provide 'indiebrain-emacs-search)

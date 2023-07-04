@@ -37,7 +37,7 @@
 (add-hook 'text-mode-hook #'turn-on-auto-fill)
 
 ;;; Comments (newcomment.el and indiebrain-comment.el)
-(indiebrain-emacs-builtin-package 'newcomment
+(indiebrain-emacs-package newcomment
   (setq comment-empty-lines t)
   (setq comment-fill-column nil)
   (setq comment-multi-line t)
@@ -46,7 +46,7 @@
     "C-:" #'comment-kill         ; C-S-;
     "M-;" #'comment-indent))
 
-(indiebrain-emacs-builtin-package 'indiebrain-comment
+(indiebrain-emacs-package indiebrain-comment
   (setq indiebrain-comment-comment-keywords
         '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
   (setq indiebrain-comment-timestamp-format-concise "%F")
@@ -56,7 +56,7 @@
     "C-x C-;" #'indiebrain-comment-timestamp-keyword))
 
 ;;; Configure 'electric' behaviour
-(indiebrain-emacs-builtin-package 'electric
+(indiebrain-emacs-package electric
   (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
   (setq electric-pair-preserve-balance t)
   (setq electric-pair-pairs
@@ -78,7 +78,7 @@
   (add-hook 'prog-mode-hook #'electric-indent-local-mode))
 
 ;;; Parentheses (show-paren-mode)
-(indiebrain-emacs-builtin-package 'paren
+(indiebrain-emacs-package paren
   (setq show-paren-style 'parenthesis)
   (setq show-paren-when-point-in-periphery nil)
   (setq show-paren-when-point-inside-paren nil)
@@ -92,7 +92,7 @@
 (setq-default indent-tabs-mode nil)
 
 ;;; Flyspell and indiebrain-spell.el (spell check)
-(indiebrain-emacs-builtin-package 'flyspell
+(indiebrain-emacs-package flyspell
   (setq flyspell-issue-message-flag nil)
   (setq flyspell-issue-welcome-flag nil)
   (setq ispell-program-name "aspell")
@@ -111,7 +111,7 @@
   ;; taking place.)
   (add-hook 'prog-mode-hook #'flyspell-prog-mode)) ; C-x x s
 
-(indiebrain-emacs-builtin-package 'indiebrain-spell
+(indiebrain-emacs-package indiebrain-spell
   (setq indiebrain-spell-dictionaries
         '(("EN English" . "en")
           ("FR Français" . "fr")))
@@ -125,7 +125,7 @@
     "C-M-$" #'indiebrain-spell-change-dictionary))
 
 ;;; Dictionary
-(indiebrain-emacs-builtin-package 'dictionary
+(indiebrain-emacs-package dictionary
   (setq dictionary-server "dict.org"
           dictionary-default-popup-strategy "lev" ; read doc string
           dictionary-create-buttons nil
@@ -133,7 +133,7 @@
   (indiebrain-emacs-keybind global-map "C-c d" #'dictionary-search))
 
 ;;; Flymake
-(indiebrain-emacs-builtin-package 'flymake
+(indiebrain-emacs-package flymake
   (setq flymake-fringe-indicator-position 'left-fringe)
   (setq flymake-suppress-zero-counters t)
   (setq flymake-start-on-flymake-mode t)
@@ -176,63 +176,74 @@
     "C-c ! p" #'flymake-goto-prev-error))
 
 ;;;; Flymake + Shellcheck
-(indiebrain-emacs-elpa-package 'flymake-shellcheck
+(indiebrain-emacs-package flymake-shellcheck
+  (:install t)
   (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
 
 ;;;; Flymake + Proselint
-(indiebrain-emacs-elpa-package 'flymake-proselint
+(indiebrain-emacs-package flymake-proselint
+  (:install t)
   (add-hook 'text-mode-hook #'flymake-proselint-setup))
 
 ;;;; Elisp packaging requirements
-(indiebrain-emacs-elpa-package 'package-lint-flymake
+(indiebrain-emacs-package package-lint-flymake
+  (:install t)
   (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
 
 ;;;; Flycheck
-(indiebrain-emacs-elpa-package 'flycheck
+(indiebrain-emacs-package flycheck
+  (:install t)
   (global-flycheck-mode))
 
 ;;;; Eldoc (elisp live documentation feedback)
-(indiebrain-emacs-builtin-package 'eldoc
+(indiebrain-emacs-package eldoc
   (global-eldoc-mode 1))
 
 ;;;; Handle performance for very long lines (so-long.el)
-(indiebrain-emacs-builtin-package 'so-long
+(indiebrain-emacs-package so-long
   (global-so-long-mode 1))
 
 ;;;; Language Servers (lsp-mode)
-(indiebrain-emacs-elpa-package 'lsp-mode
+(indiebrain-emacs-package lsp-mode
+  (:install t)
   (setopt lsp-ruby-lsp-use-bundler t)
 
   (add-hook 'typescript-mode-hook #'lsp-deferred)
   (add-hook 'ruby-mode-hook #'lsp-deferred))
 
-(indiebrain-emacs-elpa-package 'lsp-ui)
+(indiebrain-emacs-package lsp-ui
+  (:install t))
 
 ;;; Language specific settings
 
 ;;;; Caddy server (caddyfile-mode)
-(indiebrain-emacs-elpa-package 'caddyfile-mode)
+(indiebrain-emacs-package caddyfile-mode
+  (:install t))
 
 ;;;; CSS (css-mode)
-(indiebrain-emacs-builtin-package 'css-mode
+(indiebrain-emacs-package css-mode
   (add-to-list 'auto-mode-alist '("\\.css\\'" . css-mode))
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
   (setq css-fontify-colors nil))
 
 ;;;; Docker (dockerfile-mode
-(indiebrain-emacs-elpa-package 'dockerfile-mode
+(indiebrain-emacs-package dockerfile-mode
+  (:install t)
   (add-to-list 'auto-mode-alist '("\\Dockerfile$" . dockerfile-mode))
   (add-to-list 'auto-mode-alist '("\\Containerfile$" . dockerfile-mode)))
 
 ;;;; Go-lang (go-mode)
-(indiebrain-emacs-elpa-package 'go-mode
+(indiebrain-emacs-package go-mode
+  (:install t)
   (add-hook 'before-save-hook #'gofmt-before-save))
 
 ;;;; GraphQL (graphql-mode)
-(indiebrain-emacs-elpa-package 'graphql-mode)
+(indiebrain-emacs-package graphql-mode
+  (:install t))
 
 ;;;; JavaScript (js2-mode)
-(indiebrain-emacs-elpa-package 'js2-mode
+(indiebrain-emacs-package js2-mode
+  (:install t)
   (setq js2-basic-offset 2)
   (setq js2-highlight-level 3)
   (setq js2-mode-show-parse-errors t)
@@ -247,24 +258,26 @@
   (setq flycheck-javascript-eslint-executable "node_modules/.bin/eslint"))
 
 ;;;; Markdown (markdown-mode)
-(indiebrain-emacs-elpa-package 'markdown-mode
+(indiebrain-emacs-package markdown-mode
+  (:install t)
   (add-to-list 'auto-mode-alist '("\\.md\\'" . markdown-mode))
   (setq markdown-fontify-code-blocks-natively t))
 
 ;;;; React JSX (rjsx-mode)
-(indiebrain-emacs-elpa-package 'rjsx-mode
+(indiebrain-emacs-package rjsx-mode
+  (:install t)
   (add-to-list 'auto-mode-alist '("\\.tsx$" . rjsx-mode)))
 
 ;;;; Shell scripts (sh-mode)
-(indiebrain-emacs-builtin-package 'sh-script
+(indiebrain-emacs-package sh-script
   (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode)))
 
 ;;;; Text (text-mode)
-(indiebrain-emacs-builtin-package 'text-mode
+(indiebrain-emacs-package text-mode
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode)))
 
 ;;;; Ruby (ruby-mode)
-(indiebrain-emacs-builtin-package 'ruby-mode
+(indiebrain-emacs-package ruby-mode
   (setq ruby-insert-encoding-magic-comment nil
     ruby-deep-indent-paren nil
     ruby-indent-tabs-mode nil
@@ -278,39 +291,48 @@
   (add-to-list 'auto-mode-alist '("Guardfile$" . ruby-mode))
   (add-to-list 'auto-mode-alist '("\\.ru$" . ruby-mode)))
 
-(indiebrain-emacs-builtin-package 'indiebrain-langs-ruby
+(indiebrain-emacs-package indiebrain-langs-ruby
   (indiebrain-emacs-keybind ruby-mode-map
     "C-c C-c" 'xmp))
 
-(indiebrain-emacs-elpa-package 'ruby-end)
+(indiebrain-emacs-package ruby-end
+  (:install t))
 
-(indiebrain-emacs-elpa-package 'inf-ruby)
+(indiebrain-emacs-package inf-ruby
+  (:install t))
 
-(indiebrain-emacs-elpa-package 'rspec-mode
+(indiebrain-emacs-package rspec-mode
+  (:install t)
   (setq compilation-scroll-output 'first-error)
   (add-hook 'after-init-hook #'inf-ruby-switch-setup))
 
 ;;;; Rust (rust-mode)
-(indiebrain-emacs-elpa-package 'rust-mode)
+(indiebrain-emacs-package rust-mode
+  (:install t))
 
-(indiebrain-emacs-elpa-package 'flycheck-rust)
+(indiebrain-emacs-package flycheck-rust
+  (:install t))
 
-(indiebrain-emacs-elpa-package 'cargo
+(indiebrain-emacs-package cargo
+  (:install t)
   (add-hook 'rust-mode-hook #'cargo-minor-mode))
 
 ;;;; TypeScript (typescript-mode)
-(indiebrain-emacs-elpa-package 'typescript-mode
+(indiebrain-emacs-package typescript-mode
+  (:install t)
   (add-to-list 'auto-mode-alist '("\\.ts$" . typescript-mode))
   (setq typescript-indent-level 2)
   (setq typescript-indent-switch-clauses t))
 
 ;;;; Web / HTML (web-mode)
-(indiebrain-emacs-elpa-package 'web-mode
+(indiebrain-emacs-package web-mode
+  (:install t)
   (setq web-mode-markup-indent-offset 2)
   (add-to-list 'auto-mode-alist '("\\.html.erb$" . web-mode)))
 
 ;;;; YAML (yaml-mode)
-(indiebrain-emacs-elpa-package 'yaml-mode
+(indiebrain-emacs-package yaml-mode
+  (:install t)
   (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode)))
 
 

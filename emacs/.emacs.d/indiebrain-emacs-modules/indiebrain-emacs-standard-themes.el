@@ -29,7 +29,8 @@
 ;; See my full configuration: https://github.com/indiebrain/.files/
 
 ;;; Code:
-(indiebrain-emacs-elpa-package 'standard-themes
+(indiebrain-emacs-package standard-themes
+  (:install t)
   (setq standard-themes-bold-constructs t
         standard-themes-italic-constructs t
         standard-themes-mixed-fonts t

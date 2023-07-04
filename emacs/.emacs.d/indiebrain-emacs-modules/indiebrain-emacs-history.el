@@ -29,10 +29,10 @@
 ;;; Code:
 
 ;;; Emacs server and desktop
-(indiebrain-emacs-builtin-package 'server
+(indiebrain-emacs-package server
   (add-hook 'after-init-hook #'server-start))
 
-(indiebrain-emacs-builtin-package 'desktop
+(indiebrain-emacs-package desktop
   (setq desktop-auto-save-timeout 300)
   (setq desktop-path `(,user-emacs-directory))
   (setq desktop-base-file-name "desktop")
@@ -50,7 +50,7 @@
   (desktop-save-mode 1))
 
 ;;; Record cursor position
-(indiebrain-emacs-builtin-package 'saveplace
+(indiebrain-emacs-package saveplace
   (setq save-place-file (locate-user-emacs-file "saveplace"))
   (setq save-place-forget-unreadable-files t)
   (save-place-mode 1))

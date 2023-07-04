@@ -30,7 +30,7 @@
 
 ;;; Org-mode (personal information manager)
 
-(indiebrain-emacs-builtin-package 'org
+(indiebrain-emacs-package org
   (setq org-directory (convert-standard-filename (file-name-concat indiebrain-emacs-synchronized-directory ".org")))
   (setq org-imenu-depth 7)
 ;;;; general settings
@@ -367,7 +367,7 @@
     "C-c C-M-l" #'org-toggle-link-display))
 
 ;;; Custom extensions (indiebrain-org.el)
-(indiebrain-emacs-builtin-package 'indiebrain-org
+(indiebrain-emacs-package indiebrain-org
   (setq org-agenda-format-date #'indiebrain-org-agenda-format-date-aligned)
 
   ;; Check the variable `indiebrain-org-custom-daily-agenda' in indiebrain-org.el
@@ -402,7 +402,8 @@
                  :immediate-finish t)))
 
 ;;; org-modern
-(indiebrain-emacs-elpa-package 'org-modern
+(indiebrain-emacs-package org-modern
+  (:install t)
   (setq org-modern-label-border 1)
   (setq org-modern-variable-pitch nil)
   (setq org-modern-timestamp t)
@@ -420,7 +421,7 @@
   (add-hook 'org-agenda-finalize-hook #'org-modern-agenda))
 
 ;;; Calendar
-(indiebrain-emacs-builtin-package 'calendar
+(indiebrain-emacs-package calendar
   (setq diary-file (file-name-concat org-directory "diary"))
   (setq calendar-mark-diary-entries-flag t)
   (setq calendar-mark-holidays-flag t)
@@ -443,7 +444,7 @@
   (setq calendar-daylight-time-zone-name "-0500"))
 
 ;;; Appt (appointment reminders which also integrate with Org agenda)
-(indiebrain-emacs-builtin-package 'appt
+(indiebrain-emacs-package appt
   (setq appt-display-diary nil)
   (setq appt-disp-window-function #'appt-disp-window)
   (setq appt-display-mode-line t)

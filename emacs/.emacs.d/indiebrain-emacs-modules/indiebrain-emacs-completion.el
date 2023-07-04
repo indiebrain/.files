@@ -32,7 +32,8 @@
 ;;; Code:
 
 ;;; Orderless completion style (and indiebrain-orderless.el)
-(indiebrain-emacs-elpa-package 'orderless
+(indiebrain-emacs-package orderless
+  (:install t)
   (setq orderless-component-separator " +")
   ;; NOTE 2022-02-06: I made some major changes and this list may need
   ;; to be refined further. Remember to check my `completion-styles'
@@ -52,15 +53,16 @@
     "SPC" nil
     "?" nil))
 
-(indiebrain-emacs-builtin-package 'indiebrain-orderless)
+(indiebrain-emacs-package indiebrain-orderless)
 
 ;;; Completion annotations (marginalia)
-(indiebrain-emacs-elpa-package 'marginalia
+(indiebrain-emacs-package marginalia
+  (:install t)
   (setq marginalia-max-relative-age 0)  ; time is absolute here!
   (marginalia-mode 1))
 
 ;;; Minibuffer configurations and Vertico
-(indiebrain-emacs-builtin-package 'minibuffer
+(indiebrain-emacs-package minibuffer
   (setq completion-styles '(basic orderless)) ; also see `completion-category-overrides'
   (setq completion-category-defaults nil)
 
@@ -160,14 +162,15 @@
   (minibuffer-depth-indicate-mode 1)
   (minibuffer-electric-default-mode 1))
 
-(indiebrain-emacs-builtin-package 'savehist
+(indiebrain-emacs-package savehist
   (setq savehist-file (locate-user-emacs-file "savehist"))
   (setq history-length 10000)
   (setq history-delete-duplicates t)
   (setq savehist-save-minibuffer-history t)
   (add-hook 'after-init-hook #'savehist-mode))
 
-(indiebrain-emacs-elpa-package 'vertico
+(indiebrain-emacs-package vertico
+  (:install t)
   ;; These are the default values, but check the user option
   ;; `vertico-multiform-categories' for per-category tweaks.
   (setq vertico-scroll-margin 0)
@@ -188,7 +191,8 @@
   (add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy))
 
 ;;; Enhanced minibuffer commands (consult.el)
-(indiebrain-emacs-elpa-package 'consult
+(indiebrain-emacs-package consult
+  (:install t)
   (setq consult-line-numbers-widen t)
   ;; (setq completion-in-region-function #'consult-completion-in-region)
   (setq consult-async-min-input 3)
@@ -254,7 +258,8 @@
     (add-hook 'consult-after-jump-hook fn)))
 
 ;;; Switch to directories (consult-dir.el)
-(indiebrain-emacs-elpa-package 'consult-dir
+(indiebrain-emacs-package consult-dir
+  (:install t)
   (setq consult-dir-shadow-filenames nil)
   (setq consult-dir-sources '( consult-dir--source-bookmark
                                consult-dir--source-default
@@ -268,7 +273,8 @@
       "C-x C-d" #'consult-dir)))
 
 ;;; Extended minibuffer actions and more (embark.el and indiebrain-embark.el)
-(indiebrain-emacs-elpa-package 'embark
+(indiebrain-emacs-package embark
+  (:install t)
   (setq prefix-help-command #'embark-prefix-help-command)
   (setq embark-quit-after-action t)     ; XXX: Read the doc string!
   (setq embark-cycle-key (kbd "C-,"))   ; see the `embark-act' key
@@ -303,26 +309,28 @@
 
 ;; Needed for correct exporting while using Embark with Consult
 ;; commands.
-(indiebrain-emacs-elpa-package 'embark-consult)
+(indiebrain-emacs-package embark-consult
+  (:install t))
 
-(indiebrain-emacs-builtin-package 'indiebrain-embark
+(indiebrain-emacs-package indiebrain-embark
   (indiebrain-embark-keymaps 1)
   (indiebrain-embark-setup-packages 1))
 
 ;;; Completion for recent files and directories (indiebrain-recentf.el)
-(indiebrain-emacs-builtin-package 'recentf
+(indiebrain-emacs-package recentf
   (setq recentf-save-file (locate-user-emacs-file "recentf"))
   (setq recentf-max-saved-items 200)
   (setq recentf-exclude '(".gz" ".xz" ".zip" "/elpa/" "/ssh:" "/sudo:"))
   (add-hook 'after-init-hook #'recentf-mode))
 
-(indiebrain-emacs-builtin-package 'indiebrain-recentf
+(indiebrain-emacs-package indiebrain-recentf
   (add-to-list 'recentf-keep 'indiebrain-recentf-keep-predicate)
   (indiebrain-emacs-keybind global-map
     "C-x C-r" #'indiebrain-recentf-recent-files-or-dirs))
 
 ;;; Corfu (in-buffer completion popup)
-(indiebrain-emacs-elpa-package 'corfu
+(indiebrain-emacs-package corfu
+  (:install t)
   (global-corfu-mode 1)
   (indiebrain-emacs-keybind corfu-map
     "<tab>" #'corfu-complete)
@@ -337,13 +345,15 @@ Useful for prompts such as `eval-expression' and `shell-command'."
   (add-hook 'minibuffer-setup-hook #'contrib/corfu-enable-always-in-minibuffer 1))
 
 ;;; CAPE (extra completion-at-point backends)
-(indiebrain-emacs-elpa-package 'cape
+(indiebrain-emacs-package cape
+  (:install t)
   (setq cape-dabbrev-min-length 3)
   (dolist (backend '( cape-symbol cape-keyword cape-file cape-dabbrev))
     (add-to-list 'completion-at-point-functions backend)))
 
 ;;; Template-based in-buffer completion (tempel.el)
-(indiebrain-emacs-elpa-package 'tempel
+(indiebrain-emacs-package tempel
+  (:install t)
 
   ;; Setup completion at point
   (defun contrib/tempel-setup-capf ()
@@ -370,10 +380,11 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     "C-n" #'tempel-next))
 
 ;;; Enhance command-line completion (pcmpl-args)
-(indiebrain-emacs-elpa-package 'pcmpl-args)
+(indiebrain-emacs-package pcmpl-args
+  (:install t))
 
 ;;; Dabbrev (dynamic word completion)
-(indiebrain-emacs-builtin-package 'dabbrev
+(indiebrain-emacs-package dabbrev
   (setq dabbrev-abbrev-char-regexp "\\sw\\|\\s_")
   (setq dabbrev-abbrev-skip-leading-regexp "[$*/=~']")
   (setq dabbrev-backward-only nil)
@@ -388,7 +399,7 @@ Useful for prompts such as `eval-expression' and `shell-command'."
     "C-x M-/" #'dabbrev-completion))
 
 ;;; Abbreviations or Abbrevs
-(indiebrain-emacs-builtin-package 'abbrev
+(indiebrain-emacs-package abbrev
   (setq abbrev-file-name (locate-user-emacs-file "abbrevs"))
   (setq only-global-abbrevs nil)
   (setq save-abbrevs 'silently)

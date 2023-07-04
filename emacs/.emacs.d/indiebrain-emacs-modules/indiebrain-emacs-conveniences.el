@@ -38,7 +38,7 @@
   "h" #'indiebrain-org-ox-html)
 
 ;;; Mouse wheel behaviour
-(indiebrain-emacs-builtin-package 'mouse
+(indiebrain-emacs-package mouse
   ;; In Emacs 27+, use Control + mouse wheel to scale text.
   (setq mouse-wheel-scroll-amount
         '(1
@@ -61,7 +61,7 @@
 (setq-default next-screen-context-lines 0)
 
 ;;; Tooltips (tooltip-mode)
-(indiebrain-emacs-builtin-package 'tooltip
+(indiebrain-emacs-package tooltip
   (setq tooltip-delay 0.5)
   (setq tooltip-short-delay 0.5)
   (setq x-gtk-use-system-tooltips nil)
@@ -73,7 +73,7 @@
   (add-hook 'after-init-hook #'tooltip-mode))
 
 ;;; Auto revert mode
-(indiebrain-emacs-builtin-package 'autorevert
+(indiebrain-emacs-package autorevert
   (setq auto-revert-verbose t)
   (add-hook 'after-init-hook #'global-auto-revert-mode))
 
@@ -84,22 +84,24 @@
 (setq mode-require-final-newline 'visit-save)
 
 ;;; Go to last change
-(indiebrain-emacs-elpa-package 'goto-last-change
+(indiebrain-emacs-package goto-last-change
+  (:install t)
   (indiebrain-emacs-keybind global-map
     "C-z" #'goto-last-change))
 
 ;;; Repeatable key chords (repeat-mode)
-(indiebrain-emacs-builtin-package 'repeat
+(indiebrain-emacs-package repeat
   (setq repeat-on-final-keystroke t)
   (setq set-mark-command-repeat-pop t)
 
   (repeat-mode 1))
 
 ;;; Make Custom UI code disposable
-(indiebrain-emacs-builtin-package 'cus-edit
+(indiebrain-emacs-package cus-edit
                             (setq custom-file (make-temp-file "emacs-custom-")))
 
-(indiebrain-emacs-elpa-package 'osm
+(indiebrain-emacs-package osm
+  (:install t)
   (indiebrain-emacs-keybind global-map
     "C-c O h" #'osm-home
     "C-c O s" #'osm-search
