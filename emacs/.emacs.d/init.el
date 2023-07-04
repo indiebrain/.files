@@ -103,6 +103,7 @@ before all other modules of my setup."
 (require 'package)
 
 (setq package-quickstart t)
+(setq package-vc-register-as-project nil)
 
 (package-initialize)
 
