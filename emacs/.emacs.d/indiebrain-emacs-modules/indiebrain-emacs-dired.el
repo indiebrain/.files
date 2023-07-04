@@ -31,7 +31,7 @@
 ;;; Code:
 
 ;;; Dired file manager and indiebrain-dired.el extras
-(indiebrain-emacs-builtin-package 'dired
+(indiebrain-emacs-package dired
   (setq dired-recursive-copies 'always)
   (setq dired-recursive-deletes 'always)
   (setq delete-by-moving-to-trash t)
@@ -57,7 +57,7 @@
   ;; problem as j calls `dired-goto-file', which I often use.
   (indiebrain-emacs-keybind dired-jump-map "j" nil))
 
-(indiebrain-emacs-builtin-package 'dired-aux
+(indiebrain-emacs-package dired-aux
   (setq dired-isearch-filenames 'dwim)
   (setq dired-create-destination-dirs 'ask)
   (setq dired-vc-rename-file t)
@@ -68,7 +68,7 @@
     "M-s f" #'nil
     "C-x v v" #'dired-vc-next-action))
 
-(indiebrain-emacs-builtin-package 'dired-x
+(indiebrain-emacs-package dired-x
   (setq dired-clean-up-buffers-too t)
   (setq dired-clean-confirm-killing-deleted-buffers t)
   (setq dired-x-hands-off-my-keys t)
@@ -76,7 +76,7 @@
   (setq dired-bind-info nil)
   (indiebrain-emacs-keybind dired-mode-map "I" #'dired-info))
 
-(indiebrain-emacs-builtin-package 'indiebrain-dired
+(indiebrain-emacs-package indiebrain-dired
   (setq indiebrain-dired-image-viewers '("feh" "sxiv"))
   (setq indiebrain-dired-media-players '("mpv" "vlc"))
   (setq indiebrain-dired-media-extensions
@@ -99,17 +99,18 @@
     "C-c C-p" #'indiebrain-dired-subdirectory-previous
     "M-s G" #'indiebrain-dired-grep-marked-files)) ; M-s g is `indiebrain-search-grep'
 
-(indiebrain-emacs-elpa-package 'dired-subtree
+(indiebrain-emacs-package dired-subtree
+  (:install t)
   (setq dired-subtree-use-backgrounds nil)
   (indiebrain-emacs-keybind dired-mode-map
     "<tab>" #'dired-subtree-toggle
     "<backtab>" #'dired-subtree-remove)) ; S-TAB
 
-(indiebrain-emacs-builtin-package 'wdired
+(indiebrain-emacs-package wdired
   (setq wdired-allow-to-change-permissions t)
   (setq wdired-create-parent-directories t))
 
-(indiebrain-emacs-builtin-package 'image-dired
+(indiebrain-emacs-package image-dired
   (setq image-dired-thumbnail-storage 'standard)
   (setq image-dired-external-viewer "xdg-open")
   (setq image-dired-thumb-size 80)
@@ -120,14 +121,15 @@
     "<return>" #'image-dired-thumbnail-display-external))
 
 ;;; dired-like mode for the trash (trashed.el)
-(indiebrain-emacs-elpa-package 'trashed
+(indiebrain-emacs-package trashed
+  (:install t)
   (setq trashed-action-confirmer 'y-or-n-p)
   (setq trashed-use-header-line t)
   (setq trashed-sort-key '("Date deleted" . t))
   (setq trashed-date-format "%Y-%m-%d %H:%M:%S"))
 
 ;;; Ibuffer (dired-like buffer list manager)
-(indiebrain-emacs-builtin-package 'ibuffer
+(indiebrain-emacs-package ibuffer
   (setq ibuffer-expert t)
   (setq ibuffer-display-summary nil)
   (setq ibuffer-use-other-window nil)

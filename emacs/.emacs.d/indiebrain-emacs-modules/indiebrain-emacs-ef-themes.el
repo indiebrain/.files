@@ -29,7 +29,8 @@
 ;; See my full configuration: https://github.com/indiebrain/.files/
 
 ;;; Code:
-(indiebrain-emacs-elpa-package 'ef-themes
+(indiebrain-emacs-package ef-themes
+  (:install t)
 
   (setq ef-themes-variable-pitch-ui t
         ef-themes-mixed-fonts t

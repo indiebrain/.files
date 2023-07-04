@@ -34,7 +34,8 @@
 ;;; Pylsar - draw attention to the "current" line
 ;;
 ;; Read the manual: <https://protesilaos.com/emacs/pulsar>
-(indiebrain-emacs-elpa-package 'pulsar
+(indiebrain-emacs-package pulsar
+  (:install t)
 
   (dolist (cmd '( narrow-to-page narrow-to-defun
                   narrow-to-region widen
@@ -65,7 +66,8 @@
 ;;; LIN - enhance hl-line-mode in selection UIs
 ;;
 ;; Read the manual: <https://protesilaos.com/emacs/lin>.
-(indiebrain-emacs-elpa-package 'lin
+(indiebrain-emacs-package lin
+  (:install t)
   ;; You can use this to live update the face:
   ;;
   ;; (customize-set-variable 'lin-face 'lin-green)
@@ -85,7 +87,8 @@
   (lin-global-mode 1)) ; applies to all `lin-mode-hooks'
 
 ;;; Rainbow mode for colour previewing (rainbow-mode.el)
-(indiebrain-emacs-elpa-package 'rainbow-mode
+(indiebrain-emacs-package rainbow-mode
+  (:install t)
   (setq rainbow-ansi-colors nil)
   (setq rainbow-x-colors nil)
 
@@ -98,7 +101,7 @@
   (add-hook 'emacs-lisp-mode-hook #'indiebrain/rainbow-mode-in-themes))
 
 ;;; Line numbers and relevant indicators (indiebrain-sideline.el)
-(indiebrain-emacs-builtin-package 'indiebrain-sideline
+(indiebrain-emacs-package indiebrain-sideline
   (require 'display-line-numbers)
   ;; Set absolute line numbers. A value of "relative" is also useful.
   (setq display-line-numbers-type t)
@@ -108,7 +111,8 @@
   ;; Use absolute numbers in narrowed buffers
   (setq-default display-line-numbers-widen t)
 
-  (indiebrain-emacs-elpa-package 'diff-hl
+  (indiebrain-emacs-package diff-hl
+  (:install t)
     (setq diff-hl-draw-borders nil)
     (setq diff-hl-side 'left))
 
@@ -126,7 +130,7 @@
     "C-c z" #'delete-trailing-whitespace))
 
 ;;; Fringe mode
-(indiebrain-emacs-builtin-package 'fringe
+(indiebrain-emacs-package fringe
   (fringe-mode nil)
   (setq-default fringes-outside-margins nil)
   (setq-default indicate-buffer-boundaries nil)
@@ -135,7 +139,8 @@
 
 ;;; Cursor appearance (cursory)
 ;; Read the manual: <https://protesilaos.com/emacs/cursory>.
-(indiebrain-emacs-elpa-package 'cursory
+(indiebrain-emacs-package cursory
+  (:install t)
   (setq cursory-presets
         '((box
            :blink-cursor-interval 0.8)

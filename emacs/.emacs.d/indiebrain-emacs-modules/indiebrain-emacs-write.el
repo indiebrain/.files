@@ -27,7 +27,7 @@
 ;;; Code:
 
 ;;; Outline mode and outline-minor-mode
-(indiebrain-emacs-builtin-package 'outline
+(indiebrain-emacs-package outline
   (setq outline-minor-mode-highlight 'override)
   (setq outline-minor-mode-cycle t)
   (setq outline-minor-mode-use-buttons nil)
@@ -37,7 +37,8 @@
 
 ;;; Denote (simple note-taking)
 ;; Read the manual: <https://protesilaos.com/emacs/denote>.
-(indiebrain-emacs-elpa-package 'denote
+(indiebrain-emacs-package denote
+  (:install t)
   ;; Remember to check the doc strings of those variables.
   (setq denote-directory (expand-file-name (file-name-concat indiebrain-emacs-synchronized-directory ".notes")))
   (setq denote-known-keywords '("emacs" "philosophy" "politics" "economics"))
@@ -96,12 +97,14 @@
 
 ;;; Custom extensions for "focus mode" (logos.el)
 ;; Read the manual: <https://protesilaos.com/emacs/logos>.
-(indiebrain-emacs-elpa-package 'olivetti
+(indiebrain-emacs-package olivetti
+  (:install t)
   (setq olivetti-body-width 0.7)
   (setq olivetti-minimum-body-width 80)
   (setq olivetti-recall-visual-line-mode-entry-state t))
 
-(indiebrain-emacs-elpa-package 'logos
+(indiebrain-emacs-package logos
+  (:install t)
   (setq logos-outlines-are-pages t)
   (setq logos-outline-regexp-alist
         `((emacs-lisp-mode . ,(format "\\(^;;;+ \\|%s\\)" logos--page-delimiter))

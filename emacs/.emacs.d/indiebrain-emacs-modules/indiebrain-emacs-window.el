@@ -31,13 +31,13 @@
 ;;; Code:
 
 ;;; Unique names for buffers
-(indiebrain-emacs-builtin-package 'uniquify
+(indiebrain-emacs-package uniquify
   (setq uniquify-buffer-name-style 'forward)
   (setq uniquify-strip-common-suffix t)
   (setq uniquify-after-kill-buffer-p t))
 
 ;;; Window rules and basic tweaks (window.el)
-(indiebrain-emacs-builtin-package 'window
+(indiebrain-emacs-package window
   (setq display-buffer-alist
     `(;; no window
       ("\\`\\*Async Shell Command\\*\\'"
@@ -142,7 +142,7 @@ use in `display-buffer-alist'."
     "<" #'shrink-window-horizontally))
 
 ;;; Directional window motions (windmove)
-(indiebrain-emacs-builtin-package 'windmove
+(indiebrain-emacs-package windmove
   (setq windmove-create-window nil)     ; Emacs 27.1
   (indiebrain-emacs-keybind global-map
     ;; Those override some commands that are already available with

@@ -32,7 +32,8 @@
 
 ;;; Fontaine (font configurations)
 ;; Read the manual: <https://protesilaos.com/emacs/fontaine>
-(indiebrain-emacs-elpa-package 'fontaine
+(indiebrain-emacs-package fontaine
+  (:install t)
   ;; This is defined in Emacs C code: it belongs to font settings.
   (setq x-underline-at-descent-line nil)
 

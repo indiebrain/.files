@@ -66,7 +66,7 @@ configuration during Emacs initialization."
 (defcustom indiebrain-emacs-omit-packages nil
   "List of package names to not load.
 This instructs the relevant macros to not `require' the given
-package.  In the case of `indiebrain-emacs-elpa-package', the package
+package. In the case of `indiebrain-emacs-package', the package
 will not be installed if it is not already available on the
 system.
 
@@ -121,42 +121,142 @@ before all other modules of my setup."
 
 (setq custom-safe-themes t)
 
-(defmacro indiebrain-emacs-builtin-package (package &rest body)
-  "Set up builtin PACKAGE with rest BODY.
-PACKAGE is a quoted symbol, while BODY consists of balanced
-expressions.
+(defun indiebrain-emacs-package-install (package &optional method)
+  "Install PACKAGE with optional METHOD.
 
-Ignore PACKAGE if it is a member of `indiebrain-emacs-omit-packages'."
+If METHOD is nil or the `builtin' symbol, PACKAGE is not
+installed as it is considered part of Emacs.
+
+If METHOD is a string, it must be a URL pointing to the version
+controlled repository of PACKAGE.  Installation is done with
+`package-vc-install'.
+
+If METHOD is a quoted list, it must have a form accepted by
+`package-vc-install' such as:
+
+\\='(denote :url \"https://git.sr.ht/~protesilaos/denote\" :branch \"main\")
+
+If METHOD is any other non-nil value, install PACKAGE using
+`package-install'."
+  (unless (or (eq method 'builtin) (null method))
+    (unless (package-installed-p package)
+      (when (or (stringp method) (listp method))
+        (package-vc-install method))
+      (unless package-archive-contents
+        (package-refresh-contents))
+      (package-install package))))
+
+(defvar indiebrain-emacs-loaded-packages nil)
+
+(defmacro indiebrain-emacs-package (package &rest body)
+  "Require PACKAGE with BODY configurations.
+
+PACKAGE is an unquoted symbol that is passed to `require'.  It
+thus conforms with `featurep'.
+
+BODY consists of ordinary Lisp expressions.  There are,
+nevertheless, two unquoted plists that are treated specially:
+
+1. (:install METHOD)
+2. (:delay NUMBER)
+
+These plists can be anywhere in BODY and are not part of its
+final expansion.
+
+The :install property is the argument passed to
+`indiebrain-emacs-package-install' and has the meaning of METHOD
+described therein.
+
+The :delay property makes the evaluation of PACKAGE with the
+expanded BODY happen with `run-with-timer'.
+
+Also see `indiebrain-emacs-configure'."
   (declare (indent 1))
-  `(progn
-     (unless (and (not (memq ,package indiebrain-emacs-omit-packages))
-                  (require ,package nil 'noerror))
-       (display-warning 'indiebrain-emacs
-                        (format "Loading `%s' failed" ,package)
-                        :warning))
-     ,@body))
+  (unless (memq package indiebrain-emacs-omit-packages)
+    (let (install delay)
+      (dolist (element body)
+        (when (plistp element)
+          (pcase (car element)
+            (:install (setq install (cdr element)
+                            body (delq element body)))
+            (:delay (setq delay (cadr element)
+                          body (delq element body))))))
+      (let ((common `(,(when install
+                         `(indiebrain-emacs-package-install ',package ,@install))
+                      (require ',package)
+                      (add-to-list 'indiebrain-emacs-loaded-packages ',package)
+                      ,@body
+                      ;; (message "Prot Emacs loaded package: %s" ',package)
+                      )))
+        (cond
+         ((featurep package)
+          `(progn ,@body))
+         (delay
+          `(run-with-timer ,delay nil (lambda () ,@(delq nil common))))
+         (t
+          `(progn ,@(delq nil common))))))))
 
-(defmacro indiebrain-emacs-elpa-package (package &rest body)
-  "Set up PACKAGE from an Elisp archive with rest BODY.
-PACKAGE is a quoted symbol, while BODY consists of balanced
-expressions.
+;; Samples of `indiebrain-emacs-package' (expand them with `pp-macroexpand-last-sexp').
 
-Try to install the PACKAGE if it is missing.
+;; (indiebrain-emacs-package denote
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (:install '(denote . (:url "https://git.sr.ht/~protesilaos/denote" :branch "main")))
+;;   (:delay 5)
+;;   (setq denote-file-type nil))
+;;
+;; (indiebrain-emacs-package denote
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (:install "https://git.sr.ht/~protesilaos/denote")
+;;   (:delay 5)
+;;   (setq denote-file-type nil))
+;;
+;; (indiebrain-emacs-package denote
+;;   (:delay 5)
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (:install "https://git.sr.ht/~protesilaos/denote")
+;;   (setq denote-file-type nil))
+;;
+;; (indiebrain-emacs-package denote
+;;   (:install "https://git.sr.ht/~protesilaos/denote")
+;;   (:delay 5)
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (setq denote-file-type nil))
+;;
+;; (indiebrain-emacs-package denote
+;;   (:delay 5)
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (setq denote-file-type nil))
+;;
+;; (indiebrain-emacs-package denote
+;;   (setq denote-directory "path/to/dir")
+;;   (define-key global-map (kbd "C-c n") #'denote)
+;;   (setq denote-file-type nil))
 
-Ignore PACKAGE, including the step of installing it, if it is a
-member of `indiebrain-emacs-omit-packages'."
-  (declare (indent 1))
-  `(unless (memq ,package indiebrain-emacs-omit-packages)
-     (progn
-       (when (not (package-installed-p ,package))
-         (unless package-archive-contents
-           (package-refresh-contents))
-         (package-install ,package))
-       (if (require ,package nil 'noerror)
-           (progn ,@body)
-         (display-warning 'indiebrain-emacs
-                          (format "Loading `%s' failed" ,package)
-                          :warning)))))
+(defmacro indiebrain-emacs-configure (&rest body)
+  "Evaluate BODY as a `progn'.
+BODY consists of ordinary Lisp expressions.  The sole exception
+is an unquoted plist of the form (:delay NUMBER) which evaluates
+BODY with NUMBER seconds of `run-with-timer'.
+
+Note that `indiebrain-emacs-configure' does not try to autoload
+anything.  Use it only for forms that evaluate regardless.
+
+Also see `indiebrain-emacs-package'."
+  (declare (indent 0))
+  (let (delay)
+    (dolist (element body)
+      (when (plistp element)
+        (pcase (car element)
+          (:delay (setq delay (cadr element)
+                        body (delq element body))))))
+    (if delay
+        `(run-with-timer ,delay nil (lambda () ,@body))
+      `(progn ,@body))))
 
 (defvar indiebrain-emacs-package-form-regexp
   "^(\\(indiebrain-emacs-.*-package\\|require\\) +'\\([0-9a-zA-Z-]+\\)"

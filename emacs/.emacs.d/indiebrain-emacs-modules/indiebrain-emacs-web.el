@@ -31,17 +31,17 @@
 ;;; Org-mode (personal information manager)
 
 ;;; Simple HTML Renderer (shr), Emacs Web Wowser (eww), Elpher, and indiebrain-eww.el
-(indiebrain-emacs-builtin-package 'browse-url
+(indiebrain-emacs-package browse-url
   (setq browse-url-browser-function 'eww-browse-url)
   (setq browse-url-secondary-browser-function 'browse-url-default-browser))
 
-(indiebrain-emacs-builtin-package 'goto-addr
+(indiebrain-emacs-package goto-addr
   (setq goto-address-url-face 'link)
   (setq goto-address-url-mouse-face 'highlight)
   (setq goto-address-mail-face nil)
   (setq goto-address-mail-mouse-face 'highlight))
 
-(indiebrain-emacs-builtin-package 'shr
+(indiebrain-emacs-package shr
   (setq shr-use-colors nil)             ; t is bad for accessibility
   (setq shr-use-fonts nil)              ; t is not for me
   (setq shr-max-image-proportion 0.6)
@@ -51,10 +51,10 @@
   (setq shr-discard-aria-hidden t)
   (setq shr-cookie-policy nil))
 
-(indiebrain-emacs-builtin-package 'url-cookie
+(indiebrain-emacs-package url-cookie
   (setq url-cookie-untrusted-urls '(".*")))
 
-(indiebrain-emacs-builtin-package 'eww
+(indiebrain-emacs-package eww
   (setq eww-restore-desktop t)
   (setq eww-desktop-remove-duplicates t)
   (setq eww-header-line-format nil)
@@ -93,9 +93,10 @@
   (indiebrain-emacs-keybind eww-bookmark-mode-map
     "d" #'eww-bookmark-kill)) ; same
 
-(indiebrain-emacs-elpa-package 'elpher)    ; NOTE 2021-07-24: work-in-progress
+(indiebrain-emacs-package elpher    ; NOTE 2021-07-24: work-in-progress
+  (:install t))
 
-(indiebrain-emacs-builtin-package 'indiebrain-eww
+(indiebrain-emacs-package indiebrain-eww
   (setq indiebrain-eww-save-history-file
         (locate-user-emacs-file "indiebrain-eww-visited-history"))
   (setq indiebrain-eww-save-visited-history t)
@@ -124,7 +125,8 @@
     "Q" #'indiebrain-eww-quit))
 
 ;;; Elfeed feed/RSS reader
-(indiebrain-emacs-elpa-package 'elfeed
+(indiebrain-emacs-package elfeed
+  (:install t)
   (setq elfeed-use-curl nil)
   (setq elfeed-curl-max-connections 10)
   (setq elfeed-db-directory (concat user-emacs-directory "elfeed/"))
@@ -154,7 +156,7 @@
     "w" #'elfeed-show-yank))
 
 (with-eval-after-load 'elfeed
-  (indiebrain-emacs-builtin-package 'indiebrain-elfeed
+  (indiebrain-emacs-package indiebrain-elfeed
     (setq indiebrain-elfeed-tag-faces t)
     (indiebrain-elfeed-fontify-tags)
     (add-hook 'elfeed-search-mode-hook #'indiebrain-elfeed-load-feeds)
@@ -166,7 +168,8 @@
       "+" #'indiebrain-elfeed-toggle-tag)))
 
 ;;; Elfeed extensions for watching videos (elfeed-tube)
-(indiebrain-emacs-elpa-package 'elfeed-tube
+(indiebrain-emacs-package elfeed-tube
+  (:install t)
   ;; (setq elfeed-tube-auto-save-p nil) ; default value
   ;; (setq elfeed-tube-auto-fetch-p t)  ; default value
   (elfeed-tube-setup)
@@ -178,9 +181,11 @@
     "F" #'elfeed-tube-fetch
     "C-c C-s" #'elfeed-tube-save))
 
-(indiebrain-emacs-elpa-package 'mpv)
+(indiebrain-emacs-package mpv
+  (:install t))
 
-(indiebrain-emacs-elpa-package 'elfeed-tube-mpv
+(indiebrain-emacs-package elfeed-tube-mpv
+  (:install t)
   (indiebrain-emacs-keybind elfeed-search-mode-map
     "v" 'elfeed-tube-mpv)
   (indiebrain-emacs-keybind elfeed-show-mode-map
@@ -190,7 +195,7 @@
     "C-c C-w" 'elfeed-tube-mpv-where))
 
 ;;; Rcirc (IRC client)
-;; (indiebrain-emacs-builtin-package 'rcirc
+;; (indiebrain-emacs-package rcirc
 ;;   (setq rcirc-server-alist
 ;;         `(("irc.libera.chat"
 ;;            :channels ("#emacs""#org-mode" "#rcirc" "#sr.ht")

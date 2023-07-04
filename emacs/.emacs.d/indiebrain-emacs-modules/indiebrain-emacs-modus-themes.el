@@ -32,7 +32,8 @@
 
 ;;; Code:
 
-(indiebrain-emacs-elpa-package 'modus-themes
+(indiebrain-emacs-package modus-themes
+  (:install t)
   (setq modus-themes-italic-constructs t
         modus-themes-bold-constructs t
         modus-themes-mixed-fonts t

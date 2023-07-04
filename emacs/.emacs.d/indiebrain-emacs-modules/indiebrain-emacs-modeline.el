@@ -69,7 +69,8 @@
 (add-hook 'after-init-hook #'column-number-mode)
 
 ;;; Hide modeline "lighters" (minions.el)
-(indiebrain-emacs-elpa-package 'minions
+(indiebrain-emacs-package minions
+  (:install t)
   (setq minions-mode-line-lighter ";")
   ;; NOTE: This will be expanded whenever I find a mode that should not
   ;; be hidden
@@ -80,13 +81,14 @@
   (minions-mode 1))
 
 ;;; Mode line recursion indicators
-(indiebrain-emacs-elpa-package 'recursion-indicator
+(indiebrain-emacs-package recursion-indicator
+  (:install t)
   (setq recursion-indicator-general "&")
   (setq recursion-indicator-minibuffer "@")
   (recursion-indicator-mode 1))
 
 ;;; Display current time
-(indiebrain-emacs-builtin-package 'time
+(indiebrain-emacs-package time
   (setq display-time-format "%a %e %b, %H:%M")
   (setq display-time-interval 60)
   (setq display-time-default-load-average nil)
@@ -121,7 +123,8 @@
   (setq world-clock-timer-second 60))
 
 ;;; Keycast mode
-(indiebrain-emacs-elpa-package 'keycast
+(indiebrain-emacs-package keycast
+  (:install t)
   (setq keycast-mode-line-window-predicate #'keycast-active-frame-bottom-right-p)
   (setq keycast-separator-width 1)
   (setq keycast-mode-line-remove-tail-elements nil)
