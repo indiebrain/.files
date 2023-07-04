@@ -65,15 +65,16 @@ configuration during Emacs initialization."
 
 (defcustom indiebrain-emacs-omit-packages nil
   "List of package names to not load.
-This instrucs the relevant macros to not 'require' the given
-package. In the case of 'indiebrain-emacs-elpa-package', the
-package will not be installed if it is not already available on
-the system.
+This instructs the relevant macros to not `require' the given
+package.  In the case of `indiebrain-emacs-elpa-package', the package
+will not be installed if it is not already available on the
+system.
 
-This user option must be set in the
-'indiebrain-emcas-pre-custom.el' file. If that file exists in the
-Emacs directory, it is loaded before all other modules of my
-configuration during Emacs initialization.")
+This user option must be set in the `indiebrain-emacs-pre-custom.el'
+file.  If that file exists in the Emacs directory, it is loaded
+before all other modules of my setup."
+  :group 'indiebrain-emacs
+  :type '(repeat symbol))
 
 ;; Some basic settings
 (setq frame-title-format '("%b"))
