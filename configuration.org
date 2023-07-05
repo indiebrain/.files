@@ -83,14 +83,234 @@ the file ~/.bash_logout, if it exists.
 A non-interactive shell might be launched by another program - a shell
 script with a =#!/usr/bin/env bash= SHEBANG line, for example.
 
+*** Configuration for login shells
+:PROPERTIES:
+:header-args: :mkdirp yes :tangle ./bash/.bash_profile
+:CUSTOM_ID: h:b0fe5738-92dd-4451-8922-50c3a80d9015
+:END:
+
+Login shells loads the =.bash_profile= when created; typically via a
+system login; IE a login after a system boot, or Secure Shell (SSH)
+connection.
+
+#+begin_quote
+When Bash is invoked as an interactive login shell, or as a
+non-interactive shell with the --login option, it first reads and
+executes commands from the file /etc/profile, if that file exists. After
+reading that file, it looks for ~/.bash_profile, ~/.bash_login, and
+~/.profile, in that order, and reads and executes commands from the
+first one that exists and is readable. The --noprofile option may be
+used when the shell is started to inhibit this behavior.
+
+When an interactive login shell exits, or a non-interactive login shell
+executes the exit builtin command, Bash reads and executes commands from
+the file ~/.bash_logout, if it exists.
+#+end_quote
+
+First, we load any configuration for the Bash's predecesor; the Bourne
+Shell. Then we load the non-login shell configuration for Bash. Finally
+we run any login-specific tasks before we finally start to load the Bash
+login configuration. If any of the above configuration files are not
+present or not readable they're skipped. This is an attempt to offer
+the most backward compatibility while not sacrificing portability.
+
+#+begin_src sh
+[ -r ~/.profile ] && . ~/.profile || true              # If a Bourne shell configuration exists, load it
+if [ -n "$PS1" ]                                         # Is this REALLY an interactive shell?
+then
+    [ -r ~/.bashrc ] && . ~/.bashrc || true            # tty/prompt/function setup for interactive shells
+    [ -r ~/.bash_login ] && . ~/.bash_login || true    # any at-login tasks for login shell only
+fi
+#+end_src
+
+**** Command output colors
+:PROPERTIES:
+:CUSTOM_ID: h:6f44f58a-a7f6-487c-8cbe-0d5929a82eff
+:END:
+
+***** macOS
+:PROPERTIES:
+:CUSTOM_ID: h:1973e5c1-b989-4465-998d-303da9c3acea
+:END:
+
+Some UNIX-like operating systems support a global configuration option
+which instructs commands to use ANSI Color control sequences in their
+output. Setting the =CLICOLOR= environment variable enables this on such
+systems. macOS is one such UNIX-like operating system which supports
+this global colorizing configuration.
+
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
+export CLICOLOR=1
+#+end_src
+
+***** Debian GNU/Linux
+:PROPERTIES:
+:CUSTOM_ID: h:a0264de3-1526-429a-a109-bec531465e36
+:END:
+
+Some systems which do NOT honor this global switch for output coloring
+DO tend to provide command level flags to colorize their output. These
+next bits provide aliases of standard commands to their colorized
+counterparts.
+
+This configuration has the following effects:
+
+- =ls= will make different inode types visually distinct from one another.
+  Directories, files, symlinks, etc will visually distinguish themselves
+  from one another.
+- =grep= will highlight matches in its output.
+
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
+alias ls='ls --color'
+alias grep='grep --color'
+#+end_src
+
+**** Aliases
+:PROPERTIES:
+:CUSTOM_ID: h:cef90d04-82ab-4cda-b086-9fe82a8173e3
+:END:
+
+Bash supports creating a custom alias to a command string. When used as
+the first word of a simple command an alias expands to its command
+string. There are rules concerning the definition and use of aliases,
+[[https://www.gnu.org/software/bash/manual/bash.html#Aliases][please see the Bash reference manual's topic on Aliases for more
+details]]. The aliases defined herein provide shorthand notation to
+frequently run or often forgotten, but useful, commands.
+
+#+begin_src sh
+alias gs="git status"
+alias gl='git log --graph --oneline --decorate --max-count 10'
+#+end_src
+
+On Debian GNU/Linux hosts, adds a shorthand to copy data to the system
+clipboard from the terminal.
+
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
+alias pbcopy='xclip -selection clipboard'
+#+end_src
+
+**** Bash Completion
+:PROPERTIES:
+:CUSTOM_ID: h:8bf842c8-3698-427b-923a-eb6aebdac2cd
+:END:
+
+The Bash Completion extension shows a list of possible completions when
+the user types a partial completion candidate followed by the <TAB> key
+twice. This is helpful in narrowing down potential commands and
+arguments. For example =ls<TAB><TAB>= may expand and show the following
+commands as potential completions:
+
+#+begin_example
+root@3acfddd4f63d:/# ls
+ls
+lsattr
+lsblk
+lscpu
+lsipc
+lslocks
+lslogins
+lsmem
+lsnsls
+lsattr
+lsblk
+lscpu
+lsipc
+lslocks
+lslogins
+lsmem
+lsns
+#+end_example
+
+On macOS hosts, Homebrew may provide the bash-completion package and
+we'll load completions according to its conventions - see the Homebrew
+documentation on [[https://docs.brew.sh/Shell-Completion][Shell-Completion]] for more.
+
+#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
+if type brew &>/dev/null; then
+    HOMEBREW_PREFIX="$(brew --prefix)"
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    else
+        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+        done
+    fi
+fi
+#+end_src
+
+However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official
+means of loading bash-completion completions]].
+
+#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
+[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
+    source /usr/share/bash-completion/bash_completion
+#+end_src
+
+**** Editor
+:PROPERTIES:
+:CUSTOM_ID: h:06a31de9-9870-420e-81cc-0e838ea1289b
+:END:
+
+Some commands will open a text editor to complete their action - =git
+commit=, for example. Bash will execute the command stored in the =EDITOR=
+environment variable to launch a text editor in these cases. This makes
+sure that =emacs= is the preferred text editor.
+
+#+begin_src sh
+export EDITOR="emacsclient -nw || emacs -nw"
+#+end_src
+**** History
+:PROPERTIES:
+:CUSTOM_ID: h:e5fd5623-9c78-4490-9b89-a73b048b51e3
+:END:
+
+Bash has the capabilities keep track of the commands entered into
+interactive shells. History is searchable and executable. The [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use
+Bash History Commands and Expansions on a Linux VPS]] guide and
+[[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge Your Bash History]] articles are primary sources for the
+following configuration. The configuration below achieves the following
+goals:
+
+- Each command appends itself to the history on entry. By default, bash
+  writes its history at the end of each session, overwriting the
+  existing file with an updated version. This means that if there are
+  multiple bash sessions only the last one to exit will have its history
+  saved.
+- Entering a command will automatically log itself to the history.
+- Store only unique commands in bash history. Don't store multiple
+  instances of =ls= for example. The =HISTCONTROL= =erasedups= configuration
+  value controls this.
+- Prefixing a command with a white space character excludes it from the
+  history. The =HISTCONTROL= =ignoreboth= configuration value controls this.
+- The Bash defaults on the number of items and size of the history -
+  they harken back to days when storage was more expensive. This sets a
+  reasonably large cap on the number of items to keep in history via the
+  =HISTSIZE= and =HISTFILESIZE= environment variables.
+- Provides a blacklist of command "patterns" which should never appear
+  in the history via =HISTIGNORE=. Typically having history entries for
+  the following commands in the bash history either accounts for clutter
+  and removes or obscures the more meaningful history entries.
+  Therefore, we prevent creating history entries for the following
+  commands.
+
+#+begin_src sh
+shopt -s histappend
+export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
+export HISTCONTROL=ignoreboth:erasedups
+export HISTSIZE=100000
+export HISTFILESIZE=10000000
+export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
+#+end_src
+
 *** Configuration for non-login shells
 :PROPERTIES:
 :header-args: :mkdirp yes :tangle ./bash/.bashrc
 :CUSTOM_ID: h:d460ad42-3cd5-497c-a1af-465a8bbea92c
 :END:
 
-When a Bash shell is started as a non-login shell, it reads and executes
-the =.bashrc= located in the user's =$HOME= directory.
+When a Bash shell is started as a non-login shell - IE any time a new
+shell is created after login - it reads and executes the =.bashrc=
+located in the user's =$HOME= directory.
 
 #+begin_quote
 When an interactive shell that is not a login shell is started, Bash
@@ -485,224 +705,6 @@ Configure the path to the custom Ripgrep configuration.
 
 #+begin_src sh
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
-#+end_src
-
-*** Configuration for login shells
-:PROPERTIES:
-:header-args: :mkdirp yes :tangle ./bash/.bash_profile
-:CUSTOM_ID: h:b0fe5738-92dd-4451-8922-50c3a80d9015
-:END:
-
-Login shells loads the =.bash_profile= when created; typically via a
-terminal, or Secure Shell (SSH) connection.
-
-#+begin_quote
-When Bash is invoked as an interactive login shell, or as a
-non-interactive shell with the --login option, it first reads and
-executes commands from the file /etc/profile, if that file exists. After
-reading that file, it looks for ~/.bash_profile, ~/.bash_login, and
-~/.profile, in that order, and reads and executes commands from the
-first one that exists and is readable. The --noprofile option may be
-used when the shell is started to inhibit this behavior.
-
-When an interactive login shell exits, or a non-interactive login shell
-executes the exit builtin command, Bash reads and executes commands from
-the file ~/.bash_logout, if it exists.
-#+end_quote
-
-First, we load any configuration for the Bash's predecesor; the Bourne
-Shell. Then we load the non-login shell configuration for Bash. Finally
-we run any login-specific tasks before we finally start to load the Bash
-login configuration. If any of the above configuration files are not
-present or not readable they're skipped. This is an attempt to offer
-the most backward compatibility while not sacrificing portability.
-
-#+begin_src sh
-[ -r ~/.profile ] && . ~/.profile || true              # If a Bourne shell configuration exists, load it
-if [ -n "$PS1" ]                                         # Is this REALLY an interactive shell?
-then
-    [ -r ~/.bashrc ] && . ~/.bashrc || true            # tty/prompt/function setup for interactive shells
-    [ -r ~/.bash_login ] && . ~/.bash_login || true    # any at-login tasks for login shell only
-fi
-#+end_src
-
-**** Command output colors
-:PROPERTIES:
-:CUSTOM_ID: h:6f44f58a-a7f6-487c-8cbe-0d5929a82eff
-:END:
-
-***** macOS
-:PROPERTIES:
-:CUSTOM_ID: h:1973e5c1-b989-4465-998d-303da9c3acea
-:END:
-
-Some UNIX-like operating systems support a global configuration option
-which instructs commands to use ANSI Color control sequences in their
-output. Setting the =CLICOLOR= environment variable enables this on such
-systems. macOS is one such UNIX-like operating system which supports
-this global colorizing configuration.
-
-#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
-export CLICOLOR=1
-#+end_src
-
-***** Debian GNU/Linux
-:PROPERTIES:
-:CUSTOM_ID: h:a0264de3-1526-429a-a109-bec531465e36
-:END:
-
-Some systems which do NOT honor this global switch for output coloring
-DO tend to provide command level flags to colorize their output. These
-next bits provide aliases of standard commands to their colorized
-counterparts.
-
-This configuration has the following effects:
-
-- =ls= will make different inode types visually distinct from one another.
-  Directories, files, symlinks, etc will visually distinguish themselves
-  from one another.
-- =grep= will highlight matches in its output.
-
-#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
-alias ls='ls --color'
-alias grep='grep --color'
-#+end_src
-
-**** Aliases
-:PROPERTIES:
-:CUSTOM_ID: h:cef90d04-82ab-4cda-b086-9fe82a8173e3
-:END:
-
-Bash supports creating a custom alias to a command string. When used as
-the first word of a simple command an alias expands to its command
-string. There are rules concerning the definition and use of aliases,
-[[https://www.gnu.org/software/bash/manual/bash.html#Aliases][please see the Bash reference manual's topic on Aliases for more
-details]]. The aliases defined herein provide shorthand notation to
-frequently run or often forgotten, but useful, commands.
-
-#+begin_src sh
-alias gs="git status"
-alias gl='git log --graph --oneline --decorate --max-count 10'
-#+end_src
-
-On Debian GNU/Linux hosts, adds a shorthand to copy data to the system
-clipboard from the terminal.
-
-#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
-alias pbcopy='xclip -selection clipboard'
-#+end_src
-
-**** Bash Completion
-:PROPERTIES:
-:CUSTOM_ID: h:8bf842c8-3698-427b-923a-eb6aebdac2cd
-:END:
-
-The Bash Completion extension shows a list of possible completions when
-the user types a partial completion candidate followed by the <TAB> key
-twice. This is helpful in narrowing down potential commands and
-arguments. For example =ls<TAB><TAB>= may expand and show the following
-commands as potential completions:
-
-#+begin_example
-root@3acfddd4f63d:/# ls
-ls
-lsattr
-lsblk
-lscpu
-lsipc
-lslocks
-lslogins
-lsmem
-lsnsls
-lsattr
-lsblk
-lscpu
-lsipc
-lslocks
-lslogins
-lsmem
-lsns
-#+end_example
-
-On macOS hosts, Homebrew may provide the bash-completion package and
-we'll load completions according to its conventions - see the Homebrew
-documentation on [[https://docs.brew.sh/Shell-Completion][Shell-Completion]] for more.
-
-#+begin_src sh :tangle (if (eq system-type 'darwin) "./bash/.bash_profile" "no")
-if type brew &>/dev/null; then
-    HOMEBREW_PREFIX="$(brew --prefix)"
-    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
-    else
-        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-            [[ -r "$COMPLETION" ]] && source "$COMPLETION"
-        done
-    fi
-fi
-#+end_src
-
-However, on GNU/Linux hosts - IE Debian hosts, we'll use [[https://github.com/scop/bash-completion#installation][the official
-means of loading bash-completion completions]].
-
-#+begin_src sh :tangle (if (eq system-type 'gnu/linux) "./bash/.bash_profile" "no")
-[[ $PS1 && -f /usr/share/bash-completion/bash_completion ]] && \
-    source /usr/share/bash-completion/bash_completion
-#+end_src
-
-**** Editor
-:PROPERTIES:
-:CUSTOM_ID: h:06a31de9-9870-420e-81cc-0e838ea1289b
-:END:
-
-Some commands will open a text editor to complete their action - =git
-commit=, for example. Bash will execute the command stored in the =EDITOR=
-environment variable to launch a text editor in these cases. This makes
-sure that =emacs= is the preferred text editor.
-
-#+begin_src sh
-export EDITOR="emacsclient -nw || emacs -nw"
-#+end_src
-**** History
-:PROPERTIES:
-:CUSTOM_ID: h:e5fd5623-9c78-4490-9b89-a73b048b51e3
-:END:
-
-Bash has the capabilities keep track of the commands entered into
-interactive shells. History is searchable and executable. The [[https://www.digitalocean.com/community/tutorials/how-to-use-bash-history-commands-and-expansions-on-a-linux-vps][How To Use
-Bash History Commands and Expansions on a Linux VPS]] guide and
-[[https://metaredux.com/posts/2020/07/07/supercharge-your-bash-history.html][Supercharge Your Bash History]] articles are primary sources for the
-following configuration. The configuration below achieves the following
-goals:
-
-- Each command appends itself to the history on entry. By default, bash
-  writes its history at the end of each session, overwriting the
-  existing file with an updated version. This means that if there are
-  multiple bash sessions only the last one to exit will have its history
-  saved.
-- Entering a command will automatically log itself to the history.
-- Store only unique commands in bash history. Don't store multiple
-  instances of =ls= for example. The =HISTCONTROL= =erasedups= configuration
-  value controls this.
-- Prefixing a command with a white space character excludes it from the
-  history. The =HISTCONTROL= =ignoreboth= configuration value controls this.
-- The Bash defaults on the number of items and size of the history -
-  they harken back to days when storage was more expensive. This sets a
-  reasonably large cap on the number of items to keep in history via the
-  =HISTSIZE= and =HISTFILESIZE= environment variables.
-- Provides a blacklist of command "patterns" which should never appear
-  in the history via =HISTIGNORE=. Typically having history entries for
-  the following commands in the bash history either accounts for clutter
-  and removes or obscures the more meaningful history entries.
-  Therefore, we prevent creating history entries for the following
-  commands.
-
-#+begin_src sh
-shopt -s histappend
-export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
-export HISTCONTROL=ignoreboth:erasedups
-export HISTSIZE=100000
-export HISTFILESIZE=10000000
-export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
 #+end_src
 
 ** ASDF Version manager
