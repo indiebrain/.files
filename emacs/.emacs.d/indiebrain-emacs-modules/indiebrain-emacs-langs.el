@@ -203,6 +203,11 @@
 (indiebrain-emacs-package so-long
   (global-so-long-mode 1))
 
+;;;; asdf version manager integration
+(indiebrain-emacs-package asdf
+  (:install "https://github.com/tabfugnic/asdf.el")
+  (asdf-enable))
+
 ;;;; Language Servers (lsp-mode)
 (indiebrain-emacs-package lsp-mode
   (:install t)
