@@ -231,7 +231,12 @@
   (add-to-list 'auto-mode-alist '("\\.scss\\'" . scss-mode))
   (setq css-fontify-colors nil))
 
-;;;; Docker (dockerfile-mode
+;;;; Containerization (docker and dockerfile-mode)
+(indiebrain-emacs-package docker
+  (:install t)
+  (setq docker-command "podman")
+  (setq docker-compose-command "podman-compose"))
+
 (indiebrain-emacs-package dockerfile-mode
   (:install t)
   (add-to-list 'auto-mode-alist '("\\Dockerfile$" . dockerfile-mode))
