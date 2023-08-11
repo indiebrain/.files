@@ -358,10 +358,10 @@ directory - =.=. However, specifying additional paths in =CDPATH= will
 allow =cd= to look in these paths as well.
 
 This is useful if you have nested, frequently accessed directory
-hierarchies - for stowing work vs personal projects, for example.
+hierarchies.
 
 #+begin_src sh
-export CDPATH=".:$HOME/Developer/personal/:$HOME/Developer/work/"
+export CDPATH=".:$HOME/Developer/"
 #+end_src
 
 **** Prompt
@@ -831,8 +831,8 @@ system. The following contains configuration which:
 #+begin_src conf
 [user]
     name = Aaron Kuehler
-    email = aaron.kuehler@gmail.com
-    signingkey = 9e3e4c59e2694215
+    email =
+    signingkey =
 
 [diff]
     algorithm = patience
@@ -840,9 +840,6 @@ system. The following contains configuration which:
 [github]
     user = indiebrain
     oauth-token =
-
-[includeIf "gitdir:~/Developer/work/"]
-       path = ~/.work.gitconfig
 
 [core]
     excludesfile = ~/.gitignore_global
@@ -872,23 +869,6 @@ system. The following contains configuration which:
 
 [push]
     default = simple
-#+end_src
-
-*** Work specific configuration
-:properties:
-:header-args: :mkdirp yes :tangle ./git/.work.gitconfig
-:end:
-
-When working on repositories for an employer, I often need certain
-aspects of the git configuration to behave differently. [[https://git-scm.com/docs/git-config#_conditional_includes][Git's
-Conditional Includes feature makes it possible to layer in such
-configuration]]. This file contains configuration augmentations suitable
-for working on my employer's repositories.
-
-#+begin_src conf
-[user]
-    email =
-    signingkey =
 #+end_src
 
 *** Global ignore file
