@@ -343,7 +343,8 @@
 ;;;; YAML (yaml-mode)
 (indiebrain-emacs-package yaml-mode
   (:install t)
-  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode)))
+  (add-to-list 'auto-mode-alist '("\\.ya?ml\\'" . yaml-mode))
+  (add-to-list 'auto-mode-alist '("\\.ya?ml.erb\\'" . yaml-mode)))
 
 
 (provide 'indiebrain-emacs-langs)
