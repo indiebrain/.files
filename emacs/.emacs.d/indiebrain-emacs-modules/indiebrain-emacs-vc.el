@@ -210,6 +210,9 @@
   (setq magit-repository-directories
         '(("~/Git/Projects" . 1))))
 
+(indiebrain-emacs-package forge
+  (:install t))
+
 ;;; Smerge and Ediff
 (indiebrain-emacs-package smerge-mode)
 
