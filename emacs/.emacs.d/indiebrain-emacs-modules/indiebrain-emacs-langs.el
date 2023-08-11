@@ -34,7 +34,6 @@
 (setq colon-double-space nil)
 (setq use-hard-newlines nil)
 (setq adaptive-fill-mode t)
-(add-hook 'text-mode-hook #'turn-on-auto-fill)
 
 ;;; Comments (newcomment.el and indiebrain-comment.el)
 (indiebrain-emacs-package newcomment
