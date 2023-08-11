@@ -32,7 +32,6 @@
 
 ;;; Simple HTML Renderer (shr), Emacs Web Wowser (eww), Elpher, and indiebrain-eww.el
 (indiebrain-emacs-package browse-url
-  (setq browse-url-browser-function 'eww-browse-url)
   (setq browse-url-secondary-browser-function 'browse-url-default-browser))
 
 (indiebrain-emacs-package goto-addr
