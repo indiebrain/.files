@@ -1156,14 +1156,12 @@ available for use.
 
 #+begin_src sh :tangle "./scripts/bin/initial-host-setup"
 binary_packages="
-    d12frosted/emacs-plus/emacs-plus@29
+    d12frosted/emacs-plus/emacs-plus@30
     firefox-developer-edition
     gpg-suite
     iterm2
-    keepassxc
     nextcloud
     rectangle
-    slack
     signal
 "
 #+end_src
