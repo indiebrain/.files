@@ -57,7 +57,7 @@
       (insert "=>")
     ad-do-it))
 ;; To remove this advice.
-;; (progn (ad-disable-advice 'comment-dwim 'around 'rct-hack) (ad-update 'comment-dwim)) 
+;; (progn (ad-disable-advice 'comment-dwim 'around 'rct-hack) (ad-update 'comment-dwim))
 
 (defun rct-current-line ()
   "Return the vertical position of point..."
@@ -82,7 +82,7 @@
      (if current-prefix-arg
          (setq rct-option-local
                (read-from-minibuffer "rcodetools option: " option nil nil 'rct-option-history))
-       option))))  
+       option))))
 
 (defun rct-shell-command (command &optional buffer)
   "Replacement for `(shell-command-on-region (point-min) (point-max) command buffer t' because of encoding problem."
@@ -119,12 +119,12 @@ See also `rct-interactive'. "
                            (setq e (point))
                            (goto-char s)
                            (re-search-forward "# => *$" e t)))))))
-        (cond ((in-block "^class.+< Test::Unit::TestCase$")
-               (format "%s --unittest %s" xmpfilter-command-name option))
-              ((in-block "^\\(describe\\|context\\).+do$")
-               (format "%s --spec %s" xmpfilter-command-name option))
-              (t
-               (format "%s %s" xmpfilter-command-name option)))))
+    (cond ((in-block "^class.+< Test::Unit::TestCase$")
+           (format "%s --unittest %s" xmpfilter-command-name option))
+          ((in-block "^\\(describe\\|context\\).+do$")
+           (format "%s --spec %s" xmpfilter-command-name option))
+          (t
+           (format "%s %s" xmpfilter-command-name option)))))
 
 ;;;; Completion
 (defvar rct-method-completion-table nil) ;internal
@@ -146,27 +146,27 @@ See also `rct-interactive', `rct-complete-symbol--normal', and `rct-complete-sym
 See also `rct-interactive'."
   (interactive (rct-interactive))
   (let ((end (point)) beg
-	    pattern alist
-	    completion)
+        pattern alist
+        completion)
     (setq completion (rct-try-completion)) ; set also pattern / completion
     (save-excursion
       (search-backward pattern)
       (setq beg (point)))
     (cond ((eq completion t)            ;sole completion
            (message "%s" "Sole completion"))
-	      ((null completion)            ;no completions
-	       (message "Can't find completion for \"%s\"" pattern)
-	       (ding))
-	      ((not (string= pattern completion)) ;partial completion
+          ((null completion)            ;no completions
+           (message "Can't find completion for \"%s\"" pattern)
+           (ding))
+          ((not (string= pattern completion)) ;partial completion
            (delete-region beg end)      ;delete word
-	       (insert completion)
+           (insert completion)
            (message ""))
-	      (t
-	       (message "Making completion list...")
-	       (with-output-to-temp-buffer "*Completions*"
-	         (display-completion-list
-	          (all-completions pattern alist)))
-	       (message "Making completion list...%s" "done")))))
+          (t
+           (message "Making completion list...")
+           (with-output-to-temp-buffer "*Completions*"
+             (display-completion-list
+              (all-completions pattern alist)))
+           (message "Making completion list...%s" "done")))))
 
 ;; (define-key ruby-mode-map "\M-\C-i" 'rct-complete-symbol)
 
@@ -221,7 +221,7 @@ See also `rct-interactive'."
   (dolist (buf buffer-list)
     (with-current-buffer buf
       (if (and buffer-file-name (string-match "test.*\.rb$" buffer-file-name))
-          (return buf)))))
+          (cl-return buf)))))
 
 ;; (defun rct-find-test-method (buffer)
 ;;   "Find test method on point on BUFFER."
@@ -242,6 +242,7 @@ See also `rct-interactive'."
 (defun rct-ri (&optional option)
   "Browse Ri document at the point.
 If `rct-find-tag-if-available' is non-nil, search the definition using TAGS.
+
 See also `rct-interactive'. "
   (interactive (rct-interactive))
   (rct-exec-and-eval
@@ -289,8 +290,8 @@ To kill rct-fork process, use \\[rct-fork-kill].
    (lambda (lib) (format "-r %s" lib))
    (save-excursion
      (goto-char (point-min))
-     (loop while (re-search-forward "\\<require\\> ['\"]\\([^'\"]+\\)['\"]" nil t)
-           collect (match-string-no-properties 1)))
+     (cl-loop while (re-search-forward "\\<require\\> ['\"]\\([^'\"]+\\)['\"]" nil t)
+              collect (match-string-no-properties 1)))
    " "))
 
 (defun rct-fork-kill ()
