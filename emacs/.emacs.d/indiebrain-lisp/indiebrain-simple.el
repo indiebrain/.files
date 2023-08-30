@@ -117,7 +117,7 @@ MODE use that major mode instead."
           (progn
             (insert text)
             (goto-char (point-min))
-            (comment-region (point-at-bol) (point-at-eol))
+            (comment-region (line-beginning-position) (point-at-eol))
             (goto-char (point-max)))
         (goto-char (point-max))
         (when (indiebrain-common-line-regexp-p 'non-empty)
@@ -210,7 +210,7 @@ indentation while duplicating."
     (push-mark (point) t nil))
   (let* ((rbeg (region-beginning))
          (rend (region-end))
-         (pbol (point-at-bol))
+         (pbol (line-beginning-position))
          (peol (point-at-eol))
          (indent (if (eq (or rbeg rend) pbol) nil arg)))
     (cond
@@ -240,7 +240,7 @@ This command can then be followed by the standard
   (interactive)
   (if (use-region-p)
       (delete-region (region-beginning) (region-end))
-    (delete-region (point-at-bol) (point-at-eol)))
+    (delete-region (line-beginning-position) (point-at-eol)))
   (yank))
 
 ;;;###autoload
@@ -439,7 +439,7 @@ last/first two words)."
     (transpose-words 0))
    ((eq (point) (point-at-eol))
     (transpose-words -1))
-   ((eq (point) (point-at-bol))
+   ((eq (point) (line-beginning-position))
     (forward-word 1)
     (transpose-words 1))
    (t

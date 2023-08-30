@@ -192,7 +192,7 @@ For more on such headings, read `dired-maybe-insert-subdir'."
     (if (re-search-forward subdir nil t (or arg nil))
         (progn
           (goto-char (match-beginning 1))
-          (goto-char (point-at-bol)))
+          (goto-char (line-beginning-position)))
       (goto-char pos))))
 
 ;;;###autoload
@@ -202,9 +202,9 @@ For more on such headings, read `dired-maybe-insert-subdir'."
   (interactive "p")
   (let ((pos (point))
         (subdir indiebrain-dired--directory-header-regexp))
-    (goto-char (point-at-bol))
+    (goto-char (line-beginning-position))
     (if (re-search-backward subdir nil t (or arg nil))
-        (goto-char (point-at-bol))
+        (goto-char (line-beginning-position))
       (goto-char pos))))
 
 (autoload 'dired-current-directory "dired")
@@ -280,7 +280,7 @@ inserted subdirectories."
 (defun indiebrain-dired--imenu-extract-index-name ()
   "Return the name of the file at point."
   (file-relative-name
-   (buffer-substring-no-properties (+ (point-at-bol) 2)
+   (buffer-substring-no-properties (+ (line-beginning-position) 2)
                                    (1- (point-at-eol)))))
 
 ;;;###autoload

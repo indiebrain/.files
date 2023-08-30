@@ -187,7 +187,7 @@ See also `rct-interactive'."
              ;; specify column in BYTE
              (string-bytes
               (encode-coding-string
-               (buffer-substring (point-at-bol) (point))
+               (buffer-substring (line-beginning-position) (point))
                buffer-file-coding-system))
              (if rct-use-test-script (rct-test-script-option-string) ""))
      eval-buffer)
