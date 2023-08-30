@@ -30,6 +30,7 @@ ido.last
 indiebrain-emacs-post-custom.el
 indiebrain-emacs-pre-custom.el
 network-security.data
+org-persist/
 org-roam.db
 projectile-bookmarks.eld
 projectile.cache
