@@ -2,7 +2,7 @@
 #+DESCRIPTION: GNU Emacs, just the way I like it
 #+AUTHOR: Aaron Kuehler
 
-This repository holds my emacs configuration.
+This repository holds my Emacs configuration.
 
 * Installation
 
@@ -12,14 +12,14 @@ repository]] for details.
 
 * Notes
 
-This configuration is compatible with Emacs 29+. 
+This configuration is compatible with Emacs 29+.
 
-I used to generate my emacs configuration from a "Literate" style
+I used to generate my Emacs configuration from a "Literate" style
 =org-mode= file. This iteration focuses more on a modular approach
-toward maintaining my configuration. 
+toward maintaining my configuration.
 
 [[./early-init.el][early-init.el]] is responsible for configuration which must happen
-before Emacs itself initializes. Typeically one would find
+before Emacs itself initializes. Typically one would find
 configuration of the builtin =package= management module, startup
 behavior, and anything else which must happen before the "user" level
 configuration is loaded.
@@ -27,10 +27,9 @@ configuration is loaded.
 A module is meant to represent some concern or role in the Emacs
 environment; a group of related packages / libraries working in
 concert to achieve some higher order goal. Each module is responsible
-for configuring the packages and libraries used to fufil its role.
+for configuring the packages and libraries used to fulfill its role.
 [[./init.el][init.el]] uses =require= to load each module when Emacs is initialized.
 
-I alter or enahance the behavior of Emacs' builtin packages, or a
+I alter or enhance the behavior of Emacs' builtin packages, or a
 package I install from a package archive. Usually these extensions can
-be cound in the [[./indiebrain-lisp][indiebrain-lisp]] directory.
-
+be found in the [[./indiebrain-lisp][indiebrain-lisp]] directory.
