@@ -407,9 +407,7 @@
   (setq org-modern-label-border 1)
   (setq org-modern-variable-pitch nil)
   (setq org-modern-timestamp t)
-  (setq org-modern-table t)
-  (setq org-modern-table-vertical 1)
-  (setq org-modern-table-horizontal 0)
+  (setq org-modern-table nil)
   (setq org-modern-list ; I swap the defaults for + and *
         '((?+ . "•")
           (?- . "–")
