@@ -40,46 +40,52 @@
   (setq-default text-scale-remap-header-line t)
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
-  ;; Iosevka Comfy is a highly customised build of Iosevka with
+  ;; Iosevka Comfy is a highly customized build of Iosevka with
   ;; monospaced and duospaced (quasi-proportional) variants as well as
   ;; support or no support for ligatures:
-  ;; <https://git.sr.ht/~protesilaos/iosevka-comfy>.
+  ;; <https://github.com/indiebrain/iosevka-comfy>.
   ;;
-  ;; Iosevka Comfy            == monospaced, supports ligatures
-  ;; Iosevka Comfy Fixed      == monospaced, no ligatures
-  ;; Iosevka Comfy Duo        == quasi-proportional, supports ligatures
-  ;; Iosevka Comfy Wide       == like Iosevka Comfy, but wider
-  ;; Iosevka Comfy Wide Fixed == like Iosevka Comfy Fixed, but wider
-  ;; Iosevka Comfy Motion     == monospaced, supports ligatures, fancier glyphs
-  ;; Iosevka Comfy Motion Duo == as above, but quasi-proportional
+  ;; | Family                          | Shapes | Spacing | Style      | Ligatures |
+  ;; |---------------------------------+--------+---------+------------+-----------|
+  ;; | Iosevka Comfy                   | Sans   | Compact | Monospaced | Yes       |
+  ;; | Iosevka Comfy Fixed             | Sans   | Compact | Monospaced | No        |
+  ;; | Iosevka Comfy Duo               | Sans   | Compact | Duospaced  | Yes       |
+  ;; |---------------------------------+--------+---------+------------+-----------|
+  ;; | Iosevka Comfy Motion            | Slab   | Compact | Monospaced | Yes       |
+  ;; | Iosevka Comfy Motion Fixed      | Slab   | Compact | Monospaced | No        |
+  ;; | Iosevka Comfy Motion Duo        | Slab   | Compact | Duospaced  | Yes       |
+  ;; |---------------------------------+--------+---------+------------+-----------|
+  ;; | Iosevka Comfy Wide              | Sans   | Wide    | Monospaced | Yes       |
+  ;; | Iosevka Comfy Wide Fixed        | Sans   | Wide    | Monospaced | No        |
+  ;; | Iosevka Comfy Wide Duo          | Sans   | Wide    | Duospaced  | Yes       |
+  ;; |---------------------------------+--------+---------+------------+-----------|
+  ;; | Iosevka Comfy Wide Motion       | Slab   | Wide    | Monospaced | Yes       |
+  ;; | Iosevka Comfy Wide Motion Fixed | Slab   | Wide    | Monospaced | No        |
+  ;; | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
   (setq fontaine-presets
         '((small
-           :default-family "Iosevka Comfy Wide Fixed"
+           :default-family "Iosevka Comfy Wide"
            :default-height 80
            :variable-pitch-family "Iosevka Comfy Wide Duo")
-          (regular
-           :default-height 100)
+          (regular) ; like this it uses all the fallback values and is named `regular'
+          (medium
+           :default-weight semilight
+           :default-height 135
+           :bold-weight extrabold)
           (large
-           :default-weight semilight
-           :default-height 140
-           :bold-weight extrabold)
-          (code-demo
-           :default-family "Iosevka Comfy Fixed"
-           :default-weight semilight
-           :default-height 170
-           :variable-pitch-family "Iosevka Comfy Duo"
-           :bold-weight extrabold)
+           :inherit medium
+           :default-height 150)
           (presentation
-           :default-weight semilight
-           :default-height 220
-           :bold-weight extrabold)
+           :inherit medium
+           :default-weight light
+           :default-height 180)
           (t
            ;; I keep all properties for didactic purposes, but most can be
-           ;; omitted. See the fontaine manual for the technicalities:
+           ;; omitted.  See the fontaine manual for the technicalities:
            ;; <https://protesilaos.com/emacs/fontaine>.
            :default-family "Iosevka Comfy"
            :default-weight regular
-           :default-height 100
+           :default-height 120
            :fixed-pitch-family nil ; falls back to :default-family
            :fixed-pitch-weight nil ; falls back to :default-weight
            :fixed-pitch-height 1.0
