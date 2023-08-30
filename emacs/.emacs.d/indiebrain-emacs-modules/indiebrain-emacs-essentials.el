@@ -33,8 +33,6 @@
 ;;; Read environment variables
 (indiebrain-emacs-package exec-path-from-shell
   (:install t)
-  (setq exec-path-from-shell-variables
-        '("PATH" "MANPATH" "SSH_AUTH_SOCK"))
   (exec-path-from-shell-initialize))
 
 ;;; Common auxiliary functions (indiebrain-common.el)
