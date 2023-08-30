@@ -102,7 +102,7 @@ directory."
   "Capture last command prompt and its output."
   (let ((beg (save-excursion
                (goto-char (eshell-beginning-of-input))
-               (goto-char (point-at-bol)))))
+               (goto-char (line-beginning-position)))))
   (when (derived-mode-p 'eshell-mode)
     (buffer-substring-no-properties beg (eshell-end-of-output)))))
 
@@ -118,7 +118,7 @@ append to it, while separating multiple outputs with
       (goto-char (point-max))
       (unless (eq (point-min) (point-max))
         (insert (format "\n%s\n\n" indiebrain-eshell-output-delimiter)))
-      (goto-char (point-at-bol))
+      (goto-char (line-beginning-position))
       (insert eshell-output)
       (switch-to-buffer-other-window (current-buffer)))))
 

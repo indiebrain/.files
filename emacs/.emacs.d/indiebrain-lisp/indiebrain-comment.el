@@ -116,7 +116,7 @@ specified by `indiebrain-comment-timestamp-format-verbose'."
          (string (format "%s %s: " keyword (format-time-string date)))
          (beg (point)))
     (cond
-     ((or (eq beg (point-at-bol))
+     ((or (eq beg (line-beginning-position))
           (indiebrain-common-line-regexp-p 'empty))
       (let* ((maybe-newline (unless (indiebrain-common-line-regexp-p 'empty 1) "\n")))
         (insert
