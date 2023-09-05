@@ -21,3 +21,7 @@ graphql:*.{graphql}*
 # Add 'sorbet' type.
 --type-add
 sorbet:*.{rbi}*
+
+# Add golang test type
+--type-add
+gotest:*_test.{go}*
