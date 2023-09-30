@@ -30,11 +30,6 @@
 
 ;;; Code:
 
-;;; Read environment variables
-(indiebrain-emacs-package exec-path-from-shell
-  (:install t)
-  (exec-path-from-shell-initialize))
-
 ;;; Common auxiliary functions (indiebrain-common.el)
 (indiebrain-emacs-package indiebrain-common)
 
