@@ -1,0 +1,4 @@
+**/.config/containers
+**/.config/iterm2/AppSupport
+**/git/.gitconfig.identity
+!**/.gitkeep
