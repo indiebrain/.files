@@ -1,0 +1,34 @@
+[include]
+    path = .gitconfig.identity
+
+[diff]
+    algorithm = patience
+
+[core]
+    excludesfile = ~/.gitignore_global
+    commitGraph = true
+
+[remote "origin"]
+    tagopt = --no-tags
+    prune = true
+
+[color]
+    ui = true
+
+[alias]
+    co  = checkout
+    cb  = checkout -b
+    db  = branch -d
+    rclone = clone --recursive
+
+[commit]
+    gpgSign = true
+
+[gc]
+    writeCommitGraph = true
+
+[clean]
+    requireforce = false
+
+[push]
+    default = simple

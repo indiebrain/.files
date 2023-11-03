@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+
+function setup_macos() {
+  if ! [ -x "$(command -v brew)" ]; then
+      ruby -e "$(curl -fssl https://raw.githubusercontent.com/homebrew/install/master/install)"
+  fi
+  brew update
+  brew tap homebrew/cask-versions
+  brew tap d12frosted/emacs-plus
+  brew update
+
+  packages="
+      aspell
+      autoconf
+      automake
+      bash
+      bash-completion@2
+      curl
+      git
+      libtool
+      ncurses
+      openssl
+      proselint
+      readline
+      ripgrep
+      unzip
+  "
+
+  binary_packages="
+      d12frosted/emacs-plus/emacs-plus@30
+      firefox-developer-edition
+      gpg-suite
+      iterm2
+      nextcloud
+      rectangle
+      signal
+  "
+
+  if [ "$( brew list emacs)" != "" ]; then
+      brew uninstall emacs
+  fi
+
+  for package in $packages; do
+      if [ "$( brew list -1 | grep $package )" == "" ]; then
+          echo "installing $package"
+          brew install $package
+      else
+          echo "$package installed"
+      fi
+  done
+
+  for package in $binary_packages; do
+      if [ "$( brew list --cask -1 | grep $package )" == "" ]; then
+          echo "installing $package"
+          brew install --cask $package
+      else
+          echo "$package installed"
+      fi
+  done
+
+  if [ -z $(grep ${HOMEBREW_PREFIX}/bin/bash /etc/shells) ]
+  then
+      sudo bash -c "echo ${HOMEBREW_PREFIX}/bin/bash >> /etc/shells"
+  fi
+
+  if [[ "$(echo $SHELL)" != "${HOMEBREW_PREFIX}/bin/bash" ]]
+  then
+      echo "bash is not the current shell, changing shell..."
+      chsh -s ${HOMEBREW_PREFIX}/bin/bash 2>/dev/null
+      ${HOMEBREW_PREFIX}/bin/bash
+      source $HOME/.bashrc
+  fi
+
+  asdf_dir=$HOME/.asdf
+  if [ -e $asdf_dir ]; then
+      echo "updating $asdf_dir"
+      asdf update
+  else
+      echo "installing asdf"
+      git clone https://github.com/asdf-vm/asdf.git $asdf_dir
+      cd $asdf_dir
+      git checkout "$(git describe --abbrev=0 --tags)"
+  fi
+  [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
+  [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
+
+  asdf_plugins='ruby nodejs'
+  for plugin in $asdf_plugins; do
+      if [ -e $asdf_dir/plugins/$plugin ]; then
+          echo "asdf $plugin plugin already installed"
+          asdf plugin-update $plugin
+      else
+          echo "installing asdf $plugin plugin"
+          asdf plugin-add $plugin
+      fi
+  done
+
+  bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
+
+  if [ $(which podman) ]; then
+      echo "Podman is already installed"
+  else
+      brew install podman podman-compose podman-desktop
+  fi
+
+  if [ $(which podman-compose) ]; then
+      echo "podman-compose is already installed"
+  else
+      brew install podman-compose
+  fi
+
+  open ~/*.itermcolors
+  rm -rf ~/*.itermcolors
+}
+
+function main() {
+    local platform=`uname`
+    if [[ `uname` == "Darwin" ]]
+    then
+        setup_macos
+    else
+        echo "Platform (${platform}) not supported. Aborting..."
+        exit 1
+    fi
+}
+
+main

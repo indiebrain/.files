@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# purpose:
+#   Flush the local dns cache
+# usage:
+#   $ flush_dns_cache
+
+platform=`uname`
+
+if [[ ${platform} == "Darwin" ]]
+then
+    sudo killall -hup mDNSResponder
+else
+    echo "Platform (${platform}) not supported..."
+    exit 1
+fi

@@ -1,0 +1,7 @@
+#!/usr/bin/env bash
+# purpose:
+#   Delete all local tags and refresh from origin
+# usage:
+#   $ refresh_tags
+
+git tag -l | xargs git tag -d && git fetch

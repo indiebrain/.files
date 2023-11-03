@@ -1,12 +1,4 @@
-**/*.elc
-**/.lsp-session*
-credentials.org
-/bash/
-/terminal/
-/ruby/
-/git/
-/asdf/
-/ssh/
-/scripts/
-/proselint/.config/
-!/proselint/.config/proselint
+**/.config/containers
+**/.config/iterm2/AppSupport
+**/git/.gitconfig.identity
+!**/.gitkeep
