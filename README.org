@@ -29,23 +29,10 @@ The install script performs the following steps:
 1. ensures the the dotfiles are present in the user's home directory.
 2. ensures that host's package manager is up to date
 3. ensures that the host system has the prerequisite software
-   installed - =git=, =emacs=, =stow=, etc. If a dependency is missing, the
+   installed - =git=, =stow=, etc. If a dependency is missing, the
    install script attempts to resolve the missing dependency through the
    system's package manager.
-4. generate configuration files from the content of the literate
-   configuration document via =emacs= and =org-babel=.
-5. places configuration via GNU Stow.
-
-** A shell script on the internet
-
-This repository is install-able from the web via a(n) - admittedly
-scary - one-liner which pipes the isntall script through a sh
-interpreter. *PLEASE*, [[https://github.com/indiebrain/.files/raw/master/install][inspect the content of the install script]] before
-even considering installing these dotfiles via:
-
-#+begin_src sh
-$ curl -L "https://github.com/indiebrain/.files/raw/master/install" | sh
-#+end_src
+4. places configuration via GNU Stow.
 
 ** Locally via git and the =install= script
 
@@ -59,24 +46,20 @@ $ ~/.files/install
 :ID:       627304DE-BAA2-4227-BCCE-AE768D10DA41
 :END:
 
-The canonical source of all configuration is the [[./configuration.org][configuration.org]]
-document. This document is written in the "Literate" style - described
-by Donald Knuth. It mixes prose and code to make the code more
-accessible to human beings. GNU Emacs, its =org-babel= package in
-particular, is used to generate the on-disk configuration files. On-disk
-configuration is contained exclusively with the dotfiles project
-directory in a layout which can easily be managed by GNU Stow. GNU Stow
-symlinks the configuration into place outside the dotfiles project to
-minimize the project's impact on the host file system.
+ On-disk configuration is contained exclusively with the dotfiles
+project directory (usually =~/.files=) in a layout which can easily be
+managed by GNU Stow. GNU Stow symlinks the configuration into place
+outside the dotfiles project to minimize the project's impact on the
+host file system.
 
 * Uninstalling
 :PROPERTIES:
 :ID:       98916F17-8D18-486E-BC26-822E146778A7
 :END:
 
-This dotfiles repository is self-contained, all generated code lives
-inside the root - files should NOT be placed outside of the root on the
-host file system.
+This dotfiles repository is self-contained, all configuration lives
+inside the root - files should NOT be placed outside of the dotfiles
+home directory (usually =~/.files=) t on the host file system.
 
 The use of GNU Stow affords the ability to "Soft
 Uninstall" the configuration provided herein by removing the symbolic
@@ -87,11 +70,13 @@ disk. The =uninstall= script will do just this.
 To completely remove these dotfiles:
 
 1. run the =uninstall= script
-2. remove the dotfiles repository from the local file sytem - via =rm -rf=
+2. remove the dotfiles home directory (usually =~/.files=) from the
+   local file sytem - via =rm -rf=
+
 * Optional packages
 
 The configuration will generate a number of optional GNU Stow
-packages - for example: =ssh=, =gnome-terminal=, =iterm2=.  These are not
+packages - for example: ==, =gnome-terminal=, =iterm2=.  These are not
 "stowed" in the install script as they may not be required on the
 host. It is up to the user to determine if they should be placed.
 Placing an optional package can be done with the GNU Stow program from

@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# purpose:
+#   List locations on disk ranked by their inode consumption
+# usage:
+#  $ inode-consumption
+
+platform=`uname`
+if [[ ${platform} == "Linux" ]]
+then
+    find / -xdev -printf '%h\n' | sort | uniq -c | sort -k 1 -n
+else
+    echo "Platform (${platform}) not supported..."
+    exit 1
+fi
