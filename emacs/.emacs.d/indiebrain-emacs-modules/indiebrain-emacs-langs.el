@@ -207,17 +207,6 @@
   (:install "https://github.com/tabfugnic/asdf.el")
   (asdf-enable))
 
-;;;; Language Servers (lsp-mode)
-(indiebrain-emacs-package lsp-mode
-  (:install t)
-  (setopt lsp-ruby-lsp-use-bundler t)
-
-  (add-hook 'typescript-mode-hook #'lsp-deferred)
-  (add-hook 'ruby-mode-hook #'lsp-deferred))
-
-(indiebrain-emacs-package lsp-ui
-  (:install t))
-
 ;;; Language specific settings
 
 ;;;; Caddy server (caddyfile-mode)
