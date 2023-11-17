@@ -245,6 +245,10 @@
 (indiebrain-emacs-builtin-package 'sh-script
   (add-to-list 'auto-mode-alist '("PKGBUILD" . sh-mode)))
 
+;;;; Terraform documents
+(indiebrain-emacs-package terraform-mode
+  (:install t))
+
 ;;;; Text (text-mode)
 (indiebrain-emacs-builtin-package 'text-mode
   (add-to-list 'auto-mode-alist '("\\(README\\|CHANGELOG\\|COPYING\\|LICENSE\\)\\'" . text-mode)))
