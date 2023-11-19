@@ -34,7 +34,8 @@
 
 (indiebrain-emacs-package modus-themes
   (:install t)
-  (setq modus-themes-italic-constructs t
+  (setq
+        modus-themes-italic-constructs t
         modus-themes-bold-constructs t
         modus-themes-mixed-fonts t
         modus-themes-subtle-line-numbers nil
@@ -147,8 +148,14 @@
           (4 . (rainbow regular (height 1.2)))
           (5 . (rainbow (height 1.1)))
           (t . (variable-pitch extrabold))))
+  (setopt
+        ;; The themes between which the `modus-themes-toggle' function
+        ;; should toggle.
+        modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
 
-  (modus-themes-load-theme 'modus-vivendi)
+
+  (modus-themes-load-theme 'modus-vivendi-tinted)
+
 
   (indiebrain-emacs-keybind global-map
     "<f5>" #'modus-themes-toggle))
