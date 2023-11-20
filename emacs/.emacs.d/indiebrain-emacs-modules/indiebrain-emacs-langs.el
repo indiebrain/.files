@@ -247,7 +247,8 @@
 
 ;;;; Terraform documents
 (indiebrain-emacs-package terraform-mode
-  (:install t))
+  (:install t)
+  (add-hook 'terraform-mode-hook #'terraform-format-on-save-mode))
 
 ;;;; Text (text-mode)
 (indiebrain-emacs-builtin-package 'text-mode
