@@ -1,54 +1,148 @@
-export PATH="/usr/local/bin:/usr/local/sbin:$PATH"
-export PATH="$HOME/bin:$PATH"
+#
+# Name:
+#   ~/.bashrc
+#
+# Purpose:
+#
+#  Part of my dotfiles https://github.com/indiebrain/.files
+#
+#  Configure Interactive Shells. See the GNU Bash manuals for
+#  information on startup files:
+#  https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.htlm.
 
+# Add locations to the command lookup PATH
+
+## Add my scripts to the command lookup PATH
+if [ -d "$HOME"/bin ]
+then
+    PATH=$PATH:"$HOME"/bin
+fi
+
+if [ -d "$HOME"/.local/bin ]
+then
+    PATH=$PATH:"$HOME"/.local/bin
+fi
+
+## Add usr binaries to the command lookup PATH
+if [ -d /usr/local/bin ]
+then
+    PATH=$PATH:/usr/local/bin
+fi
+
+if [ -d /usr/local/sbin ]
+then
+    PATH=$PATH:/usr/local/sbin
+fi
+
+# Add locations the the cd command's lookup path. Usually this is just
+# the current directory, but here I add places on the file system that
+# I frequently access to save myself a few keystrokes. See
+# https://www.gnu.org/software/bash/manual/bash.html#index-cd
 export CDPATH=".:$HOME/Developer/"
 
-# Get a graphical representation of the clean/dirty state of a git repository
-# colors
-case "$TERM" in
-    xterm*|rxvt*|screen*|eterm-color)
-        ESC="\033"
-        RED="\[$ESC[01;31m\]"
-        LIGHT_RED="\[$ESC[1;31m\]"
-        GREEN="\[$ESC[01;32m\]"
-        LIGHT_GREEN="\[$ESC[1;32m\]"
-        YELLOW="\[$ESC[0;33m\]"
-        LIGHT_YELLOW="\[$ESC[1;33m\]"
-        BLUE="\[$ESC[0;34m\]"
-        LIGHT_BLUE="\[$ESC[1;34m\]"
-        MAGENTA="\[$ESC[0;35m\]"
-        LIGHT_MAGENTA="\[$ESC[1;35m\]"
-        CYAN="\[$ESC[0;36m\]"
-        LIGHT_CYAN="\[$ESC[1;36m\]"
-        WHITE="\[$ESC[0;37m\]"
-        LIGHT_WHITE="\[$ESC[1;37m\]"
-        GREY="\[$ESC[0;37m\]"
+# Command History
 
-        RESET="\[$ESC[0m\]"
-        ;;
-    *)
-        ESC=""
-        RED=""
-        LIGHT_RED=""
-        GREEN=""
-        LIGHT_GREEN=""
-        YELLOW=""
-        LIGHT_YELLOW=""
-        BLUE=""
-        LIGHT_BLUE=""
-        MAGENTA=""
-        LIGHT_MAGENTA=""
-        CYAN=""
-        LIGHT_CYAN=""
-        WHITE=""
-        LIGHT_WHITE=""
-        GREY=""
+## Always append commands to the history
+shopt -s histappend
 
-        RESET=""
-        ;;
-esac
+## After command execution, immediately write and reload the history file into the shell session
+export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
 
-# prints path to git directory
+## Prevent duplicate history entryies
+export HISTCONTROL=ignoreboth:erasedups
+
+## Configure the amount of history to keep
+export HISTSIZE=100000
+export HISTFILESIZE=10000000
+
+## Never write commands that match these expressions to the history
+export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
+
+# Aliases
+alias gs="git status"
+alias gl='git log --graph --oneline --decorate --max-count 10'
+
+# Default pager. The check for the terminal is useful for Emacs with
+# M-x shell (which is how I usually interact with bash these days).
+#
+# The COLORTERM is documented in (info "(emacs) General Variables") -
+# https://www.gnu.org/software/emacs/manual/html_node/emacs/General-Variables.html.
+# I found the reference to `dumb-emacs-ansi' in (info "(emacs)
+# Connection Variables").
+if [ "$TERM" = "dumb" ] && [ "$INSIDE_EMACS" ]
+then
+    export PAGER="cat"
+    alias less="cat"
+    export COLORTERM=1
+else
+    # Quit once you try to scroll past the end of the file.
+    export PAGER="less --quit-at-eof"
+fi
+
+export MANPAGER="$PAGER"
+
+# Setup the default editor
+# Default editor.
+if pgrep -x emacs > /dev/null
+then
+    export VISUAL="emacsclient -c"
+    export EDITOR="emacsclient -t"
+else
+    export VISUAL=vim
+    export EDITOR=$VISUAL
+fi
+
+# Setup the Primary Prompt String - $PS1. See the GNU Bash manual's
+# "Controlling the Prompt" section:
+# https://www.gnu.org/software/bash/manual/bash.html#Controlling-the-Prompt
+
+## Setup color short-hand variables
+if [ -n "$COLORTERM" ] || [[ "$CLICOLOR" -gt 0 ]]
+then
+    # When the terminal supports colors, setup shorthands for the ANSI
+    # color codes.
+    ESC="\033"
+    RED="\[$ESC[01;31m\]"
+    LIGHT_RED="\[$ESC[1;31m\]"
+    GREEN="\[$ESC[01;32m\]"
+    LIGHT_GREEN="\[$ESC[1;32m\]"
+    YELLOW="\[$ESC[0;33m\]"
+    LIGHT_YELLOW="\[$ESC[1;33m\]"
+    BLUE="\[$ESC[0;34m\]"
+    LIGHT_BLUE="\[$ESC[1;34m\]"
+    MAGENTA="\[$ESC[0;35m\]"
+    LIGHT_MAGENTA="\[$ESC[1;35m\]"
+    CYAN="\[$ESC[0;36m\]"
+    LIGHT_CYAN="\[$ESC[1;36m\]"
+    WHITE="\[$ESC[0;37m\]"
+    LIGHT_WHITE="\[$ESC[1;37m\]"
+    GREY="\[$ESC[0;37m\]"
+
+    RESET="\[$ESC[0m\]"
+else
+    # When the terminal DOES NOT supports colors, all colors are the empty string to prevent goofy escape sequences muddying up the output.
+    ESC=""
+    RED=""
+    LIGHT_RED=""
+    GREEN=""
+    LIGHT_GREEN=""
+    YELLOW=""
+    LIGHT_YELLOW=""
+    BLUE=""
+    LIGHT_BLUE=""
+    MAGENTA=""
+    LIGHT_MAGENTA=""
+    CYAN=""
+    LIGHT_CYAN=""
+    WHITE=""
+    LIGHT_WHITE=""
+    GREY=""
+    RESET=""
+fi
+
+## Get a graphical representation of the clean/dirty state of a git repository
+
+### prints path to git directory
 __git_dirname() {
     local dirname
     if [ -d .git ]; then
@@ -59,8 +153,8 @@ __git_dirname() {
     echo "$dirname"
 }
 
-# gets the branching state of the repository
-# optional arg: path to git directory
+### gets the branching state of the repository
+### optional arg: path to git directory
 __git_branching_state() {
     local gitdir="$1" || "$(__git_dirname)"
     local state
@@ -87,9 +181,9 @@ __git_branching_state() {
     echo "$state"
 }
 
-# prints the working directory state of the repository using symbols
-# these could be expensive.. would make sense to have configs to turn off
-# * - modified / + - staged / ^ - stashed / % - untracked
+### prints the working directory state of the repository using symbols
+### these could be expensive.. would make sense to have configs to turn off
+### * - modified / + - staged / ^ - stashed / % - untracked
 __git_working_dir_symbols() {
     local symbols
 
@@ -111,9 +205,9 @@ __git_working_dir_symbols() {
     echo "$symbols"
 }
 
-# prints current / parent branch name
-# optional arg: 'parent' -- returns a limited guess of the parent
-# optional arg: path to git directory
+### prints current / parent branch name
+### optional arg: 'parent' -- returns a limited guess of the parent
+### optional arg: path to git directory
 __git_branch_name() {
     # current branch name
     local branch
@@ -154,7 +248,7 @@ __git_branch_name() {
     echo "$branch"
 }
 
-# prints if inside git directory or bare git repository
+### prints if inside git directory or bare git repository
 __git_in_gitdir() {
     if [ true = "$(git rev-parse --is-inside-git-dir 2>/dev/null)" ]; then
         if [ true = "$(git rev-parse --is-bare-repository 2>/dev/null)" ]; then
@@ -165,14 +259,14 @@ __git_in_gitdir() {
     fi
 }
 
-# prints number of commits that are available on ref B but not ref A
-# arg1: reference A
-# arg2: reference B
+### prints number of commits that are available on ref B but not ref A
+### arg1: reference A
+### arg2: reference B
 __git_commit_diff_count() {
     echo "$(git rev-list $1..$2 2>/dev/null | awk 'END {print NR}')"
 }
 
-# build combined (+/-) counts for related commits
+### build combined (+/-) counts for related commits
 __git_count_str() {
     local str
     local parent="$(__git_branch_name parent)"
@@ -192,7 +286,7 @@ __git_count_str() {
     echo "$str"
 }
 
-# install git integration into PS1
+### install git integration into PS1
 __git_prompt() {
     local last_exit="$?" # keep here.. so we get the last command
 
@@ -251,17 +345,37 @@ __git_prompt() {
 }
 PROMPT_COMMAND=__git_prompt
 
+# ASDF Version Manger
 [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
 [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
 
+# Spring Gem
 DISABLE_SPRING=1
 
+# Golang
+
+## Store golang binaries outside of the standard HOME directory, and make sure they're on the command lookup PATH
 export GOPATH=$HOME/Developer/go
 export PATH=$PATH:$GOPATH/bin
 
+# MacOS Homebrew "Package Manager"
 [[ -x /opt/homebrew/bin/brew ]] && eval $(/opt/homebrew/bin/brew shellenv)
 export HOMEBREW_NO_ANALYTICS=1
+if type brew &>/dev/null; then
+    HOMEBREW_PREFIX="$(brew --prefix)"
+    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
+        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
+    else
+        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
+            [[ -r "$COMPLETION" ]] && source "$COMPLETION"
+        done
+    fi
+fi
 
+# Podman
+
+## Hijack the DOCKER_HOST env var so `docker *' commands are forwarded to podman
 export DOCKER_HOST='unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock'
 
+# Ripgrep
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"

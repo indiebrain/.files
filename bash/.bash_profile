@@ -1,31 +1,26 @@
-[ -r ~/.profile ] && . ~/.profile || true              # If a Bourne shell configuration exists, load it
-if [ -n "$PS1" ]                                         # Is this REALLY an interactive shell?
+#
+# Name:
+#   ~/.bash_profile
+#
+# Purpose:
+#
+#  Part of my dotfiles https://github.com/indiebrain/.files
+#
+#  Configure Login Shells. See the GNU Bash manuals for information on
+#  startup files:
+#  https://www.gnu.org/software/bash/manual/html_node/Bash-Startup-Files.html.
+
+
+
+## If a Bourne Login Shell configuration exists, load it
+[ -r ~/.profile ] && . ~/.profile || true
+
+# If Bash Login Shell configuration exists, load it
+[ -r ~/.bash_login ] && . ~/.bash_login || true
+
+## Is this an interactive shell?
+if [ -n "$PS1" ]
 then
-    [ -r ~/.bashrc ] && . ~/.bashrc || true            # tty/prompt/function setup for interactive shells
-    [ -r ~/.bash_login ] && . ~/.bash_login || true    # any at-login tasks for login shell only
+    # If interactive shell configuration exists, load it
+    [ -r ~/.bashrc ] && . ~/.bashrc || true
 fi
-
-export CLICOLOR=1
-
-alias gs="git status"
-alias gl='git log --graph --oneline --decorate --max-count 10'
-
-if type brew &>/dev/null; then
-    HOMEBREW_PREFIX="$(brew --prefix)"
-    if [[ -r "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh" ]]; then
-        source "${HOMEBREW_PREFIX}/etc/profile.d/bash_completion.sh"
-    else
-        for COMPLETION in "${HOMEBREW_PREFIX}/etc/bash_completion.d/"*; do
-            [[ -r "$COMPLETION" ]] && source "$COMPLETION"
-        done
-    fi
-fi
-
-export EDITOR="emacs -nw"
-
-shopt -s histappend
-export PROMPT_COMMAND="history -n; history -w; history -c; history -r; $PROMPT_COMMAND"
-export HISTCONTROL=ignoreboth:erasedups
-export HISTSIZE=100000
-export HISTFILESIZE=10000000
-export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
