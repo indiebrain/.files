@@ -277,7 +277,13 @@
   (:install t)
   (setq prefix-help-command #'embark-prefix-help-command)
   (setq embark-quit-after-action t)     ; XXX: Read the doc string!
-  (setq embark-cycle-key (kbd "C-,"))   ; see the `embark-act' key
+
+  ;; I never cycle and want to disable the key.  Normally, a nil value
+  ;; disables a key binding but here that value is interpreted as the
+  ;; binding for `embark-act'.  So I just add some obscure key that I
+  ;; do not have.  I absolutely do not want to cycle by accident!
+  (setq embark-cycle-key "<XF86Travel>")
+
   (setq embark-confirm-act-all nil)
   (setq embark-indicators
         '(embark-mixed-indicator
