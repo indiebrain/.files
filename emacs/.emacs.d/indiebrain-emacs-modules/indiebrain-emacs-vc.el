@@ -185,7 +185,8 @@
   (:install t)
   (setq magit-define-global-key-bindings nil)
   (indiebrain-emacs-keybind global-map
-    "C-c g" #'magit-status)
+    "C-c g" #'magit-status
+    "C-x p m" #'magit-status)
 
   (require 'git-commit)
   (setq git-commit-summary-max-length 50)
