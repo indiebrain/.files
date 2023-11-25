@@ -36,8 +36,7 @@
             (project-find-regexp "Find regexp")
             (project-find-dir "Find directory")
             (project-vc-dir "VC-Dir")
-            (project-shell "Shell")
-            (project-eshell "Eshell")))
+            (project-shell "Shell")))
   (indiebrain-emacs-keybind global-map
     "C-x p <delete>" #'project-forget-project))
 
