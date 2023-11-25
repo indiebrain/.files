@@ -156,5 +156,22 @@ use in `display-buffer-alist'."
     "C-M-S-<down>" #'windmove-swap-states-down
     "C-M-S-<left>" #'windmove-swap-states-left))
 
+;;; Increased padding in windows/frames
+;; Another one of Prot's quality-of-life packages:
+;; <https://protesilaos.com/codelog/2023-06-03-emacs-spacious-padding/>.
+(indiebrain-emacs-package spacious-padding
+  (:install t)
+  (:delay 1)
+
+  (setq spacious-padding-widths
+        '( :internal-border-width 25
+           :right-divider-width 30
+           :scroll-bar-width 8))
+
+  (spacious-padding-mode 1)
+
+  (indiebrain-emacs-keybind global-map
+    "<f8>" #'spacious-padding-mode))
+
 (provide 'indiebrain-emacs-window)
 ;;; indiebrain-emacs-window.el ends here
