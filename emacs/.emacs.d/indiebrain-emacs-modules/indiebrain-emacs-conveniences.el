@@ -100,18 +100,5 @@
 (indiebrain-emacs-package cus-edit
                             (setq custom-file (make-temp-file "emacs-custom-")))
 
-(indiebrain-emacs-package osm
-  (:install t)
-  (indiebrain-emacs-keybind global-map
-    "C-c O h" #'osm-home
-    "C-c O s" #'osm-search
-    "C-c O t" #'osm-server
-    "C-c O g" #'osm-goto
-    "C-c O j" #'osm-bookmark-jump)
-
-  ;; Load Org link support
-  (with-eval-after-load 'org
-    (require 'osm-ol)))
-
 (provide 'indiebrain-emacs-conveniences)
 ;;; indiebrain-emacs-conveniences.el ends here
