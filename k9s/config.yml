@@ -1,0 +1,18 @@
+k9s:
+  refreshRate: 5
+  maxConnRetry: 15
+  enableMouse: false
+  headless: false
+  logoless: false
+  crumbsless: false
+  readOnly: false
+  noExitOnCtrlC: false
+  noIcons: false
+  skipLatestRevCheck: false
+  logger:
+    tail: 100
+    buffer: 500
+    sinceSeconds: 300
+    fullScreenLogs: true
+    textWrap: false
+    showTime: true
