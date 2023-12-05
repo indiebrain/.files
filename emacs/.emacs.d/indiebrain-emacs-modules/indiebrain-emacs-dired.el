@@ -130,16 +130,17 @@
 
 ;;; Automatically preview Dired file at point (dired-preview.el)
 (indiebrain-emacs-package dired-preview
-  (:install "https://git.sr.ht/~protesilaos/dired-preview")
+  (:install t)
   ;; These are all set to their default values.  I keep them here for
   ;; reference.
   (setq dired-preview-max-size (expt 2 20))
+  (setq dired-preview-delay 1.5)
   (setq dired-preview-ignored-extensions-regexp
         (concat "\\."
                 "\\(mkv\\|" "webm\\|" "mp4\\|" "mp3\\|" "ogg\\|" "m4a\\|"
                 "gz\\|" "zst\\|" "tar\\|" "xz\\|" "rar\\|" "zip\\|"
                 "iso\\|" "epub\\|" "pdf\\)"))
-  (setq dired-preview-delay 0.7)
+
   (add-hook 'dired-mode-hook #'dired-preview-mode))
 
 ;;; Ibuffer (dired-like buffer list manager)
