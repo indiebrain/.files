@@ -244,6 +244,7 @@
     "M-s M-l" #'consult-line
     "M-s M-m" #'consult-mark
     "M-s M-s" #'consult-outline
+    "M-s M-r" #'consult-ripgrep
     "M-s M-y" #'consult-yank-pop
     "C-x r r" #'consult-register) ; Use the register's prefix
 
