@@ -26,7 +26,7 @@ elfeed/*
 elpa/*
 feeds.el.gpg
 fontaine-latest-state.eld
-forge-database.sqlite
+forge-database*.sqlite
 history
 ido.last
 indiebrain-emacs-post-custom.el
