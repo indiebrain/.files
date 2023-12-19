@@ -207,6 +207,26 @@
   (:install "https://github.com/tabfugnic/asdf.el")
   (asdf-enable))
 
+;;;; Language Server Protocols (lsp-mode)
+(indiebrain-emacs-package which-key
+  (:install t)
+  (which-key-mode))
+
+(indiebrain-emacs-package lsp-mode
+  (:install t)
+  (lsp-enable-which-key-integration)
+
+  (add-hook 'go-mode-hook #'lsp-deferred)
+  (add-hook 'ruby-mode-hook #'lsp-deferred)
+  (add-hook 'typescript-mode-hook #'lsp-deferred))
+
+(indiebrain-emacs-package lsp-ui
+  (:install t))
+
+(indiebrain-emacs-package consult-lsp
+  (:install t)
+  (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
+
 ;;; Language specific settings
 
 ;;;; Caddy server (caddyfile-mode)
