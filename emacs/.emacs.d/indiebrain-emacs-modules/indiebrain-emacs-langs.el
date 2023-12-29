@@ -123,7 +123,7 @@
     "M-$" #'indiebrain-spell-spell-dwim
     "C-M-$" #'indiebrain-spell-change-dictionary))
 
-;;; Dictionary
+;;;; Dictionary
 (indiebrain-emacs-package dictionary
   (setq dictionary-server "dict.org"
           dictionary-default-popup-strategy "lev" ; read doc string
@@ -131,7 +131,9 @@
           dictionary-use-single-buffer t)
   (indiebrain-emacs-keybind global-map "C-c d" #'dictionary-search))
 
-;;; Flymake
+;;; In buffer linting / checking
+
+;;;; Flymake
 (indiebrain-emacs-package flymake
   (setq flymake-fringe-indicator-position 'left-fringe)
   (setq flymake-suppress-zero-counters t)
@@ -174,17 +176,17 @@
     "C-c ! n" #'flymake-goto-next-error
     "C-c ! p" #'flymake-goto-prev-error))
 
-;;;; Flymake + Shellcheck
+;;;;; Flymake + Shellcheck
 (indiebrain-emacs-package flymake-shellcheck
   (:install t)
   (add-hook 'sh-mode-hook 'flymake-shellcheck-load))
 
-;;;; Flymake + Proselint
+;;;;; Flymake + Proselint
 (indiebrain-emacs-package flymake-proselint
   (:install t)
   (add-hook 'text-mode-hook #'flymake-proselint-setup))
 
-;;;; Elisp packaging requirements
+;;;;; Elisp packaging requirements
 (indiebrain-emacs-package package-lint-flymake
   (:install t)
   (add-hook 'flymake-diagnostic-functions #'package-lint-flymake))
@@ -194,20 +196,20 @@
   (:install t)
   (global-flycheck-mode))
 
-;;;; Eldoc (elisp live documentation feedback)
+;;; Eldoc (elisp live documentation feedback)
 (indiebrain-emacs-package eldoc
   (global-eldoc-mode 1))
 
-;;;; Handle performance for very long lines (so-long.el)
+;;; Handle performance for very long lines (so-long.el)
 (indiebrain-emacs-package so-long
   (global-so-long-mode 1))
 
-;;;; asdf version manager integration
+;;; asdf version manager integration
 (indiebrain-emacs-package asdf
   (:install "https://github.com/tabfugnic/asdf.el")
   (asdf-enable))
 
-;;;; Language Server Protocols (lsp-mode)
+;;; Language Server Protocols (lsp-mode)
 (indiebrain-emacs-package which-key
   (:install t)
   (which-key-mode))
@@ -274,6 +276,12 @@
   (flycheck-add-mode 'javascript-eslint 'js-mode)
   (flycheck-add-mode 'javascript-eslint 'js2-mode)
   (setq flycheck-javascript-eslint-executable "node_modules/.bin/eslint"))
+
+;;;;; nodejs (npm-mode)
+(indiebrain-emacs-package npm-mode
+  (:install t)
+  (setopt npm-mode-command-prefix "C-c j")
+  (add-hook 'js2-mode-hook 'npm-mode))
 
 ;;;; Markdown (markdown-mode)
 (indiebrain-emacs-package markdown-mode
