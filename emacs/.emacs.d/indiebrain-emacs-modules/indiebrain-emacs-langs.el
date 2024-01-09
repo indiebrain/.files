@@ -219,7 +219,6 @@
   (lsp-enable-which-key-integration)
 
   (add-hook 'go-mode-hook #'lsp-deferred)
-  (add-hook 'ruby-mode-hook #'lsp-deferred)
   (add-hook 'typescript-mode-hook #'lsp-deferred))
 
 (indiebrain-emacs-package lsp-ui
