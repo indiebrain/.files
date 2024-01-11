@@ -1,10 +1,10 @@
 # -----------------------------------------------------------------------------
-# K9s Modus Vivendi
+# K9s Modus Vivendi Tinted (dark, lower contrast)
 # Author: [@indiebrain](https://github.com/indiebrain)
 # -----------------------------------------------------------------------------
 
 # Styles...
-foreground: &foreground "#000000"
+foreground: &foreground "#ffffff"
 background: &background "#0d0e1c"
 current_line: &current_line "#303a6f"
 selection: &selection "#989898"
@@ -18,56 +18,44 @@ red: &red "#ff5f59"
 
 # Skin...
 k9s:
-  # General K9s styles
   body:
     fgColor: *foreground
     bgColor: *background
     logoColor: *foreground
-
-  # ProptView styles
+    logoColorInfo: *foreground
+    logoColorWarn: *yellow
+    logoColorError: *red
   prompt:
     fgColor: *foreground
     bgColor: *background
     suggestColor: *comment
-
-  # ClusterInfoView styles
-  info:
-    fgColor: *foreground
-    sectionColor: *comment
-
-  dialog:
+    border:
+      command: *yellow
+      default: *foreground
+  help:
     fgColor: *foreground
     bgColor: *background
-    buttonFgColor: *foreground
-    buttonBgColor: *background
-    buttonFocusFgColor: *background
-    buttonFocusBgColor: *foreground
-    labelFgColor: *selection
-    fieldFgColor: *foreground
-
-  # Frame styles
+    sectionColor: *comment
+    keyColor: *foreground
+    numKeyColor: *foreground
   frame:
-
-    # Borders styles
+    title:
+      fgColor: *foreground
+      bgColor: *background
+      highlightColor: *selection
+      counterColor: *foreground
+      filterColor: *foreground
     border:
       fgColor: *foreground
       focusColor: *selection
-
-    # MenuView attributes and styles
     menu:
       fgColor: *foreground
-      keyColor: *selection
-
-      # Used for favorite namespaces
-      numKeyColor: *selection
-
-    # CrumbView attributes for history navigation.
+      keyColor: *foreground
+      numKeyColor: *foreground
     crumbs:
       fgColor: *foreground
       bgColor: *background
       activeColor: *current_line
-
-    # Resource status and update styles
     status:
       newColor: *cyan
       modifyColor: *yellow
@@ -77,53 +65,47 @@ k9s:
       highlightColor: *cyan
       killColor: *magenta
       completedColor: *comment
-
-    # Border title styles.
-    title:
+  info:
+    sectionColor: *comment
+    fgColor: *foreground
+  views:
+    table:
       fgColor: *foreground
       bgColor: *background
-      highlightColor: *selection
-      counterColor: *foreground
-      filterColor: *selection
-
-  # Specific views styles
-  views:
-
+      cursorFgColor: *background
+      cursorBgColor: *foreground
+      markColor: *selection
+      header:
+        fgColor: *foreground
+        bgColor: *background
+        sorterColor: *foreground
+    xray:
+      fgColor: *foreground
+      bgColor: *background
+      cursorColor: *current_line
+      cursorTextColor: *foreground
+      graphicColor: *foreground
     charts:
       bgColor: *background
+      dialBgColor: *background
+      chartBgColor: *background
       defaultDialColors:
         - *green
         - *red
       defaultChartColors:
         - *green
         - *red
-
-    # TableView attributes.
-    table:
-      fgColor: *foreground
-      bgColor: *background
-      cursorFgColor: *background
-      markColor: *green
-
-      # Header row styles.
-      header:
-        fgColor: *foreground
-        bgColor: *background
-        sorterColor: *background
-
-    xray:
-      fgColor: *foreground
-      bgColor: *background
-      cursorColor: *current_line
-      graphicColor: *foreground
-
-    # YAML info styles.
+      resourceColors:
+        - *green
+        - *red
     yaml:
       keyColor: *foreground
-      colonColor: *foreground
       valueColor: *foreground
-
-    # Logs styles.
+      colonColor: *foreground
+    picker:
+      mainColor: *foreground
+      focusColor: *current_line
+      shortcutColor: *comment
     logs:
       fgColor: *foreground
       bgColor: *background
@@ -132,3 +114,12 @@ k9s:
         bgColor: *background
         toggleOnColor: *green
         toggleOffColor: *red
+  dialog:
+    fgColor: *foreground
+    bgColor: *background
+    buttonFgColor: *foreground
+    buttonBgColor: *background
+    buttonFocusFgColor: *background
+    buttonFocusBgColor: *foreground
+    labelFgColor: *selection
+    fieldFgColor: *foreground
