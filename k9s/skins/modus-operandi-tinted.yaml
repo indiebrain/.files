@@ -21,8 +21,8 @@ k9s:
   body:
     fgColor: *foreground
     bgColor: *background
-    logoColor: *foreground
-    logoColorInfo: *foreground
+    logoColor: *blue
+    logoColorInfo: *magenta
     logoColorWarn: *yellow
     logoColorError: *red
   prompt:
@@ -30,12 +30,12 @@ k9s:
     bgColor: *background
     suggestColor: *comment
     border:
-      command: *yellow
+      command: *blue
       default: *foreground
   help:
     fgColor: *foreground
     bgColor: *background
-    sectionColor: *comment
+    sectionColor: *magenta
     keyColor: *foreground
     numKeyColor: *foreground
   frame:
@@ -64,9 +64,9 @@ k9s:
       errorColor: *red
       highlightColor: *cyan
       killColor: *magenta
-      completedColor: *comment
+      completedColor: *selection
   info:
-    sectionColor: *comment
+    sectionColor: *magenta
     fgColor: *foreground
   views:
     table:

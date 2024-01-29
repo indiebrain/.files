@@ -10,7 +10,7 @@ k9s:
     logoless: false
     crumbsless: false
     noIcons: false
-    skin: modus-operandi-tinted
+    skin: modus-vivendi-tinted
   skipLatestRevCheck: false
   disablePodCounting: false
   shellPod:
