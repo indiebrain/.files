@@ -453,5 +453,11 @@
 
   (run-at-time 10 nil #'appt-activate 1))
 
+;;; Github Flavored Markdown exporter (ox-gfm.el)
+(indiebrain-emacs-package ox-gfm
+  (:install t)
+  (eval-after-load "org"
+    '(require 'ox-gfm)))
+
 (provide 'indiebrain-emacs-org)
 ;;; indiebrain-emacs-org.el ends here
