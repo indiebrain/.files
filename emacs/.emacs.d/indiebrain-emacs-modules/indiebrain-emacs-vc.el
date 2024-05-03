@@ -211,7 +211,20 @@
         '(("~/Git/Projects" . 1))))
 
 (indiebrain-emacs-package forge
-  (:install t))
+  (:install t)
+  (setopt forge-topic-list-limit '(5 . -1))
+
+  ;; Puts the newly-created PR ID onto the kill-ring
+  ;; so we can call fetch-topic
+  (defun indiebrain-forge--post-submit-callback-kill-topic-id (value _headers _status _req)
+    (when t
+      (when-let ((url (alist-get 'html_url value)))
+          (when (string-match "\\([0-9]+\\)$" url)
+            (let ((topic-id (match-string 1 url)))
+              ;; If only forge exposed a way to fetch and update a single PR in the database in a non-interactive way...
+              (kill-new topic-id))))))
+
+  (add-hook 'forge-post-submit-callback-hook #'indiebrain-forge--post-submit-callback-kill-topic-id))
 
 ;;; Smerge and Ediff
 (indiebrain-emacs-package smerge-mode)
