@@ -184,6 +184,17 @@
 (indiebrain-emacs-package magit
   (:install t)
   (setq magit-define-global-key-bindings nil)
+
+  (defun indiebrain-project--project-magit ()
+    (interactive)
+    (require 'project)
+      (magit-status (project-root (project-current t))))
+
+  (with-eval-after-load 'project
+    (setq project-switch-commands
+          (append project-switch-commands
+                  '((indiebrain-project--project-magit "Magit Status" "m")))))
+
   (indiebrain-emacs-keybind global-map
     "C-c g" #'magit-status
     "C-x p m" #'magit-status)
