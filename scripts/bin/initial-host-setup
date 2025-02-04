@@ -10,6 +10,7 @@ function setup_macos() {
   brew update
 
   packages="
+      asdf
       aspell
       autoconf
       automake
@@ -70,32 +71,6 @@ function setup_macos() {
       ${HOMEBREW_PREFIX}/bin/bash
       source $HOME/.bashrc
   fi
-
-  asdf_dir=$HOME/.asdf
-  if [ -e $asdf_dir ]; then
-      echo "updating $asdf_dir"
-      asdf update
-  else
-      echo "installing asdf"
-      git clone https://github.com/asdf-vm/asdf.git $asdf_dir
-      cd $asdf_dir
-      git checkout "$(git describe --abbrev=0 --tags)"
-  fi
-  [ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
-  [ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
-
-  asdf_plugins='ruby nodejs'
-  for plugin in $asdf_plugins; do
-      if [ -e $asdf_dir/plugins/$plugin ]; then
-          echo "asdf $plugin plugin already installed"
-          asdf plugin-update $plugin
-      else
-          echo "installing asdf $plugin plugin"
-          asdf plugin-add $plugin
-      fi
-  done
-
-  bash ~/.asdf/plugins/nodejs/bin/import-release-team-keyring
 
   if [ $(which podman) ]; then
       echo "Podman is already installed"
