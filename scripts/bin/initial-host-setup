@@ -5,7 +5,6 @@ function setup_macos() {
       ruby -e "$(curl -fssl https://raw.githubusercontent.com/homebrew/install/master/install)"
   fi
   brew update
-  brew tap homebrew/cask-versions
   brew tap d12frosted/emacs-plus
   brew update
 
