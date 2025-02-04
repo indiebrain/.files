@@ -368,11 +368,6 @@ if type brew &>/dev/null; then
     fi
 fi
 
-# Podman
-
-## Hijack the DOCKER_HOST env var so `docker *' commands are forwarded to podman
-export DOCKER_HOST='unix://$HOME/.local/share/containers/podman/machine/qemu/podman.sock'
-
 # Ripgrep
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
