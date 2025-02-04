@@ -16,6 +16,7 @@ function setup_macos() {
       bash
       bash-completion@2
       curl
+      emacs-plus@31
       git
       libtool
       ncurses
@@ -27,7 +28,6 @@ function setup_macos() {
   "
 
   binary_packages="
-      emacs-plus/emacs-plus@31
       docker
       firefox-developer-edition
       gpg-suite
