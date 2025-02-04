@@ -28,6 +28,7 @@ function setup_macos() {
 
   binary_packages="
       emacs-plus/emacs-plus@31
+      docker
       firefox-developer-edition
       gpg-suite
       iterm2
@@ -65,18 +66,6 @@ function setup_macos() {
       chsh -s ${HOMEBREW_PREFIX}/bin/bash 2>/dev/null
       ${HOMEBREW_PREFIX}/bin/bash
       source $HOME/.bashrc
-  fi
-
-  if [ $(which podman) ]; then
-      echo "Podman is already installed"
-  else
-      brew install podman podman-compose podman-desktop
-  fi
-
-  if [ $(which podman-compose) ]; then
-      echo "podman-compose is already installed"
-  else
-      brew install podman-compose
   fi
 
   open ~/*.itermcolors
