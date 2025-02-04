@@ -345,10 +345,6 @@ __git_prompt() {
 }
 PROMPT_COMMAND=__git_prompt
 
-# ASDF Version Manger
-[ -f $HOME/.asdf/asdf.sh ] && source $HOME/.asdf/asdf.sh
-[ -f $HOME/.asdf/completions/asdf.bash ] && source $HOME/.asdf/completions/asdf.bash
-
 # Spring Gem
 DISABLE_SPRING=1
 
@@ -379,3 +375,7 @@ export DOCKER_HOST='unix://$HOME/.local/share/containers/podman/machine/qemu/pod
 
 # Ripgrep
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
+
+# asdf-vm tool manager
+export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+. <(asdf completion bash)
