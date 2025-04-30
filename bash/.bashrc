@@ -373,5 +373,4 @@ fi
 
 # asdf-vm tool manager
 export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-source $(brew --prefix asdf)/libexec/asdf.sh
-source $(brew --prefix asdf)/etc/bash_completion.d/asdf
+. <(asdf completion bash)
