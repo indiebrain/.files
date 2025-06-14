@@ -154,7 +154,7 @@
         modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
 
 
-  (modus-themes-load-theme 'modus-vivendi-tinted)
+  (modus-themes-load-theme 'modus-operandi-tinted)
 
 
   (indiebrain-emacs-keybind global-map
