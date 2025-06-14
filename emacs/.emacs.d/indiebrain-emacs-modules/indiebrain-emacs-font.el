@@ -107,11 +107,6 @@
   ;; The other side of `fontaine-restore-latest-preset'.
   (add-hook 'kill-emacs-hook #'fontaine-store-latest-preset)
 
-  ;; Persist font configurations while switching themes (doing it with
-  ;; the `modus-themes' and `ef-themes' via the hooks they provide).
-  (dolist (hook '(modus-themes-after-load-theme-hook ef-themes-post-load-hook))
-    (add-hook hook #'fontaine-apply-current-preset))
-
   (indiebrain-emacs-keybind global-map
     "C-c f" #'fontaine-set-preset
     "C-c F" #'fontaine-set-face-font))
