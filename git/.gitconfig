@@ -27,6 +27,9 @@
 [gc]
     writeCommitGraph = true
 
+[gpg]
+    program=/usr/local/bin/gpg
+
 [clean]
     requireforce = false
 
