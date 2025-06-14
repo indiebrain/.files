@@ -37,6 +37,7 @@ org-persist/
 org-roam.db
 projectile-bookmarks.eld
 projectile.cache
+projects.eld
 request/
 session*
 tramp
