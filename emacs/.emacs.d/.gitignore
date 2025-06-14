@@ -4,6 +4,7 @@
 /.org-id-locations
 /bookmarks
 /custom.el
+/eln-cache*
 /emacs-custom-*
 /eshell
 /indiebrain-emacs.el
