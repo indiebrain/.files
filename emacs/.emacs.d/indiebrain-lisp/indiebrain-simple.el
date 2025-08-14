@@ -62,6 +62,12 @@ Used by `indiebrain-simple-inset-date'."
   :type 'string
   :group 'indiebrain-simple)
 
+(defcustom indiebrain-simple-date-compact-specifier "%Y%m%d"
+  "Compact Date specifier for `format-time-string'.
+Used by `indiebrain-simple-in'."
+  :type 'string
+  :group 'indiebrain-simple)
+
 (defcustom indiebrain-simple-time-specifier "%R %z"
   "Time specifier for `format-time-string'.
 Used by `indiebrain-simple-inset-date'."
@@ -333,15 +339,26 @@ controlled by `delete-pair-blink-delay'."
 (defun indiebrain-simple-insert-date (&optional arg)
   "Insert the current date as `indiebrain-simple-date-specifier'.
 
-With optional prefix ARG (\\[universal-argument]) also append the
-current time understood as `indiebrain-simple-time-specifier'.
+With optional prefix ARG (\\[universal-argument]) the format is
+augmented; meant to be used with the `universal-argument'. When prefixed
+with a single `universal-argument', a compact date format -
+`indiebrain-simple-date-compact-specifier' is used. When prefixed with
+the `universal-argument' twice the `indibrain-simple-date-specifier' and
+current time is appended - as understood as
+`indiebrain-simple-time-specifier'.
 
 When region is active, delete the highlighted text and replace it
 with the specified date."
   (interactive "P")
   (let* ((date indiebrain-simple-date-specifier)
          (time indiebrain-simple-time-specifier)
-         (format (if arg (format "%s %s" date time) date)))
+         (date-compact indiebrain-simple-date-compact-specifier)
+         (format
+          (pcase (_prefix-value arg)
+            (4 date-compact)
+            (16 (format "%s %s" date time))
+            (_ date))))
+
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))
     (insert (format-time-string format))))
