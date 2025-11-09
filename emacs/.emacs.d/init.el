@@ -40,8 +40,8 @@
 
 (defcustom indiebrain-emacs-load-theme-family 'modus
   "Set of themes to load.
-Valid values are the symbols of 'ef', 'modus', and 'standard',
-which reference the 'ef-themes', 'modus-themes', and
+Valid values are the symbols of 'ef', 'modus', 'nord', and 'standard',
+which reference the 'ef-themes', 'modus-themes', 'nord-themes', and
 'standard-themes' respectively.
 
 A nil value does not load any of the above (use Emacs without a theme).
@@ -54,6 +54,7 @@ configuration during Emacs initialization."
   :type '(choice :tag "Set of themes to load" :value modus
                  (const :tag "The 'ef-themes' module" ef)
                  (const :tag "The 'modus-themes' module" modus)
+                 (const :tag "The 'nord-themes' module" nord)
                  (const :tag "The 'standard-themes' module" standard)
                  (const :tag "Do not load a theme module" nil)))
 
@@ -303,6 +304,7 @@ DEFINITIONS is a sequence of string and command pairs."
 (pcase indiebrain-emacs-load-theme-family
   ('ef (require 'indiebrain-emacs-ef-themes))
   ('modus (require 'indiebrain-emacs-modus-themes))
+  ('nord (require 'indiebrain-emacs-nord-themes))
   ('stadard (require 'indiebrain-emacs-standard-themes)))
 
 (require 'indiebrain-emacs-theme-extras)
