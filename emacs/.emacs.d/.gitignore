@@ -2,8 +2,8 @@
 /.org-id-locations
 /bookmarks.eld
 /custom.el
-/eln-cache*
 /ede-projects.el
+/eln-cache*
 /eln-cache*
 /emacs-custom-*
 /eshell
@@ -11,9 +11,11 @@
 /multisession
 /package-quickstart.el
 /projects
+/projects.eld
 /recentf
 /savehist
 /saveplace
+/tree-sitter/
 abbrevs
 ac-comphist.dat
 auto-save-list/*
