@@ -107,8 +107,8 @@ then
     export VISUAL="emacsclient -c"
     export EDITOR="emacsclient -t"
 else
-    export VISUAL="emacs -c"
-    export EDITOR="emacs -nw"
+    export VISUAL="emacsclient -c"
+    export EDITOR="emacsclient -t"
 fi
 
 # Setup the Primary Prompt String - $PS1. See the GNU Bash manual's
