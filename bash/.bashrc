@@ -67,19 +67,19 @@ alias gl='git log --graph --oneline --decorate --max-count 10'
 ### Work
 
 #### PAC Aliases
-alias kbg='pac "kubectl --context app-beta-gm"'
-alias kbgn='pac "kubectl --context app-beta-gm --namespace"'
-alias kbg='pac "kubectl --context app-beta-gm"'
-alias kbgn='pac "kubectl --context app-beta-gm --namespace"'
-alias kbh='pac "kubectl --context app-beta-hq"'
-alias kbhn='pac "kubectl --context app-beta-hq --namespace"'
-alias kbp='pac "kubectl --context app-beta-px"'
-alias kbpn='pac "kubectl --context app-beta-px --namespace"'
+alias kbg='kubectl --context app-beta-gm'
+alias kbgn='kubectl --context app-beta-gm --namespace'
+alias kbg='kubectl --context app-beta-gm'
+alias kbgn='kubectl --context app-beta-gm --namespace'
+alias kbh='kubectl --context app-beta-hq'
+alias kbhn='kubectl --context app-beta-hq --namespace'
+alias kbp='kubectl --context app-beta-px'
+alias kbpn='kubectl --context app-beta-px --namespace'
 
-alias kpg='pac "kubectl --context app-prod-gm"'
-alias kpgn='pac "kubectl --context app-prod-gm --namespace"'
-alias kph='pac "kubectl --context app-prod-hq"'
-alias kphn='pac "kubectl --context app-prod-hq --namespace"'
+alias kpg='kubectl --context app-prod-gm'
+alias kpgn='kubectl --context app-prod-gm --namespace'
+alias kph='kubectl --context app-prod-hq'
+alias kphn='kubectl --context app-prod-hq --namespace'
 
 # Default pager. The check for the terminal is useful for Emacs with
 # M-x shell (which is how I usually interact with bash these days).
