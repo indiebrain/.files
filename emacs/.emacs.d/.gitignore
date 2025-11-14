@@ -1,7 +1,10 @@
 .emacs.desktop.lock
 /.org-id-locations
-/bookmarks
+/bookmarks.eld
 /custom.el
+/eln-cache*
+/ede-projects.el
+/eln-cache*
 /emacs-custom-*
 /eshell
 /indiebrain-emacs.el
@@ -17,9 +20,11 @@ auto-save-list/*
 autosaves
 backup
 basic-init.el
+bookmarks.eld
 configuration.el
 cursory-latest-state.eld
 desktop
+ede-projects.el
 elfeed/*
 elpa/*
 feeds.el.gpg
