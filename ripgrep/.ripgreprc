@@ -6,6 +6,14 @@
 --type-add
 web:*.{html,css,js}*
 
+# Add 'gemspec' type.
+--type-add
+gemspec:*.gemspec*
+
+# Add 'Gemfile.lock' type.
+--type-add
+gemlock:*Gemfile.lock*
+
 # Add 'minitest' type.
 --type-add
 minitest:*_test.{rb}*
