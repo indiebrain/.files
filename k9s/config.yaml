@@ -10,7 +10,7 @@ k9s:
     logoless: false
     crumbsless: false
     noIcons: false
-    skin: modus-vivendi-tinted
+    skin: nord
   skipLatestRevCheck: false
   disablePodCounting: false
   shellPod:
