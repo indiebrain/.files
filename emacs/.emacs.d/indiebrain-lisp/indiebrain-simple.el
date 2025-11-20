@@ -339,26 +339,15 @@ controlled by `delete-pair-blink-delay'."
 (defun indiebrain-simple-insert-date (&optional arg)
   "Insert the current date as `indiebrain-simple-date-specifier'.
 
-With optional prefix ARG (\\[universal-argument]) the format is
-augmented; meant to be used with the `universal-argument'. When prefixed
-with a single `universal-argument', a compact date format -
-`indiebrain-simple-date-compact-specifier' is used. When prefixed with
-the `universal-argument' twice the `indibrain-simple-date-specifier' and
-current time is appended - as understood as
-`indiebrain-simple-time-specifier'.
+With optional prefix ARG (\\[universal-argument]) also append the
+current time understood as `indiebrain-simple-time-specifier'.
 
 When region is active, delete the highlighted text and replace it
 with the specified date."
   (interactive "P")
   (let* ((date indiebrain-simple-date-specifier)
          (time indiebrain-simple-time-specifier)
-         (date-compact indiebrain-simple-date-compact-specifier)
-         (format
-          (pcase (_prefix-value arg)
-            (4 date-compact)
-            (16 (format "%s %s" date time))
-            (_ date))))
-
+         (format (if arg (format "%s %s" date time) date)))
     (when (use-region-p)
       (delete-region (region-beginning) (region-end)))
     (insert (format-time-string format))))
