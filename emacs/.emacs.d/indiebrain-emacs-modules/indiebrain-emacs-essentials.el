@@ -241,6 +241,8 @@
     "C-c C-k" #'comint-clear-buffer
     "C-c C-w" #'comint-write-output))
 
+(indiebrain-emacs-configure
+  (setq auth-sources '("~/.authinfo.gpg")))
 
 (provide 'indiebrain-emacs-essentials)
 ;;; indiebrain-emacs-essentials.el ends here
