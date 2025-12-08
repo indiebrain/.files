@@ -33,6 +33,16 @@
 ;;; Common auxiliary functions (indiebrain-common.el)
 (indiebrain-emacs-package indiebrain-common)
 
+;;; macOS hosts - ensure Emacs can access the "Interactive Shell"
+;;; path. macOs Applications are started in the "Login Shell"
+;;; environment and usually lack paths to things like Homebrew
+;;; binaries, etc.
+(indiebrain-emacs-package exec-path-from-shell
+  (:install t)
+
+  (when (eq system-type 'darwin)
+    (exec-path-from-shell-initialize)))
+
 ;;; Common custom functions (indiebrain-simple.el)
 (indiebrain-emacs-package indiebrain-simple
   (setq indiebrain-simple-insert-pair-alist
