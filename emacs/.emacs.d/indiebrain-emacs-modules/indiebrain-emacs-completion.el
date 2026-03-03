@@ -124,7 +124,7 @@
   (setq read-file-name-completion-ignore-case t)
   (setq-default case-fold-search t)   ; For general regexp
 
-  (setq enable-recursive-minibuffers t)
+  (setq enable-recursive-minibuffers nil)
 
   (setq resize-mini-windows t)
   (setq minibuffer-eldef-shorten-default t)
