@@ -5,19 +5,21 @@
     algorithm = patience
 
 [core]
-    excludesfile = ~/.gitignore_global
     commitGraph = true
+    excludesfile = ~/.gitignore_global
+    fsmonitor = true
+    untrackedcache = true
 
 [remote "origin"]
-    tagopt = --no-tags
     prune = true
+    tagopt = --no-tags
 
 [color]
     ui = true
 
 [alias]
-    co  = checkout
     cb  = checkout -b
+    co  = checkout
     db  = branch -d
     rclone = clone --recursive
 
@@ -35,3 +37,6 @@
 
 [push]
     default = simple
+
+[feature]
+    manyFiles = true
