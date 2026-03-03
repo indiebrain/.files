@@ -293,7 +293,8 @@ __git_prompt() {
     # setup PS1
     local host="${MAGENTA}\h:${RESET}"
     local dir="${CYAN}\W${RESET}"
-    PS1="[$host $dir]"
+    local timestamp="${GREEN}\D{%F %T}${RESET}"
+    PS1="[$timestamp $host $dir]"
 
     # when in git repository
     local gitdir="$(__git_dirname)"
