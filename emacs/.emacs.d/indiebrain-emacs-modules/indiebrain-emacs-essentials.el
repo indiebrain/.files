@@ -209,6 +209,12 @@
   ;; Disable the damn thing
   (setq custom-file (make-temp-file "emacs-custom-")))
 
+;;; Emacs server (allow emacsclient to connect to a running session)
+(indiebrain-emacs-package server
+  (setq server-client-instructions nil)
+  (unless (or (server-running-p) (daemonp))
+    (server-start)))
+
 ;;; Substitute - search/replace enhancements
 (indiebrain-emacs-package substitute
   (:install t)
