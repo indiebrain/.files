@@ -83,14 +83,8 @@ export MANPAGER="$PAGER"
 
 # Setup the default editor
 # Default editor.
-if pgrep -x emacs > /dev/null
-then
-    export VISUAL="emacsclient -c"
-    export EDITOR="emacsclient -t"
-else
-    export VISUAL=vim
-    export EDITOR=$VISUAL
-fi
+export VISUAL="emacsclient -c -a emacs"
+export EDITOR="emacsclient -t -a emacs"
 
 # Setup the Primary Prompt String - $PS1. See the GNU Bash manual's
 # "Controlling the Prompt" section:
