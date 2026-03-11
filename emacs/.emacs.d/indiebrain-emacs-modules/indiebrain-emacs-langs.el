@@ -229,9 +229,7 @@
   (define-key lsp-mode-map [remap xref-find-apropos] #'consult-lsp-symbols))
 
 ;;; Tree-sitter
-(indiebrain-emacs-package tree-sitter
-  (:install t)
-
+(indiebrain-emacs-package treesit
   (setq treesit-language-source-alist
    '((bash "https://github.com/tree-sitter/tree-sitter-bash")
      (cmake "https://github.com/uyha/tree-sitter-cmake")
