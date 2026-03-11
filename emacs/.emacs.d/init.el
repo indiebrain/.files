@@ -276,7 +276,7 @@ DEFINITIONS is a sequence of string and command pairs."
   (let ((keys (seq-filter #'stringp definitions))
         ;; We do accept nil as a definition: it unsets the given key.
         (commands (seq-remove #'stringp definitions)))
-    `(when-let (((keymapp ,keymap))
+    `(when-let* (((keymapp ,keymap))
                 (map ,keymap))
        ,@(mapcar
           (lambda (pair)
