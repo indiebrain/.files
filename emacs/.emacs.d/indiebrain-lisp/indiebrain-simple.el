@@ -359,7 +359,7 @@ with the specified date."
 (defun indiebrain-simple-escape-url ()
   "Wrap URL (or email address) in angled brackets."
   (interactive)
-  (when-let ((url (ffap-url-at-point)))
+  (when-let* ((url (ffap-url-at-point)))
     (let* ((reg ffap-string-at-point-region)
            (beg (car reg))
            (end (cadr reg))
