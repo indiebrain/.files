@@ -1,0 +1,384 @@
+# This is the configuration file for Ghostty.
+#
+# This template file has been automatically created at the following
+# path since Ghostty couldn't find any existing config files on your system:
+#
+#   /Users/aaron.kuehler/Library/Application Support/com.mitchellh.ghostty/config
+#
+# The template does not set any default options, since Ghostty ships
+# with sensible defaults for all options. Users should only need to set
+# options that they want to change from the default.
+#
+# Run `ghostty +show-config --default --docs` to view a list of
+# all available config options and their default values.
+#
+# Additionally, each config option is also explained in detail
+# on Ghostty's website, at https://ghostty.org/docs/config.
+#
+# Ghostty can reload the configuration while running by using the menu
+# options or the bound key (default: Command + Shift + comma on macOS and
+# Control + Shift + comma on other platforms). Not all config options can be
+# reloaded while running; some only apply to new windows and others may require
+# a full restart to take effect.
+
+
+# Control the auto-update functionality of Ghostty. This is only supported
+# on macOS currently, since Linux builds are distributed via package
+# managers that are not centrally controlled by Ghostty.
+#
+# Checking or downloading an update does not send any information to
+# the project beyond standard network information mandated by the
+# underlying protocols. To put it another way: Ghostty doesn't explicitly
+# add any tracking to the update process. The update process works by
+# downloading information about the latest version and comparing it
+# client-side to the current version.
+#
+# Valid values are:
+#
+#  * `off` - Disable auto-updates.
+#  * `check` - Check for updates and notify the user if an update is
+#    available, but do not automatically download or install the update.
+#  * `download` - Check for updates, automatically download the update,
+#    notify the user, but do not automatically install the update.
+#
+# If unset, we defer to Sparkle's default behavior, which respects the
+# preference stored in the standard user defaults (`defaults(1)`).
+#
+# Changing this value at runtime works after a small delay.
+auto-update = download
+
+# This will be used to set the `TERM` environment variable.
+# HACK: We set this with an `xterm` prefix because vim uses that to enable key
+# protocols (specifically this will enable `modifyOtherKeys`), among other
+# features. An option exists in vim to modify this: `:set
+# keyprotocol=ghostty:kitty`, however a bug in the implementation prevents it
+# from working properly. https://github.com/vim/vim/pull/13211 fixes this.
+term = xterm-256color
+
+# A theme to use. This can be a built-in theme name, a custom theme
+# name, or an absolute path to a custom theme file. Ghostty also supports
+# specifying a different theme to use for light and dark mode. Each
+# option is documented below.
+#
+# If the theme is an absolute pathname, Ghostty will attempt to load that
+# file as a theme. If that file does not exist or is inaccessible, an error
+# will be logged and no other directories will be searched.
+#
+# If the theme is not an absolute pathname, two different directories will be
+# searched for a file name that matches the theme. This is case sensitive on
+# systems with case-sensitive filesystems. It is an error for a theme name to
+# include path separators unless it is an absolute pathname.
+#
+# The first directory is the `themes` subdirectory of your Ghostty
+# configuration directory. This is `$XDG_CONFIG_HOME/ghostty/themes` or
+# `~/.config/ghostty/themes`.
+#
+# The second directory is the `themes` subdirectory of the Ghostty resources
+# directory. Ghostty ships with a multitude of themes that will be installed
+# into this directory. On macOS, this list is in the
+# `Ghostty.app/Contents/Resources/ghostty/themes` directory. On Linux, this
+# list is in the `share/ghostty/themes` directory (wherever you installed the
+# Ghostty "share" directory.
+#
+# To see a list of available themes, run `ghostty +list-themes`.
+#
+# A theme file is simply another Ghostty configuration file. They share
+# the same syntax and same configuration options. A theme can set any valid
+# configuration option so please do not use a theme file from an untrusted
+# source. The built-in themes are audited to only set safe configuration
+# options.
+#
+# Some options cannot be set within theme files. The reason these are not
+# supported should be self-evident. A theme file cannot set `theme` or
+# `config-file`. At the time of writing this, Ghostty will not show any
+# warnings or errors if you set these options in a theme file but they will
+# be silently ignored.
+#
+# Any additional colors specified via background, foreground, palette, etc.
+# will override the colors specified in the theme.
+#
+# To specify a different theme for light and dark mode, use the following
+# syntax: `light:theme-name,dark:theme-name`. For example:
+# `light:Rose Pine Dawn,dark:Rose Pine`. Whitespace around all values are
+# trimmed and order of light and dark does not matter. Both light and dark
+# must be specified in this form. In this form, the theme used will be
+# based on the current desktop environment theme.
+#
+# There are some known bugs with light/dark mode theming. These will
+# be fixed in a future update:
+#
+#   - macOS: titlebar tabs style is not updated when switching themes.
+theme = Nord
+
+# The font families to use.
+#
+# You can generate the list of valid values using the CLI:
+#
+#     ghostty +list-fonts
+#
+# This configuration can be repeated multiple times to specify preferred
+# fallback fonts when the requested codepoint is not available in the primary
+# font. This is particularly useful for multiple languages, symbolic fonts,
+# etc.
+#
+# Notes on emoji specifically: On macOS, Ghostty by default will always use
+# Apple Color Emoji and on Linux will always use Noto Emoji. You can
+# override this behavior by specifying a font family here that contains
+# emoji glyphs.
+#
+# The specific styles (bold, italic, bold italic) do not need to be
+# explicitly set. If a style is not set, then the regular style (font-family)
+# will be searched for stylistic variants. If a stylistic variant is not
+# found, Ghostty will use the regular style. This prevents falling back to a
+# different font family just to get a style such as bold. This also applies
+# if you explicitly specify a font family for a style. For example, if you
+# set `font-family-bold = FooBar` and "FooBar" cannot be found, Ghostty will
+# use whatever font is set for `font-family` for the bold style.
+#
+# Finally, some styles may be synthesized if they are not supported.
+# For example, if a font does not have an italic style and no alternative
+# italic font is specified, Ghostty will synthesize an italic style by
+# applying a slant to the regular style. If you want to disable these
+# synthesized styles then you can use the `font-style` configurations
+# as documented below.
+#
+# You can disable styles completely by using the `font-style` set of
+# configurations. See the documentation for `font-style` for more information.
+#
+# If you want to overwrite a previous set value rather than append a fallback,
+# specify the value as `""` (empty string) to reset the list and then set the
+# new values. For example:
+#
+#     font-family = ""
+#     font-family = "My Favorite Font"
+#
+# Setting any of these as CLI arguments will automatically clear the
+# values set in configuration files so you don't need to specify
+# `--font-family=""` before setting a new value. You only need to specify
+# this within config files if you want to clear previously set values in
+# configuration files or on the CLI if you want to clear values set on the
+# CLI.
+font-family = Hack
+
+# Font size in points. This value can be a non-integer and the nearest integer
+# pixel size will be selected. If you have a high dpi display where 1pt = 2px
+# then you can get an odd numbered pixel size by specifying a half point.
+#
+# For example, 13.5pt @ 2px/pt = 27px
+#
+# Changing this configuration at runtime will only affect existing
+# terminals that have NOT manually adjusted their font size in some way
+# (e.g. increased or decreased the font size). Terminals that have manually
+# adjusted their font size will retain their manually adjusted size.
+# Otherwise, the font size of existing terminals will be updated on
+# reload.
+#
+# On Linux with GTK, font size is scaled according to both display-wide and
+# text-specific scaling factors, which are often managed by your desktop
+# environment (e.g. the GNOME display scale and large text settings).
+font-size = 13
+
+# Horizontal window padding. This applies padding between the terminal cells
+# and the left and right window borders. The value is in points, meaning that
+# it will be scaled appropriately for screen DPI.
+#
+# If this value is set too large, the screen will render nothing, because the
+# grid will be completely squished by the padding. It is up to you as the user
+# to pick a reasonable value. If you pick an unreasonable value, a warning
+# will appear in the logs.
+#
+# Changing this configuration at runtime will only affect new terminals, i.e.
+# new windows, tabs, etc.
+#
+# To set a different left and right padding, specify two numerical values
+# separated by a comma. For example, `window-padding-x = 2,4` will set the
+# left padding to 2 and the right padding to 4. If you want to set both
+# paddings to the same value, you can use a single value. For example,
+# `window-padding-x = 2` will set both paddings to 2.
+window-padding-x = 4
+
+# Vertical window padding. This applies padding between the terminal cells and
+# the top and bottom window borders. The value is in points, meaning that it
+# will be scaled appropriately for screen DPI.
+#
+# If this value is set too large, the screen will render nothing, because the
+# grid will be completely squished by the padding. It is up to you as the user
+# to pick a reasonable value. If you pick an unreasonable value, a warning
+# will appear in the logs.
+#
+# Changing this configuration at runtime will only affect new terminals,
+# i.e. new windows, tabs, etc.
+#
+# To set a different top and bottom padding, specify two numerical values
+# separated by a comma. For example, `window-padding-y = 2,4` will set the
+# top padding to 2 and the bottom padding to 4. If you want to set both
+# paddings to the same value, you can use a single value. For example,
+# `window-padding-y = 2` will set both paddings to 2.
+window-padding-y = 4
+
+# Shell integration features to enable. These require our shell integration
+# to be loaded, either automatically via shell-integration or manually.
+#
+# The format of this is a list of features to enable separated by commas. If
+# you prefix a feature with `no-` then it is disabled. If you omit a feature,
+# its default value is used, so you must explicitly disable features you don't
+# want. You can also use `true` or `false` to turn all features on or off.
+#
+# Example: `cursor`, `no-cursor`, `sudo`, `no-sudo`, `title`, `no-title`
+#
+# Available features:
+#
+#   * `cursor` - Set the cursor to a bar at the prompt.
+#
+#   * `sudo` - Set sudo wrapper to preserve terminfo.
+#
+#   * `title` - Set the window title via shell integration.
+#
+#   * `ssh-env` - Enable SSH environment variable compatibility. Automatically
+#     converts TERM from `xterm-ghostty` to `xterm-256color` when connecting to
+#     remote hosts and propagates COLORTERM, TERM_PROGRAM, and TERM_PROGRAM_VERSION.
+#     Whether or not these variables will be accepted by the remote host(s) will
+#     depend on whether or not the variables are allowed in their sshd_config.
+#     (Available since: 1.2.0)
+#
+#   * `ssh-terminfo` - Enable automatic terminfo installation on remote hosts.
+#     Attempts to install Ghostty's terminfo entry using `infocmp` and `tic` when
+#     connecting to hosts that lack it. Requires `infocmp` to be available locally
+#     and `tic` to be available on remote hosts. Once terminfo is installed on a
+#     remote host, it will be automatically "cached" to avoid repeat installations.
+#     If desired, the `+ssh-cache` CLI action can be used to manage the installation
+#     cache manually using various arguments.
+#     (Available since: 1.2.0)
+#
+#   * `path` - Add Ghostty's binary directory to PATH. This ensures the `ghostty`
+#     command is available in the shell even if shell init scripts reset PATH.
+#     This is particularly useful on macOS where PATH is often overridden by
+#     system scripts. The directory is only added if not already present.
+#
+# SSH features work independently and can be combined for optimal experience:
+# when both `ssh-env` and `ssh-terminfo` are enabled, Ghostty will install its
+# terminfo on remote hosts and use `xterm-ghostty` as TERM, falling back to
+# `xterm-256color` with environment variables if terminfo installation fails
+shell-integration-features = cursor,sudo,title
+
+# The style of the cursor. This sets the default style. A running program can
+# still request an explicit cursor style using escape sequences (such as `CSI
+# q`). Shell configurations will often request specific cursor styles.
+#
+# Note that shell integration will automatically set the cursor to a bar at
+# a prompt, regardless of this configuration. You can disable that behavior
+# by specifying `shell-integration-features = no-cursor` or disabling shell
+# integration entirely.
+#
+# Valid values are:
+#
+#   * `block`
+#   * `bar`
+#   * `underline`
+#   * `block_hollow`
+cursor-style = bar
+
+# Sets the default blinking state of the cursor. This is just the default
+# state; running programs may override the cursor style using `DECSCUSR` (`CSI
+# q`).
+#
+# If this is not set, the cursor blinks by default. Note that this is not the
+# same as a "true" value, as noted below.
+#
+# If this is not set at all (`null`), then Ghostty will respect DEC Mode 12
+# (AT&T cursor blink) as an alternate approach to turning blinking on/off. If
+# this is set to any value other than null, DEC mode 12 will be ignored but
+# `DECSCUSR` will still be respected.
+#
+# Valid values are:
+#
+#   * ` ` (blank)
+#   * `true`
+#   * `false`
+cursor-style-blink = true
+
+# Whether to allow programs running in the terminal to read/write to the
+# system clipboard (OSC 52, for googling). The default is to allow clipboard
+# reading after prompting the user and allow writing unconditionally.
+#
+# Valid values are:
+#
+#   * `ask`
+#   * `allow`
+#   * `deny`
+#
+clipboard-read = allow
+clipboard-write = allow
+
+# Hide the mouse immediately when typing. The mouse becomes visible again
+# when the mouse is used (button, movement, etc.). Platform-specific behavior
+# may dictate other scenarios where the mouse is shown. For example on macOS,
+# the mouse is shown again when a new window, tab, or split is created.
+mouse-hide-while-typing = true
+
+# Enable or disable mouse reporting. When set to `false`, mouse events will
+# not be reported to terminal applications even if they request it. This
+# allows you to always use the mouse for selection and other terminal UI
+# interactions without applications capturing mouse input.
+#
+# When set to `true` (the default), terminal applications can request mouse
+# reporting and will receive mouse events according to their requested mode.
+#
+# This can be toggled at runtime using the `toggle_mouse_reporting` keybind
+# action.
+mouse-reporting = false
+
+# macOS doesn't have a distinct "alt" key and instead has the "option"
+# key which behaves slightly differently. On macOS by default, the
+# option key plus a character will sometimes produce a Unicode character.
+# For example, on US standard layouts option-b produces "∫". This may be
+# undesirable if you want to use "option" as an "alt" key for keybindings
+# in terminal programs or shells.
+#
+# This configuration lets you change the behavior so that option is treated
+# as alt.
+#
+# The default behavior (unset) will depend on your active keyboard
+# layout. If your keyboard layout is one of the keyboard layouts listed
+# below, then the default value is "true". Otherwise, the default
+# value is "false". Keyboard layouts with a default value of "true" are:
+#
+#   - U.S. Standard
+#   - U.S. International
+#
+# Note that if an *Option*-sequence doesn't produce a printable character, it
+# will be treated as *Alt* regardless of this setting. (e.g. `alt+ctrl+a`).
+#
+# Explicit values that can be set:
+#
+# If `true`, the *Option* key will be treated as *Alt*. This makes terminal
+# sequences expecting *Alt* to work properly, but will break Unicode input
+# sequences on macOS if you use them via the *Alt* key.
+#
+# You may set this to `false` to restore the macOS *Alt* key unicode
+# sequences but this will break terminal sequences expecting *Alt* to work.
+#
+# The values `left` or `right` enable this for the left or right *Option*
+# key, respectively.
+macos-option-as-alt = true
+
+# The size of the scrollback buffer in bytes. This also includes the active
+# screen. No matter what this is set to, enough memory will always be
+# allocated for the visible screen and anything leftover is the limit for
+# the scrollback.
+#
+# When this limit is reached, the oldest lines are removed from the
+# scrollback.
+#
+# Scrollback currently exists completely in memory. This means that the
+# larger this value, the larger potential memory usage. Scrollback is
+# allocated lazily up to this limit, so if you set this to a very large
+# value, it will not immediately consume a lot of memory.
+#
+# This size is per terminal surface, not for the entire application.
+#
+# It is not currently possible to set an unlimited scrollback buffer.
+# This is a future planned feature.
+#
+# This can be changed at runtime but will only affect new terminal surfaces.
+scrollback-limit = 10000000000
