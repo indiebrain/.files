@@ -1,5 +1,5 @@
 **/.config/containers
 **/.config/iterm2/AppSupport
 **/bash/.bashrc.local
-**/git/.gitconfig.identity
+**/git/.gitconfig.local
 !**/.gitkeep
