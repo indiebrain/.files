@@ -35,6 +35,16 @@
 (setq use-hard-newlines nil)
 (setq adaptive-fill-mode t)
 
+;;; Tool version manager (mise.el)
+(cond ((executable-find "mise")
+       (indiebrain-emacs-package mise
+	 (:install t)
+	 (add-hook 'after-init-hook #'global-mise-mode)))
+      ((executable-find "asdf")
+       (indiebrain-emacs-package asdf
+	 (:install "https://github.com/tabfugnic/asdf.el")
+	 (asdf-enable))))
+
 ;;; Comments (newcomment.el and indiebrain-comment.el)
 (indiebrain-emacs-package newcomment
   (setq comment-empty-lines t)
@@ -47,7 +57,7 @@
 
 (indiebrain-emacs-package indiebrain-comment
   (setq indiebrain-comment-comment-keywords
-        '("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
+	'("TODO" "NOTE" "XXX" "REVIEW" "FIXME"))
   (setq indiebrain-comment-timestamp-format-concise "%F")
   (setq indiebrain-comment-timestamp-format-verbose "%F %T %z")
   (indiebrain-emacs-keybind global-map
@@ -59,9 +69,9 @@
   (setq electric-pair-inhibit-predicate 'electric-pair-conservative-inhibit)
   (setq electric-pair-preserve-balance t)
   (setq electric-pair-pairs
-        '((8216 . 8217)
-          (8220 . 8221)
-          (171 . 187)))
+	'((8216 . 8217)
+	  (8220 . 8221)
+	  (171 . 187)))
   (setq electric-pair-skip-self 'electric-pair-default-skip-self)
   (setq electric-pair-skip-whitespace nil)
   (setq electric-pair-skip-whitespace-chars '(9 10 32))
@@ -112,8 +122,8 @@
 
 (indiebrain-emacs-package indiebrain-spell
   (setq indiebrain-spell-dictionaries
-        '(("EN English" . "en")
-          ("FR Français" . "fr")))
+	'(("EN English" . "en")
+	  ("FR Français" . "fr")))
 
   ;; Also check indiebrain-spell.el for what I am doing with
   ;; `indiebrain-spell-ispell-display-buffer'.  Then refer to the
@@ -126,9 +136,9 @@
 ;;;; Dictionary
 (indiebrain-emacs-package dictionary
   (setq dictionary-server "dict.org"
-          dictionary-default-popup-strategy "lev" ; read doc string
-          dictionary-create-buttons nil
-          dictionary-use-single-buffer t)
+	  dictionary-default-popup-strategy "lev" ; read doc string
+	  dictionary-create-buttons nil
+	  dictionary-use-single-buffer t)
   (indiebrain-emacs-keybind global-map "C-c d" #'dictionary-search))
 
 ;;; In buffer linting / checking
@@ -143,11 +153,11 @@
   (setq flymake-proc-compilation-prevents-syntax-check t)
   (setq flymake-wrap-around nil)
   (setq flymake-mode-line-format
-        '("" flymake-mode-line-exception flymake-mode-line-counters))
+	'("" flymake-mode-line-exception flymake-mode-line-counters))
   (setq flymake-mode-line-counter-format
-        '(" " flymake-mode-line-error-counter
-          flymake-mode-line-warning-counter
-          flymake-mode-line-note-counter ""))
+	'(" " flymake-mode-line-error-counter
+	  flymake-mode-line-warning-counter
+	  flymake-mode-line-note-counter ""))
 
   (defvar indiebrain/flymake-mode-projects-path
     (file-name-as-directory (expand-file-name "Developer" "~/"))
@@ -159,10 +169,10 @@
 
   (defun indiebrain/flymake-mode-in-my-projects ()
     (when-let* ((file (buffer-file-name))
-                ((string-prefix-p indiebrain/flymake-mode-projects-path
-                                  (expand-file-name file)))
-                ((not (file-directory-p file)))
-                ((file-regular-p file)))
+		((string-prefix-p indiebrain/flymake-mode-projects-path
+				  (expand-file-name file)))
+		((not (file-directory-p file)))
+		((file-regular-p file)))
       (add-hook 'find-file-hook #'indiebrain/flymake-mode-lexical-binding nil t)))
 
   (add-hook 'emacs-lisp-mode-hook #'indiebrain/flymake-mode-in-my-projects)
@@ -203,11 +213,6 @@
 ;;; Handle performance for very long lines (so-long.el)
 (indiebrain-emacs-package so-long
   (global-so-long-mode 1))
-
-;;; asdf version manager integration
-(indiebrain-emacs-package asdf
-  (:install "https://github.com/tabfugnic/asdf.el")
-  (asdf-enable))
 
 ;;; Language Server Protocols (lsp-mode)
 (indiebrain-emacs-package which-key
