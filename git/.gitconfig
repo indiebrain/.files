@@ -1,6 +1,3 @@
-[include]
-    path = .gitconfig.identity
-
 [diff]
     algorithm = patience
 
@@ -40,3 +37,6 @@
 
 [feature]
     manyFiles = true
+
+[include]
+    path = .gitconfig.local
