@@ -193,8 +193,15 @@ fi
 [ -f $HOME/.ripgreprc ] && export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"
 
 # asdf-vm tool manager
-export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
-. <(asdf completion bash)
+if type asdf &> /dev/null; then
+    export PATH="${ASDF_DATA_DIR:-$HOME/.asdf}/shims:$PATH"
+    . <(asdf completion bash)
+fi
+
+# mise tool manager
+if type mise &> /dev/null; then
+    eval "$(mise activate bash)"
+fi
 
 # Per-host shell configuration overrides
 [ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
