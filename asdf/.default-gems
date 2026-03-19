@@ -1,4 +1,9 @@
 bundler
+licensee
+flay
+flog
 pry
 rcodetools
+reek
 ruby-lsp
+rubycritic
