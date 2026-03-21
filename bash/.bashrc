@@ -83,8 +83,8 @@ export MANPAGER="$PAGER"
 
 # Setup the default editor
 # Default editor.
-export VISUAL="emacsclient -c -a emacs"
-export EDITOR="emacsclient -t -a emacs"
+export VISUAL="emacsclient-editor"
+export EDITOR="emacsclient-editor"
 
 # Setup the Primary Prompt String - $PS1. See the GNU Bash manual's
 # "Controlling the Prompt" section:
