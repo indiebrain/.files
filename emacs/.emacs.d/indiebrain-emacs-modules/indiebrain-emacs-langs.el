@@ -44,7 +44,7 @@
 (when (executable-find "asdf")
   (indiebrain-emacs-package asdf
     (:install "https://github.com/tabfugnic/asdf.el")
-    (asdf-enable))))
+    (asdf-enable)))
 
 ;;; Comments (newcomment.el and indiebrain-comment.el)
 (indiebrain-emacs-package newcomment
@@ -170,10 +170,10 @@
 
   (defun indiebrain/flymake-mode-in-my-projects ()
     (when-let* ((file (buffer-file-name))
-        ((string-prefix-p indiebrain/flymake-mode-projects-path
-                  (expand-file-name file)))
-        ((not (file-directory-p file)))
-        ((file-regular-p file)))
+	((string-prefix-p indiebrain/flymake-mode-projects-path
+		  (expand-file-name file)))
+	((not (file-directory-p file)))
+	((file-regular-p file)))
       (add-hook 'find-file-hook #'indiebrain/flymake-mode-lexical-binding nil t)))
 
   (add-hook 'emacs-lisp-mode-hook #'indiebrain/flymake-mode-in-my-projects)
