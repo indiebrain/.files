@@ -2,4 +2,5 @@
 **/.config/iterm2/AppSupport
 **/bash/.bashrc.local
 **/git/.gitconfig.local
+**/ssh/.ssh/id*
 !**/.gitkeep
