@@ -136,6 +136,11 @@ fi
 
 ## Get a graphical representation of the clean/dirty state of a git repository
 
+### Include git ps1 helpers
+
+#### Arch Linux
+[[ -f /usr/share/git/completion/git-prompt.sh ]] && source  /usr/share/git/completion/git-prompt.sh
+
 ### Configure git PS1
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
