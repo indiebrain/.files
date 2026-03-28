@@ -173,6 +173,432 @@ font-family = Hack
 # environment (e.g. the GNOME display scale and large text settings).
 font-size = 13
 
+# Key bindings. The format is `trigger=action`. Duplicate triggers will
+# overwrite previously set values. The list of actions is available in
+# the documentation or using the `ghostty +list-actions` command.
+#
+# Trigger: `+`-separated list of keys and modifiers. Example: `ctrl+a`,
+# `ctrl+shift+b`, `up`.
+#
+# If the key is a single Unicode codepoint, the trigger will match
+# any presses that produce that codepoint. These are impacted by
+# keyboard layouts. For example, `a` will match the `a` key on a
+# QWERTY keyboard, but will match the `q` key on a AZERTY keyboard
+# (assuming US physical layout).
+#
+# For Unicode codepoints, matching is done by comparing the set of
+# modifiers with the unmodified codepoint. The unmodified codepoint is
+# sometimes called an "unshifted character" in other software, but all
+# modifiers are considered, not only shift. For example, `ctrl+a` will match
+# `a` but not `ctrl+shift+a` (which is `A` on a US keyboard).
+#
+# Further, codepoint matching is case-insensitive and the unmodified
+# codepoint is always case folded for comparison. As a result,
+# `ctrl+A` configured will match when `ctrl+a` is pressed. Note that
+# this means some key combinations are impossible depending on keyboard
+# layout. For example, `ctrl+_` is impossible on a US keyboard because
+# `_` is `shift+-` and `ctrl+shift+-` is not equal to `ctrl+_` (because
+# the modifiers don't match!). More details on impossible key combinations
+# can be found at this excellent source written by Qt developers:
+# https://doc.qt.io/qt-6/qkeysequence.html#keyboard-layout-issues
+#
+# Physical key codes can be specified by using any of the key codes
+# as specified by the [W3C specification](https://www.w3.org/TR/uievents-code/).
+# For example, `KeyA` will match the physical `a` key on a US standard
+# keyboard regardless of the keyboard layout. These are case-sensitive.
+#
+# For aesthetic reasons, the w3c codes also support snake case. For
+# example, `key_a` is equivalent to `KeyA`. The only exceptions are
+# function keys, e.g. `F1` is `f1` (no underscore). This is a consequence
+# of our internal code using snake case but is purposely supported
+# and tested so it is safe to use. It allows an all-lowercase binding
+# which I find more aesthetically pleasing.
+#
+# Function keys such as `insert`, `up`, `f5`, etc. are also specified
+# using the keys as specified by the previously linked W3C specification.
+#
+# Physical keys always match with a higher priority than Unicode codepoints,
+# so if you specify both `a` and `KeyA`, the physical key will always be used
+# regardless of what order they are configured.
+#
+# The special key `catch_all` can be used to match any key that is not
+# otherwise bound. This can be combined with modifiers, for example
+# `ctrl+catch_all` will match any key pressed with `ctrl` that is not
+# otherwise bound. When looking up a binding, Ghostty first tries to match
+# `catch_all` with modifiers. If no match is found and the event has
+# modifiers, it falls back to `catch_all` without modifiers.
+#
+# Valid modifiers are `shift`, `ctrl` (alias: `control`), `alt` (alias: `opt`,
+# `option`), and `super` (alias: `cmd`, `command`). You may use the modifier
+# or the alias. When debugging keybinds, the non-aliased modifier will always
+# be used in output.
+#
+# Note: The fn or "globe" key on keyboards are not supported as a
+# modifier. This is a limitation of the operating systems and GUI toolkits
+# that Ghostty uses.
+#
+# Some additional notes for triggers:
+#
+#   * modifiers cannot repeat, `ctrl+ctrl+a` is invalid.
+#
+#   * modifiers and keys can be in any order, `shift+a+ctrl` is *weird*,
+#     but valid.
+#
+#   * only a single key input is allowed, `ctrl+a+b` is invalid.
+#
+# You may also specify multiple triggers separated by `>` to require a
+# sequence of triggers to activate the action. For example,
+# `ctrl+a>n=new_window` will only trigger the `new_window` action if the
+# user presses `ctrl+a` followed separately by `n`. In other software, this
+# is sometimes called a leader key, a key chord, a key table, etc. There
+# is no hardcoded limit on the number of parts in a sequence.
+#
+# Warning: If you define a sequence as a CLI argument to `ghostty`,
+# you probably have to quote the keybind since `>` is a special character
+# in most shells. Example: ghostty --keybind='ctrl+a>n=new_window'
+#
+# A trigger sequence has some special handling:
+#
+#   * Ghostty will wait an indefinite amount of time for the next key in
+#     the sequence. There is no way to specify a timeout. The only way to
+#     force the output of a prefix key is to assign another keybind to
+#     specifically output that key (e.g. `ctrl+a>ctrl+a=text:foo`) or
+#     press an unbound key which will send both keys to the program.
+#
+#   * If an unbound key is pressed during a sequence and a `catch_all`
+#     binding exists that would `ignore` the input, the entire sequence
+#     is dropped and nothing happens. Otherwise, the entire sequence is
+#     encoded and sent to the running program as if no keybind existed.
+#
+#   * If a prefix in a sequence is previously bound, the sequence will
+#     override the previous binding. For example, if `ctrl+a` is bound to
+#     `new_window` and `ctrl+a>n` is bound to `new_tab`, pressing `ctrl+a`
+#     will do nothing.
+#
+#   * Adding to the above, if a previously bound sequence prefix is
+#     used in a new, non-sequence binding, the entire previously bound
+#     sequence will be unbound. For example, if you bind `ctrl+a>n` and
+#     `ctrl+a>t`, and then bind `ctrl+a` directly, both `ctrl+a>n` and
+#     `ctrl+a>t` will become unbound.
+#
+#   * Trigger sequences are not allowed for `global:` or `all:`-prefixed
+#     triggers. This is a limitation we could remove in the future.
+#
+# Action is the action to take when the trigger is satisfied. It takes the
+# format `action` or `action:param`. The latter form is only valid if the
+# action requires a parameter.
+#
+#   * `ignore` - Do nothing, ignore the key input. This can be used to
+#     black hole certain inputs to have no effect.
+#
+#   * `unbind` - Remove the binding. This makes it so the previous action
+#     is removed, and the key will be sent through to the child command
+#     if it is printable. Unbind will remove any matching trigger,
+#     including `physical:`-prefixed triggers without specifying the
+#     prefix.
+#
+#   * `csi:text` - Send a CSI sequence. e.g. `csi:A` sends "cursor up".
+#
+#   * `esc:text` - Send an escape sequence. e.g. `esc:d` deletes to the
+#     end of the word to the right.
+#
+#   * `text:text` - Send a string. Uses Zig string literal syntax.
+#     e.g. `text:\x15` sends Ctrl-U.
+#
+#   * All other actions can be found in the documentation or by using the
+#     `ghostty +list-actions` command.
+#
+# Some notes for the action:
+#
+#   * The parameter is taken as-is after the `:`. Double quotes or
+#     other mechanisms are included and NOT parsed. If you want to
+#     send a string value that includes spaces, wrap the entire
+#     trigger/action in double quotes. Example: `--keybind="up=csi:A B"`
+#
+# There are some additional special values that can be specified for
+# keybind:
+#
+#   * `keybind=clear` will clear all set keybindings. Warning: this
+#     removes ALL keybindings up to this point, including the default
+#     keybindings.
+#
+# The keybind trigger can be prefixed with some special values to change
+# the behavior of the keybind. These are:
+#
+#  * `all:`
+#
+#    Make the keybind apply to all terminal surfaces. By default,
+#    keybinds only apply to the focused terminal surface. If this is true,
+#    then the keybind will be sent to all terminal surfaces. This only
+#    applies to actions that are surface-specific. For actions that
+#    are already global (e.g. `quit`), this prefix has no effect.
+#
+#    Available since: 1.0.0
+#
+#  * `global:`
+#
+#    Make the keybind global. By default, keybinds only work within Ghostty
+#    and under the right conditions (application focused, sometimes terminal
+#    focused, etc.). If you want a keybind to work globally across your system
+#    (e.g. even when Ghostty is not focused), specify this prefix.
+#    This prefix implies `all:`.
+#
+#    Note: this does not work in all environments; see the additional notes
+#    below for more information.
+#
+#    Available since: 1.0.0 on macOS, 1.2.0 on GTK
+#
+#  * `unconsumed:`
+#
+#    Do not consume the input. By default, a keybind will consume the input,
+#    meaning that the associated encoding (if any) will not be sent to the
+#    running program in the terminal. If you wish to send the encoded value
+#    to the program, specify the `unconsumed:` prefix before the entire
+#    keybind. For example: `unconsumed:ctrl+a=reload_config`. `global:` and
+#    `all:`-prefixed keybinds will always consume the input regardless of
+#    this setting. Since they are not associated with a specific terminal
+#    surface, they're never encoded.
+#
+#    Available since: 1.0.0
+#
+#  * `performable:`
+#
+#    Only consume the input if the action is able to be performed.
+#    For example, the `copy_to_clipboard` action will only consume the input
+#    if there is a selection to copy. If there is no selection, Ghostty
+#    behaves as if the keybind was not set. This has no effect with `global:`
+#    or `all:`-prefixed keybinds. For key sequences, this will reset the
+#    sequence if the action is not performable (acting identically to not
+#    having a keybind set at all).
+#
+#    Performable keybinds will not appear as menu shortcuts in the
+#    application menu. This is because the menu shortcuts force the
+#    action to be performed regardless of the state of the terminal.
+#    Performable keybinds will still work, they just won't appear as
+#    a shortcut label in the menu.
+#
+#    Available since: 1.1.0
+#
+# Keybind triggers are not unique per prefix combination. For example,
+# `ctrl+a` and `global:ctrl+a` are not two separate keybinds. The keybind
+# set later will overwrite the keybind set earlier. In this case, the
+# `global:` keybind will be used.
+#
+# Multiple prefixes can be specified. For example,
+# `global:unconsumed:ctrl+a=reload_config` will make the keybind global
+# and not consume the input to reload the config.
+#
+# Note: `global:` is only supported on macOS and certain Linux platforms.
+#
+# On macOS, this feature requires accessibility permissions to be granted
+# to Ghostty. When a `global:` keybind is specified and Ghostty is launched
+# or reloaded, Ghostty will attempt to request these permissions.
+# If the permissions are not granted, the keybind will not work. On macOS,
+# you can find these permissions in System Preferences -> Privacy & Security
+# -> Accessibility.
+#
+# On Linux, you need a desktop environment that implements the
+# [Global Shortcuts](https://flatpak.github.io/xdg-desktop-portal/docs/doc-org.freedesktop.portal.GlobalShortcuts.html)
+# protocol as a part of its XDG desktop protocol implementation.
+# Desktop environments that are known to support (or not support)
+# global shortcuts include:
+#
+#  - Users using KDE Plasma (since [5.27](https://kde.org/announcements/plasma/5/5.27.0/#wayland))
+#    and GNOME (since [48](https://release.gnome.org/48/#and-thats-not-all)) should be able
+#    to use global shortcuts with little to no configuration.
+#
+#  - Some manual configuration is required on Hyprland. Consult the steps
+#    outlined on the [Hyprland Wiki](https://wiki.hyprland.org/Configuring/Binds/#dbus-global-shortcuts)
+#    to set up global shortcuts correctly.
+#    (Important: [`xdg-desktop-portal-hyprland`](https://wiki.hyprland.org/Hypr-Ecosystem/xdg-desktop-portal-hyprland/)
+#    must also be installed!)
+#
+#  - Notably, global shortcuts have not been implemented on wlroots-based
+#    compositors like Sway (see [upstream issue](https://github.com/emersion/xdg-desktop-portal-wlr/issues/240)).
+#
+# ## Chained Actions
+#
+# A keybind can have multiple actions by using the `chain` keyword for
+# subsequent actions. When a keybind is activated, all chained actions are
+# executed in order. The syntax is:
+#
+# ```ini
+# keybind = ctrl+a=new_window
+# keybind = chain=goto_split:left
+# ```
+#
+# This binds `ctrl+a` to first open a new window, then move focus to the
+# left split. Each `chain` entry appends an action to the most recently
+# defined keybind. You can chain as many actions as you want:
+#
+# ```ini
+# keybind = ctrl+a=new_window
+# keybind = chain=goto_split:left
+# keybind = chain=toggle_fullscreen
+# ```
+#
+# Chained actions cannot have prefixes like `global:` or `unconsumed:`.
+# The flags from the original keybind apply to the entire chain.
+#
+# Chained actions work with key sequences as well. For example:
+#
+# ```ini
+# keybind = ctrl+a>n=new_window
+# keybind = chain=goto_split:left
+# ````
+#
+# Chains with key sequences apply to the most recent binding in the
+# sequence.
+#
+# Chained keybinds are available since Ghostty 1.3.0.
+#
+# ## Key Tables
+#
+# You may also create a named set of keybindings known as a "key table."
+# A key table must be explicitly activated for the bindings to become
+# available. This can be used to implement features such as a
+# "copy mode", "vim mode", etc. Generically, this can implement modal
+# keyboard input.
+#
+# Key tables are defined using the syntax `<table>/<binding>`. The
+# `<binding>` value is everything documented above for keybinds. The
+# `<table>` value is the name of the key table. Table names can contain
+# anything except `/`, `=`, `+`, and `>`. The characters `+` and `>` are
+# reserved for keybind syntax (modifier combinations and key sequences).
+# For example `foo/ctrl+a=new_window` defines a binding within a table
+# named `foo`.
+#
+# Tables are activated and deactivated using the binding actions
+# `activate_key_table:<name>` and `deactivate_key_table`. Other table
+# related binding actions also exist; see the documentation for a full list.
+# These are the primary way to interact with key tables.
+#
+# Binding lookup proceeds from the innermost table outward, so keybinds in
+# the default table remain available unless explicitly unbound in an inner
+# table.
+#
+# A key table has some special syntax and handling:
+#
+#   * `<name>/` (with no binding) defines and clears a table, resetting all
+#     of its keybinds and settings.
+#
+#   * You cannot activate a table that is already the innermost table; such
+#     attempts are ignored. However, the same table can appear multiple times
+#     in the stack as long as it is not innermost (e.g., `A -> B -> A -> B`
+#     is valid, but `A -> B -> B` is not).
+#
+#   * A table can be activated in one-shot mode using
+#     `activate_key_table_once:<name>`. A one-shot table is automatically
+#     deactivated when any non-catch-all binding is invoked.
+#
+#   * Key sequences work within tables: `foo/ctrl+a>ctrl+b=new_window`.
+#     If an invalid key is pressed, the sequence ends but the table remains
+#     active.
+#
+#   * Chain actions work within tables, the `chain` keyword applies to
+#     the most recently defined binding in the table. e.g. if you set
+#     `table/ctrl+a=new_window` you can chain by using `chain=text:hello`.
+#     Important: chain itself doesn't get prefixed with the table name,
+#     since it applies to the most recent binding in any table.
+#
+#   * Prefixes like `global:` work within tables:
+#     `foo/global:ctrl+a=new_window`.
+#
+# Key tables are available since Ghostty 1.3.0.
+keybind = super+shift+,=reload_config
+keybind = super+,=open_config
+keybind = copy=copy_to_clipboard:mixed
+keybind = paste=paste_from_clipboard
+keybind = super+c=copy_to_clipboard:mixed
+keybind = super+v=paste_from_clipboard
+keybind = super+==increase_font_size:1
+keybind = super++=increase_font_size:1
+keybind = super+-=decrease_font_size:1
+keybind = super+0=reset_font_size
+keybind = super+ctrl+shift+j=write_screen_file:copy,plain
+keybind = super+shift+j=write_screen_file:paste,plain
+keybind = super+alt+shift+j=write_screen_file:open,plain
+keybind = shift+arrow_left=adjust_selection:left
+keybind = shift+arrow_right=adjust_selection:right
+keybind = shift+arrow_up=adjust_selection:up
+keybind = shift+arrow_down=adjust_selection:down
+keybind = shift+page_up=adjust_selection:page_up
+keybind = shift+page_down=adjust_selection:page_down
+keybind = shift+home=adjust_selection:home
+keybind = shift+end=adjust_selection:end
+keybind = ctrl+shift+tab=previous_tab
+keybind = ctrl+tab=next_tab
+keybind = super+digit_1=goto_tab:1
+keybind = super+1=goto_tab:1
+keybind = super+digit_2=goto_tab:2
+keybind = super+2=goto_tab:2
+keybind = super+digit_3=goto_tab:3
+keybind = super+3=goto_tab:3
+keybind = super+digit_4=goto_tab:4
+keybind = super+4=goto_tab:4
+keybind = super+digit_5=goto_tab:5
+keybind = super+5=goto_tab:5
+keybind = super+digit_6=goto_tab:6
+keybind = super+6=goto_tab:6
+keybind = super+digit_7=goto_tab:7
+keybind = super+7=goto_tab:7
+keybind = super+digit_8=goto_tab:8
+keybind = super+8=goto_tab:8
+keybind = super+9=last_tab
+keybind = super+enter=toggle_fullscreen
+keybind = super+shift+enter=toggle_split_zoom
+keybind = super+shift+p=toggle_command_palette
+keybind = super+q=quit
+keybind = super+k=clear_screen
+keybind = super+a=select_all
+keybind = super+shift+t=undo
+keybind = super+z=undo
+keybind = super+shift+z=redo
+keybind = super+home=scroll_to_top
+keybind = super+end=scroll_to_bottom
+keybind = super+page_up=scroll_page_up
+keybind = super+page_down=scroll_page_down
+keybind = super+j=scroll_to_selection
+keybind = super+shift+arrow_up=jump_to_prompt:-1
+keybind = super+shift+arrow_down=jump_to_prompt:1
+keybind = super+n=new_window
+keybind = super+w=close_surface
+keybind = super+alt+w=close_tab:this
+keybind = super+shift+w=close_window
+keybind = super+alt+shift+w=close_all_windows
+keybind = super+t=new_tab
+keybind = super+shift+[=previous_tab
+keybind = super+shift+]=next_tab
+keybind = super+d=new_split:right
+keybind = super+shift+d=new_split:down
+keybind = super+[=goto_split:previous
+keybind = super+]=goto_split:next
+keybind = super+alt+arrow_up=goto_split:up
+keybind = super+alt+arrow_down=goto_split:down
+keybind = super+alt+arrow_left=goto_split:left
+keybind = super+alt+arrow_right=goto_split:right
+keybind = super+ctrl+arrow_up=resize_split:up,10
+keybind = super+ctrl+arrow_down=resize_split:down,10
+keybind = super+ctrl+arrow_left=resize_split:left,10
+keybind = super+ctrl+arrow_right=resize_split:right,10
+keybind = super+ctrl+==equalize_splits
+keybind = super+arrow_up=jump_to_prompt:-1
+keybind = super+arrow_down=jump_to_prompt:1
+keybind = super+f=start_search
+keybind = super+e=search_selection
+keybind = super+shift+f=end_search
+keybind = escape=end_search
+keybind = super+g=navigate_search:next
+keybind = super+shift+g=navigate_search:previous
+keybind = super+alt+i=inspector:toggle
+keybind = super+ctrl+f=toggle_fullscreen
+keybind = super+shift+v=paste_from_selection
+keybind = super+arrow_right=text:\\x05
+keybind = super+arrow_left=text:\\x01
+keybind = super+backspace=text:\\x15
+keybind = alt+arrow_left=esc:b
+keybind = alt+arrow_right=esc:f
+
 # Horizontal window padding. This applies padding between the terminal cells
 # and the left and right window borders. The value is in points, meaning that
 # it will be scaled appropriately for screen DPI.
