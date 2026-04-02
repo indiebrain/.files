@@ -210,3 +210,6 @@ fi
 
 # Per-host shell configuration overrides
 [ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
+
+# Stable K9S configuration directory across hosts
+export K9S_CONFIG_DIR=~/.config/k9s
