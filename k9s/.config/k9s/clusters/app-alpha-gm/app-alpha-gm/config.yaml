@@ -1,0 +1,12 @@
+k9s:
+  cluster: app-alpha-gm
+  namespace:
+    active: default
+    lockFavorites: false
+    favorites:
+      - default
+  view:
+    active: v1/namespaces
+  featureGates:
+    nodeShell: false
+  proxy: null

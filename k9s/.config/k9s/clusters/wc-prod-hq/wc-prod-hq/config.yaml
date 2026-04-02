@@ -1,0 +1,13 @@
+k9s:
+  cluster: wc-prod-hq
+  namespace:
+    active: milano-production
+    lockFavorites: false
+    favorites:
+      - milano-production
+      - default
+  view:
+    active: v1/pods milano-production
+  featureGates:
+    nodeShell: false
+  proxy: null
