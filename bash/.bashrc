@@ -213,3 +213,40 @@ fi
 
 # Stable K9S configuration directory across hosts
 export K9S_CONFIG_DIR=~/.config/k9s
+
+# Ollama config
+
+## flash Attention is a feature of most modern models that can
+## significantly reduce memory usage as the context size grows.
+export OLLAMA_FLASH_ATTENTION=1
+
+## Specifies the quantization type for the K/V (Key/Value) cache. This
+## setting is crucial for optimizing memory usage when running large
+## language models (LLMs). Supported Quantization Types
+##
+## The currently available K/V cache quantization types are:
+##
+##     - f16 - high precision and memory usage (default).
+##
+##     - q8_0 - 8-bit quantization, uses approximately 1/2 the memory
+##       of f16 with a very small loss in precision, this usually has
+##       no noticeable impact on the model’s quality (recommended if
+##       not using f16).
+##
+##     - q4_0 - 4-bit quantization, uses approximately 1/4 the memory
+##       of f16 with a small-medium loss in precision that may be more
+##       noticeable at higher context sizes.
+##
+export OLLAMA_KV_CACHE_TYPE=q8_0
+
+## The maximum time allowed for a request to complete in the Ollama
+## API: default 30s
+export OLLAMA_REQUEST_TIMEOUT=300s
+
+## How long models remain loaded in memory when idle: default: 5
+## minutes.
+export OLLAMA_KEEP_ALIVE=15m
+
+## Controls the maximum number of models that can be loaded into
+## memory at the same time when using the Ollama service
+export OLLAMA_MAX_LOADED_MODELS=2
