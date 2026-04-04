@@ -1,0 +1,890 @@
+#!/bin/bash
+set -uo pipefail
+
+WORKSPACE="${PWD}"
+REPORTS_DIR="$WORKSPACE/reports"
+TODAY="$(date +%Y-%m-%d)"
+
+mkdir -p "$REPORTS_DIR"
+rm -f "$REPORTS_DIR/.index_data"
+
+# === Helper functions ===
+
+strip_ruby_prefix() { echo "$1" | sed 's/^ruby-//'; }
+
+get_ruby_eol() {
+  local ver="$1"
+  case "$ver" in
+    4.0*) echo "Active|~2029+";;
+    3.4*) echo "Active|~2028-03";;
+    3.3*) echo "Active|~2027-03";;
+    3.2*) echo "EOL|2026-03-31";;
+    3.1*) echo "EOL|2025-03-31";;
+    3.0*) echo "EOL|2024-03-31";;
+    2.7*) echo "EOL|2023-03-31";;
+    2.6*) echo "EOL|2022-03-31";;
+    2.*) echo "EOL|long past";;
+    unknown) echo "Unknown|N/A";;
+    *) echo "Unknown|N/A";;
+  esac
+}
+
+get_rails_eol() {
+  local ver="$1"
+  case "$ver" in
+    8.0*|8.1*) echo "Active|~2027+";;
+    7.2*) echo "Active (maintenance)|~2026-08";;
+    7.1*) echo "EOL|~2025-10";;
+    7.0*) echo "EOL|~2025-04";;
+    6.1*) echo "EOL|2024-10-01";;
+    6.0*) echo "EOL|2023-06-01";;
+    5.*) echo "EOL|long past";;
+    3.*) echo "EOL|long past";;
+    N/A*) echo "N/A|N/A";;
+    *) echo "Unknown|N/A";;
+  esac
+}
+
+bar_chart() {
+  local pct="${1%%.*}"
+  [ -z "$pct" ] && pct=0
+  local filled=$((pct / 2))
+  [ "$filled" -gt 50 ] && filled=50
+  local empty=$((50 - filled))
+  local bar=""
+  for ((i=0; i<filled; i++)); do bar+="▓"; done
+  for ((i=0; i<empty; i++)); do bar+="░"; done
+  echo "$bar"
+}
+
+# Rewrite a markdown file in place so that all pipe tables have their columns
+# vertically aligned. Cell padding uses plain character length; this looks
+# correct for ASCII content and acceptably close for text that mixes in emoji.
+format_markdown_tables() {
+  local file="$1"
+  ruby - "$file" << 'RUBY'
+    path = ARGV[0]
+    lines = File.read(path).split("\n", -1)
+    sep_re = /\A\s*\|[\s\-:|]+\|\s*\z/
+    row_re = /\A\s*\|.*\|\s*\z/
+
+    split_row = ->(line) {
+      line.strip.sub(/\A\|/, '').sub(/\|\z/, '').split('|', -1).map(&:strip)
+    }
+
+    out = []
+    i = 0
+    while i < lines.length
+      if row_re.match?(lines[i]) && i + 1 < lines.length && sep_re.match?(lines[i + 1])
+        table = []
+        while i < lines.length && row_re.match?(lines[i])
+          table << lines[i]
+          i += 1
+        end
+        rows = table.map(&split_row)
+        col_count = rows.map(&:length).max
+        widths = Array.new(col_count, 0)
+        rows.each_with_index do |r, idx|
+          next if idx == 1 # separator row
+          r.each_with_index do |cell, c|
+            widths[c] = [widths[c], cell.length].max
+          end
+        end
+        rows.each_with_index do |r, idx|
+          if idx == 1
+            out << "| " + widths.map { |w| "-" * [w, 3].max }.join(" | ") + " |"
+          else
+            cells = Array.new(col_count) { |c| (r[c] || "").ljust(widths[c]) }
+            out << "| " + cells.join(" | ") + " |"
+          end
+        end
+      else
+        out << lines[i]
+        i += 1
+      end
+    end
+    File.write(path, out.join("\n"))
+RUBY
+}
+
+# Scale to 50 chars where max_pct = full bar
+bar_chart_scaled() {
+  local pct="${1%%.*}"
+  local max_pct="${2:-100}"
+  [ -z "$pct" ] && pct=0
+  local filled=$(( pct * 50 / max_pct ))
+  [ "$filled" -gt 50 ] && filled=50
+  [ "$filled" -lt 0 ] && filled=0
+  local empty=$((50 - filled))
+  local bar=""
+  for ((i=0; i<filled; i++)); do bar+="▓"; done
+  for ((i=0; i<empty; i++)); do bar+="░"; done
+  echo "$bar"
+}
+
+for dir in "$WORKSPACE"/*/; do
+  [ -f "$dir/Gemfile" ] || continue
+  PROJECT_NAME=$(basename "$dir")
+  PROJECT_ROOT="$dir"
+  REPORT="$REPORTS_DIR/${PROJECT_NAME}-health-report.md"
+
+  echo "=== Processing: $PROJECT_NAME ==="
+
+  # ========== Phase 2A: Versions ==========
+  RAW_RUBY_VER="unknown"
+  RUBY_VER_SOURCE=""
+  if [ -f "$PROJECT_ROOT/.ruby-version" ]; then
+    RAW_RUBY_VER=$(cat "$PROJECT_ROOT/.ruby-version" | tr -d '[:space:]')
+    RUBY_VER_SOURCE=".ruby-version"
+  elif [ -f "$PROJECT_ROOT/Gemfile.lock" ]; then
+    RAW_RUBY_VER=$(grep -oE 'ruby [0-9.]+' "$PROJECT_ROOT/Gemfile.lock" 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
+    [ -z "$RAW_RUBY_VER" ] && RAW_RUBY_VER="unknown" || RUBY_VER_SOURCE="Gemfile.lock"
+  fi
+
+  # Fallback: detect Ruby version from CI/CD configuration
+  if [ "$RAW_RUBY_VER" = "unknown" ]; then
+    # Dockerfile: FROM phusion/passenger-rubyXX (active or commented-out lines)
+    if [ -f "$PROJECT_ROOT/Dockerfile" ]; then
+      DOCKER_RUBY=$(grep -oE 'passenger-ruby[0-9]+' "$PROJECT_ROOT/Dockerfile" | head -1 | sed 's/passenger-ruby//')
+      if [ -n "$DOCKER_RUBY" ] && [ ${#DOCKER_RUBY} -ge 2 ]; then
+        MAJOR="${DOCKER_RUBY:0:1}"
+        MINOR="${DOCKER_RUBY:1}"
+        RAW_RUBY_VER="${MAJOR}.${MINOR}"
+        RUBY_VER_SOURCE="Dockerfile"
+      fi
+    fi
+  fi
+
+  if [ "$RAW_RUBY_VER" = "unknown" ]; then
+    # .travis.yml: rvm entries
+    if [ -f "$PROJECT_ROOT/.travis.yml" ]; then
+      TRAVIS_RUBY=$(grep -A1 '^rvm:' "$PROJECT_ROOT/.travis.yml" | grep -oE '[0-9]+\.[0-9.]+' | tail -1)
+      if [ -n "$TRAVIS_RUBY" ]; then
+        RAW_RUBY_VER="$TRAVIS_RUBY"
+        RUBY_VER_SOURCE=".travis.yml"
+      fi
+    fi
+  fi
+
+  if [ "$RAW_RUBY_VER" = "unknown" ]; then
+    # GitHub Actions: ruby-version in workflow files
+    for wf in "$PROJECT_ROOT"/.github/workflows/*.yml "$PROJECT_ROOT"/.github/workflows/*.yaml; do
+      [ -f "$wf" ] || continue
+      GHA_RUBY=$(grep -E 'ruby-version' "$wf" 2>/dev/null | grep -oE '[0-9]+\.[0-9.]+' | head -1)
+      if [ -n "$GHA_RUBY" ]; then
+        RAW_RUBY_VER="$GHA_RUBY"
+        RUBY_VER_SOURCE="GitHub Actions"
+        break
+      fi
+    done
+  fi
+
+  if [ "$RAW_RUBY_VER" = "unknown" ]; then
+    # .circleci/config.yml: ruby image or ruby-version
+    if [ -f "$PROJECT_ROOT/.circleci/config.yml" ]; then
+      CIRCLE_RUBY=$(grep -oE 'ruby:[0-9]+\.[0-9.]+' "$PROJECT_ROOT/.circleci/config.yml" 2>/dev/null | head -1 | sed 's/ruby://')
+      if [ -n "$CIRCLE_RUBY" ]; then
+        RAW_RUBY_VER="$CIRCLE_RUBY"
+        RUBY_VER_SOURCE="CircleCI"
+      fi
+    fi
+  fi
+
+  RUBY_VER=$(strip_ruby_prefix "$RAW_RUBY_VER")
+
+  # Annotate Ruby version with source when detected from CI/CD
+  RUBY_VER_DISPLAY="$RUBY_VER"
+  if [ -n "$RUBY_VER_SOURCE" ] && [ "$RUBY_VER_SOURCE" != ".ruby-version" ] && [ "$RUBY_VER_SOURCE" != "Gemfile.lock" ]; then
+    RUBY_VER_DISPLAY="~${RUBY_VER} (via $RUBY_VER_SOURCE)"
+  fi
+
+  RAILS_VER="N/A"
+  if [ -f "$PROJECT_ROOT/Gemfile.lock" ]; then
+    RAILS_VER=$(grep -E '^\s+rails \(' "$PROJECT_ROOT/Gemfile.lock" 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9.]+' | head -1 || echo "")
+    [ -z "$RAILS_VER" ] && RAILS_VER="N/A (not a Rails app)"
+  fi
+
+  HEAD_SHA=$(git -C "$PROJECT_ROOT" rev-parse HEAD 2>/dev/null || echo "not a git repo")
+
+  RUBY_EOL_INFO=$(get_ruby_eol "$RUBY_VER")
+  RUBY_STATUS=$(echo "$RUBY_EOL_INFO" | cut -d'|' -f1)
+  RUBY_EOL_DATE=$(echo "$RUBY_EOL_INFO" | cut -d'|' -f2)
+
+  RAILS_EOL_INFO=$(get_rails_eol "$RAILS_VER")
+  RAILS_STATUS=$(echo "$RAILS_EOL_INFO" | cut -d'|' -f1)
+  RAILS_EOL_DATE=$(echo "$RAILS_EOL_INFO" | cut -d'|' -f2)
+
+  # ========== Phase 2B: Tests ==========
+  HAS_RSPEC=false; [ -d "$PROJECT_ROOT/spec" ] && HAS_RSPEC=true
+  HAS_MINITEST=false; [ -d "$PROJECT_ROOT/test" ] && HAS_MINITEST=true
+
+  RSPEC_FILES=0; MINITEST_FILES=0
+  FRAMEWORK="none detected"
+  if $HAS_RSPEC; then
+    RSPEC_FILES=$(find "$PROJECT_ROOT/spec" -name "*_spec.rb" 2>/dev/null | wc -l | tr -d ' ')
+    FRAMEWORK="RSpec"
+  fi
+  if $HAS_MINITEST; then
+    MINITEST_FILES=$(find "$PROJECT_ROOT/test" -name "*_test.rb" 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$FRAMEWORK" = "none detected" ]; then FRAMEWORK="Minitest"; else FRAMEWORK="RSpec + Minitest"; fi
+  fi
+  TEST_FILES=$((RSPEC_FILES + MINITEST_FILES))
+
+  SOURCE_FILES=$(find "$PROJECT_ROOT" \( -path "*/app/*.rb" -o -path "*/lib/*.rb" \) \
+    -not -path "*/spec/*" -not -path "*/test/*" -not -path "*/vendor/*" 2>/dev/null | wc -l | tr -d ' ')
+  [ "$SOURCE_FILES" -eq 0 ] && SOURCE_FILES=1
+
+  TEST_RATIO="0"
+  if [ "$TEST_FILES" -gt 0 ]; then
+    TEST_RATIO=$(echo "$TEST_FILES $SOURCE_FILES" | awk '{printf "%.2f", $1/$2}')
+  fi
+
+  COVERAGE_PCT=""
+  if [ -f "$PROJECT_ROOT/coverage/.last_run.json" ]; then
+    COVERAGE_PCT=$(ruby -rjson -e 'puts JSON.parse(File.read("'"$PROJECT_ROOT/coverage/.last_run.json"'"))["result"]["line"]' 2>/dev/null || echo "")
+  fi
+
+  CI_FILES=""
+  for f in .github/workflows .circleci Jenkinsfile .travis.yml .gitlab-ci.yml azure-pipelines.yml bitbucket-pipelines.yml; do
+    [ -e "$PROJECT_ROOT/$f" ] && CI_FILES="$CI_FILES $f"
+  done
+
+  HAS_SIMPLECOV="No"
+  for f in spec/spec_helper.rb spec/rails_helper.rb test/test_helper.rb .simplecov; do
+    if [ -f "$PROJECT_ROOT/$f" ] && grep -ql 'SimpleCov\|simplecov' "$PROJECT_ROOT/$f" 2>/dev/null; then
+      HAS_SIMPLECOV="Yes"; break
+    fi
+  done
+
+  # ========== Phase 2C: Bundle Audit ==========
+  AUDIT_OUTPUT=$(cd "$PROJECT_ROOT" && bundle-audit check 2>&1 || true)
+  AUDIT_CLEAN=0
+  echo "$AUDIT_OUTPUT" | grep -q "No vulnerabilities found" && AUDIT_CLEAN=1
+  ADVISORY_COUNT=0
+  if [ "$AUDIT_CLEAN" -eq 0 ]; then
+    ADVISORY_COUNT=$(echo "$AUDIT_OUTPUT" | grep -c "^Name:" || true)
+  fi
+
+  # ========== Phase 2D: Velocity ==========
+  TOTAL_COMMITS=$(git -C "$PROJECT_ROOT" rev-list --count HEAD 2>/dev/null || echo "0")
+  RECENT_COMMITS=$(git -C "$PROJECT_ROOT" log --oneline --since="90 days ago" 2>/dev/null | wc -l | tr -d ' ')
+  YEARLY_COMMITS=$(git -C "$PROJECT_ROOT" log --oneline --since="365 days ago" 2>/dev/null | wc -l | tr -d ' ')
+  LAST_COMMIT_DATE=$(git -C "$PROJECT_ROOT" log -1 --format="%cd" --date=short 2>/dev/null || echo "unknown")
+
+  if [ "$RECENT_COMMITS" -gt 10 ]; then VELOCITY="Active"
+  elif [ "$RECENT_COMMITS" -ge 1 ]; then VELOCITY="Maintained"
+  elif [ "$YEARLY_COMMITS" -ge 1 ]; then VELOCITY="Stale"
+  else VELOCITY="Dormant"; fi
+
+  CONTRIBUTORS=$(git -C "$PROJECT_ROOT" log --format='%aN' 2>/dev/null | sort | uniq -c | sort -rn | head -10)
+  TOP_CONTRIBUTOR_COMMITS=$(echo "$CONTRIBUTORS" | head -1 | awk '{print $1}')
+  [ -z "$TOP_CONTRIBUTOR_COMMITS" ] && TOP_CONTRIBUTOR_COMMITS=0
+
+  BUS_FACTOR_PCT="0"
+  if [ "$TOTAL_COMMITS" -gt 0 ] && [ "$TOP_CONTRIBUTOR_COMMITS" -gt 0 ]; then
+    BUS_FACTOR_PCT=$(echo "$TOP_CONTRIBUTOR_COMMITS $TOTAL_COMMITS" | awk '{printf "%.1f", ($1/$2)*100}')
+  fi
+
+  YEARLY_CONTRIBUTORS=$(git -C "$PROJECT_ROOT" log --since="365 days ago" --format='%aN' 2>/dev/null | sort -u | wc -l | tr -d ' ')
+
+  BF_INT=${BUS_FACTOR_PCT%%.*}
+  [ -z "$BF_INT" ] && BF_INT=0
+  if [ "$BF_INT" -lt 40 ] && [ "$YEARLY_CONTRIBUTORS" -ge 3 ]; then BUS_ASSESSMENT="Healthy"
+  elif [ "$BF_INT" -gt 70 ] || [ "$YEARLY_CONTRIBUTORS" -le 1 ]; then BUS_ASSESSMENT="Critical"
+  else BUS_ASSESSMENT="At Risk"; fi
+
+  CHURN_FILES=$(git -C "$PROJECT_ROOT" log --since="365 days ago" --pretty=format: --name-only 2>/dev/null \
+    | grep -v '^$' | grep -v '_spec\.rb$' | grep -v '_test\.rb$' \
+    | sort | uniq -c | sort -rn | head -10 || true)
+
+  # ========== Phase 2E: Code Quality ==========
+  # Collect ruby source paths relative to PROJECT_ROOT so tool output (flog, flay,
+  # reek) cannot leak absolute paths from the local filesystem into the reports.
+  RUBY_SRC_FILES=$(cd "$PROJECT_ROOT" && find . -name "*.rb" \
+    -not -path "*/.git/*" -not -path "*/vendor/*" -not -path "*/node_modules/*" \
+    -not -path "*/spec/*" -not -path "*/test/*" -not -path "*/db/migrate/*" 2>/dev/null \
+    | sed 's|^\./||' | head -200)
+
+  REEK_TOTAL=0; SMELL_BREAKDOWN=""; FLOG_OUTPUT=""; FLOG_SUMMARY=""; FLAY_OUTPUT="No duplication found."
+
+  if [ -n "$RUBY_SRC_FILES" ]; then
+    # Reek exits 2 when it finds smells, so a trailing `|| echo "[]"` would
+    # append "[]" to valid JSON and break parsing under strict JSON libraries.
+    REEK_JSON=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs reek --format json 2>/dev/null)
+    [ -z "$REEK_JSON" ] && REEK_JSON="[]"
+    REEK_TOTAL=$(echo "$REEK_JSON" | ruby -rjson -e 'puts JSON.parse(STDIN.read).length' 2>/dev/null || echo "0")
+    REEK_VERSION=$(reek --version 2>/dev/null | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -1)
+    SMELL_BREAKDOWN=$(echo "$REEK_JSON" | ruby -rjson -e '
+      data = JSON.parse(STDIN.read)
+      version = ARGV[0] || "master"
+      name_to_param = ->(name) {
+        name.split(/([A-Z][a-z][a-z]*)/).map(&:strip).reject(&:empty?).join("-")
+      }
+      by_type = data.group_by { |s| s["smell_type"] }
+      by_type.sort_by { |_, v| -v.length }.first(15).each do |type, items|
+        slug = name_to_param.(type)
+        link = "https://github.com/troessner/reek/blob/v#{version}/docs/#{slug}.md"
+        puts "| [#{type}](#{link}) | #{items.length} |"
+      end
+    ' "$REEK_VERSION" 2>/dev/null || echo "")
+    FLOG_OUTPUT=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs flog -g 2>/dev/null | head -25 || echo "")
+    FLOG_SUMMARY=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs flog -s 2>/dev/null | head -3 || echo "")
+    FLAY_OUTPUT=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs flay 2>/dev/null || echo "No duplication found.")
+  fi
+
+  # ========== Phase 2F: Documentation Quality ==========
+
+  # F1: README
+  README_SCORE=0; README_DETAIL="No README.md found"
+  README_FILE="$PROJECT_ROOT/README.md"
+  README_LINES=0
+  if [ -f "$README_FILE" ]; then
+    README_LINES=$(wc -l < "$README_FILE" | tr -d ' ')
+    IS_BOILERPLATE=false
+    grep -qi "This README would normally" "$README_FILE" 2>/dev/null && [ "$README_LINES" -le 30 ] && IS_BOILERPLATE=true
+    if $IS_BOILERPLATE; then
+      README_SCORE=1; README_DETAIL="Boilerplate Rails scaffolding ($README_LINES lines)"
+    elif [ "$README_LINES" -le 50 ]; then
+      README_SCORE=3; README_DETAIL="Brief ($README_LINES lines)"
+    elif [ "$README_LINES" -le 150 ]; then
+      README_SCORE=5; README_DETAIL="Moderate ($README_LINES lines)"
+    else
+      README_SCORE=7; README_DETAIL="Comprehensive ($README_LINES lines)"
+    fi
+    SECTION_HITS=$(grep -ciE '^\s*##?\s*(setup|install|usage|getting.started|architecture|api|deploy|configuration|running|development)' "$README_FILE" 2>/dev/null || true)
+    if [ "$SECTION_HITS" -ge 2 ]; then
+      README_SCORE=$((README_SCORE + 1))
+      README_DETAIL="$README_DETAIL, $SECTION_HITS useful sections"
+    fi
+    [ "$README_SCORE" -gt 8 ] && README_SCORE=8
+  fi
+
+  # F2: Code-Level Docs
+  COMMENT_SCORE=0; YARD_SCORE=0; COMMENT_RATIO="0.0"; YARD_PCT="0.0"
+  YARD_FILE_COUNT=0; TOTAL_RUBY_LINES=0; COMMENT_LINES_COUNT=0; TOTAL_SRC_COUNT=0
+
+  if [ -n "$RUBY_SRC_FILES" ]; then
+    TOTAL_RUBY_LINES=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs cat 2>/dev/null | grep -cv '^\s*$' || echo 0)
+    COMMENT_LINES_COUNT=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs grep -ch '^\s*#' 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    if [ "$TOTAL_RUBY_LINES" -gt 0 ]; then
+      COMMENT_RATIO=$(echo "$COMMENT_LINES_COUNT $TOTAL_RUBY_LINES" | awk '{printf "%.1f", ($1/$2)*100}')
+      CR_INT=${COMMENT_RATIO%%.*}
+      if [ "$CR_INT" -ge 15 ]; then COMMENT_SCORE=5
+      elif [ "$CR_INT" -ge 10 ]; then COMMENT_SCORE=4
+      elif [ "$CR_INT" -ge 5 ]; then COMMENT_SCORE=3
+      elif [ "$CR_INT" -ge 3 ]; then COMMENT_SCORE=2
+      elif [ "$CR_INT" -ge 1 ]; then COMMENT_SCORE=1
+      fi
+    fi
+    TOTAL_SRC_COUNT=$(echo "$RUBY_SRC_FILES" | wc -l | tr -d ' ')
+    YARD_FILE_COUNT=$(cd "$PROJECT_ROOT" && echo "$RUBY_SRC_FILES" | xargs grep -lE '@param|@return|@example' 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$TOTAL_SRC_COUNT" -gt 0 ]; then
+      YARD_PCT=$(echo "$YARD_FILE_COUNT $TOTAL_SRC_COUNT" | awk '{printf "%.1f", ($1/$2)*100}')
+      YP_INT=${YARD_PCT%%.*}
+      if [ "$YP_INT" -ge 25 ]; then YARD_SCORE=3
+      elif [ "$YP_INT" -ge 10 ]; then YARD_SCORE=2
+      elif [ "$YP_INT" -ge 1 ]; then YARD_SCORE=1
+      fi
+    fi
+  fi
+  CODE_DOC_SCORE=$((COMMENT_SCORE + YARD_SCORE))
+
+  # F3: API & Architectural Docs
+  API_DOC_SCORE=0; DOCS_DIR_FILES=0; HAS_SWAGGER="No"; EXTRA_MD_COUNT=0; ROUTE_COMMENTS=0
+  DOCS_DIR_FILES=$(find "$PROJECT_ROOT/docs" -type f 2>/dev/null | wc -l | tr -d ' ')
+  [ "$DOCS_DIR_FILES" -gt 0 ] && API_DOC_SCORE=$((API_DOC_SCORE + 2))
+
+  SWAGGER_COUNT=$(find "$PROJECT_ROOT" -maxdepth 3 \( -name "*.yml" -o -name "*.yaml" -o -name "*.json" \) \
+    -exec grep -l -E '"openapi"|"swagger"|openapi:|swagger:' {} \; 2>/dev/null | wc -l | tr -d ' ')
+  [ "$SWAGGER_COUNT" -gt 0 ] && { API_DOC_SCORE=$((API_DOC_SCORE + 2)); HAS_SWAGGER="Yes"; }
+
+  EXTRA_MD_FILES=$(find "$PROJECT_ROOT" -maxdepth 1 -name "*.md" \
+    ! -name "README.md" ! -name "CLAUDE.md" ! -name "CHANGELOG.md" \
+    ! -name "CONTRIBUTING.md" ! -name "LICENSE.md" ! -name "CODE_OF_CONDUCT.md" 2>/dev/null)
+  EXTRA_MD_COUNT=$(echo "$EXTRA_MD_FILES" | grep -c '.' || true)
+  EXTRA_MD_NAMES=$(echo "$EXTRA_MD_FILES" | xargs -I{} basename {} 2>/dev/null | tr '\n' ', ' | sed 's/,$//')
+  [ "$EXTRA_MD_COUNT" -gt 0 ] && API_DOC_SCORE=$((API_DOC_SCORE + 1))
+
+  if [ -f "$PROJECT_ROOT/config/routes.rb" ]; then
+    ROUTE_COMMENTS=$(grep -c '^\s*#' "$PROJECT_ROOT/config/routes.rb" 2>/dev/null || true)
+    [ "$ROUTE_COMMENTS" -ge 5 ] && API_DOC_SCORE=$((API_DOC_SCORE + 1))
+  fi
+
+  # F4: Supporting Documents
+  SUPPORT_DOC_SCORE=0; HAS_CHANGELOG="Missing"; HAS_CONTRIBUTING="Missing"; HAS_LICENSE="Missing"; HAS_GH_TEMPLATES="Missing"
+  for f in CHANGELOG.md HISTORY.md CHANGELOG CHANGES.md; do
+    [ -f "$PROJECT_ROOT/$f" ] && { SUPPORT_DOC_SCORE=$((SUPPORT_DOC_SCORE + 1)); HAS_CHANGELOG="Present"; break; }
+  done
+  [ -f "$PROJECT_ROOT/CONTRIBUTING.md" ] && { SUPPORT_DOC_SCORE=$((SUPPORT_DOC_SCORE + 1)); HAS_CONTRIBUTING="Present"; }
+  for f in LICENSE LICENSE.md LICENSE.txt; do
+    [ -f "$PROJECT_ROOT/$f" ] && { SUPPORT_DOC_SCORE=$((SUPPORT_DOC_SCORE + 1)); HAS_LICENSE="Present"; break; }
+  done
+  GH_TEMPLATE_COUNT=$(find "$PROJECT_ROOT/.github" -name "*.md" 2>/dev/null | wc -l | tr -d ' ')
+  [ "$GH_TEMPLATE_COUNT" -gt 0 ] && { SUPPORT_DOC_SCORE=$((SUPPORT_DOC_SCORE + 1)); HAS_GH_TEMPLATES="Present ($GH_TEMPLATE_COUNT files)"; }
+
+  # F5: Tests as Documentation
+  TEST_DOC_SCORE=0; DESC_TEST_PCT="N/A"
+  if [ "$TEST_FILES" -gt 0 ]; then
+    TEST_DOC_SCORE=1
+    if [ "$SOURCE_FILES" -gt 0 ]; then
+      T_RATIO=$(echo "$TEST_FILES $SOURCE_FILES" | awk '{printf "%.2f", $1/$2}')
+      [ "$(echo "$T_RATIO >= 0.5" | bc)" -eq 1 ] && TEST_DOC_SCORE=$((TEST_DOC_SCORE + 1))
+      [ "$(echo "$T_RATIO >= 1.0" | bc)" -eq 1 ] && TEST_DOC_SCORE=$((TEST_DOC_SCORE + 1))
+    fi
+    DESCRIPTIVE_TESTS=$(find "$PROJECT_ROOT/spec" "$PROJECT_ROOT/test" \
+      \( -name "*_spec.rb" -o -name "*_test.rb" \) 2>/dev/null \
+      | xargs grep -lE '(describe|context)\s+["'"'"']' 2>/dev/null | wc -l | tr -d ' ')
+    if [ "$TEST_FILES" -gt 0 ]; then
+      DESC_TEST_PCT=$(echo "$DESCRIPTIVE_TESTS $TEST_FILES" | awk '{printf "%.0f", ($1/$2)*100}')
+      [ "$DESC_TEST_PCT" -ge 80 ] && TEST_DOC_SCORE=$((TEST_DOC_SCORE + 1))
+    fi
+  fi
+
+  # F6: Total
+  DOC_TOTAL=$((README_SCORE + CODE_DOC_SCORE + API_DOC_SCORE + SUPPORT_DOC_SCORE + TEST_DOC_SCORE))
+  if [ "$DOC_TOTAL" -le 5 ]; then DOC_RATING="🔴"; DOC_LABEL="Poor"
+  elif [ "$DOC_TOTAL" -le 13 ]; then DOC_RATING="🟡"; DOC_LABEL="Minimal"
+  else DOC_RATING="🟢"; DOC_LABEL="Adequate"; fi
+
+  # ========== EOL Risk ==========
+  EOL_RISK="🟢"
+  case "$RUBY_STATUS" in *EOL*) EOL_RISK="🔴";; *maintenance*) EOL_RISK="🟡";; *Unknown*) EOL_RISK="🟡";; esac
+  case "$RAILS_STATUS" in *EOL*) EOL_RISK="🔴";; *maintenance*) [ "$EOL_RISK" != "🔴" ] && EOL_RISK="🟡";; esac
+
+  HAS_TESTS="no"
+  [ "$TEST_FILES" -gt 0 ] && HAS_TESTS="yes ($TEST_FILES)"
+
+  QUALITY_RATING="Good"
+  if [ "$REEK_TOTAL" -gt 50 ]; then QUALITY_RATING="Needs Work"
+  elif [ "$REEK_TOTAL" -gt 10 ]; then QUALITY_RATING="Fair"; fi
+
+  # ========== Build key findings ==========
+  KEY_FINDINGS=""
+  echo "$RUBY_STATUS" | grep -q "EOL" && KEY_FINDINGS="${KEY_FINDINGS}Ruby $RUBY_VER_DISPLAY is past end-of-life — upgrade immediately. "
+  echo "$RAILS_STATUS" | grep -q "EOL" && KEY_FINDINGS="${KEY_FINDINGS}Rails $RAILS_VER is past end-of-life — upgrade immediately. "
+  [ "$ADVISORY_COUNT" -gt 0 ] && KEY_FINDINGS="${KEY_FINDINGS}${ADVISORY_COUNT} security advisories found. "
+  [ "$TEST_FILES" -eq 0 ] && KEY_FINDINGS="${KEY_FINDINGS}No automated tests. "
+  [ "$VELOCITY" = "Dormant" ] && KEY_FINDINGS="${KEY_FINDINGS}Project is dormant (no commits in 1 year). "
+  [ "$BUS_ASSESSMENT" = "Critical" ] && KEY_FINDINGS="${KEY_FINDINGS}Bus factor is critical. "
+  [ "$DOC_LABEL" = "Poor" ] && KEY_FINDINGS="${KEY_FINDINGS}Documentation is Poor ($DOC_TOTAL/30). "
+  [ -z "$KEY_FINDINGS" ] && KEY_FINDINGS="All indicators healthy."
+
+  COVERAGE_DISPLAY="${COVERAGE_PCT:-No data}"
+  [ -n "$COVERAGE_PCT" ] && COVERAGE_DISPLAY="${COVERAGE_PCT}%"
+
+  # ========== Phase 4: Write Report ==========
+  {
+    cat << EOF
+---
+project: $PROJECT_NAME
+evaluated_sha: $HEAD_SHA
+generated: $TODAY
+---
+
+# $PROJECT_NAME — Health Report
+
+## Summary
+
+| Indicator     | Status |
+|---------------|--------|
+| Ruby          | $RUBY_VER_DISPLAY — $RUBY_STATUS |
+| Rails         | $RAILS_VER — $RAILS_STATUS |
+| EOL Risk      | $EOL_RISK |
+| Tests         | $TEST_FILES files ($FRAMEWORK, ratio ${TEST_RATIO}:1) |
+| Coverage      | $COVERAGE_DISPLAY |
+| Advisories    | $ADVISORY_COUNT known vulnerabilities |
+| Velocity      | $VELOCITY — $RECENT_COMMITS commits in last 90 days |
+| Bus Factor    | $BUS_ASSESSMENT (top contributor ${BUS_FACTOR_PCT}%) |
+| Code Smells   | $REEK_TOTAL (Reek) |
+| Documentation | $DOC_RATING $DOC_LABEL ($DOC_TOTAL/30) |
+
+**Key findings:** $KEY_FINDINGS
+
+---
+
+## Language and Framework Versions
+
+| Component | Version | EOL Status | EOL Date |
+|---|---|---|---|
+| Ruby | $RUBY_VER_DISPLAY | $RUBY_STATUS | $RUBY_EOL_DATE |
+| Rails | $RAILS_VER | $RAILS_STATUS | $RAILS_EOL_DATE |
+
+> **EOL Status key:** **Active** = receiving features and security patches.
+> **Active (maintenance)** = security patches only, approaching EOL within 6 months.
+> **EOL** = past end-of-life, no longer receiving security patches — upgrade recommended.
+
+EOF
+
+    if echo "$RUBY_STATUS" | grep -q "EOL"; then
+      echo "⚠️ **Ruby $RUBY_VER_DISPLAY reached end-of-life on $RUBY_EOL_DATE.** Upgrade to Ruby 3.3+ or 3.4+ is strongly recommended for continued security patches."
+      echo ""
+    fi
+    if echo "$RAILS_STATUS" | grep -q "EOL"; then
+      echo "⚠️ **Rails $RAILS_VER reached end-of-life on $RAILS_EOL_DATE.** Upgrade to Rails 7.2+ or 8.0+ is strongly recommended."
+      echo ""
+    fi
+
+    cat << EOF
+## Automated Tests
+
+**Framework**: $FRAMEWORK
+**Test files**: $TEST_FILES
+**Source files**: $SOURCE_FILES
+**Test-to-source ratio**: ${TEST_RATIO}:1
+
+> **Test-to-source ratio guide:** ≥1.0 = thorough, 0.5–1.0 = moderate, <0.5 = light, 0 = no tests.
+
+**SimpleCov configured**: $HAS_SIMPLECOV
+**CI/CD detected**:${CI_FILES:-" None"}
+
+### Coverage
+
+EOF
+
+    if [ -n "$COVERAGE_PCT" ]; then
+      local_bar=$(bar_chart "$COVERAGE_PCT")
+      echo '```'
+      echo "Test Coverage: ${COVERAGE_PCT}%"
+      echo "$local_bar ${COVERAGE_PCT}%"
+      echo '```'
+    else
+      echo "⚠ No coverage data available. Consider configuring SimpleCov for test coverage tracking."
+    fi
+
+    echo ""
+    echo "## Outstanding RubySec Advisories"
+    echo ""
+    if [ "$AUDIT_CLEAN" -eq 1 ]; then
+      echo "No known vulnerabilities found."
+    else
+      echo "**$ADVISORY_COUNT advisories found.** Run \`bundle update\` to patch."
+      echo ""
+      echo '```'
+      echo "$AUDIT_OUTPUT"
+      echo '```'
+    fi
+
+    cat << EOF
+
+## Project Velocity & Knowledge Density
+
+**Status**: $VELOCITY
+**Last commit**: $LAST_COMMIT_DATE
+**Commits (90d / 1yr / all-time)**: $RECENT_COMMITS / $YEARLY_COMMITS / $TOTAL_COMMITS
+
+> **Velocity key:** **Active** = >10 commits in last 90 days.
+> **Maintained** = 1–10 commits in last 90 days.
+> **Stale** = 0 commits in last 90 days, but some in last year.
+> **Dormant** = 0 commits in last 365 days.
+
+### Contributor Distribution
+
+| Contributor | Commits | % of Total |
+|---|---|---|
+EOF
+
+    echo "$CONTRIBUTORS" | while read -r count name; do
+      [ -z "$count" ] && continue
+      pct=$(echo "$count $TOTAL_COMMITS" | awk '{printf "%.1f", ($1/$2)*100}')
+      echo "| $name | $count | ${pct}% |"
+    done
+
+    cat << EOF
+
+**Bus Factor**: $BUS_ASSESSMENT — Top contributor has ${BUS_FACTOR_PCT}% of commits, $YEARLY_CONTRIBUTORS active contributor(s) in past year.
+
+> **Bus Factor key:** **Healthy** = top contributor <40% of commits AND ≥3 active contributors in past year.
+> **At Risk** = top contributor 40–70% OR only 2 active contributors.
+> **Critical** = top contributor >70% OR only 1 active contributor.
+
+### High Churn Areas
+
+Files most frequently changed in the last year:
+
+| Changes | File |
+|---|---|
+EOF
+
+    echo "$CHURN_FILES" | head -10 | while read -r count file; do
+      [ -z "$count" ] && continue
+      echo "| $count | $file |"
+    done
+
+    cat << EOF
+
+## Code Quality
+
+### Smell Summary (Reek)
+
+**Total smells**: $REEK_TOTAL
+
+> **Reek smell guide:** 0 = pristine, 1–10 = good, 11–50 = fair (review worst offenders),
+> \>50 = needs work (systemic design issues likely). Common smells include
+> *FeatureEnvy* (method uses another object's data more than its own),
+> *TooManyStatements* (method doing too much), and *DuplicateMethodCall*
+> (repeated expressions that should be extracted).
+
+| Smell Type | Count |
+|---|---|
+$SMELL_BREAKDOWN
+
+### Complexity (Flog)
+
+EOF
+
+    echo '```'
+    echo "$FLOG_SUMMARY"
+    echo '```'
+
+    cat << EOF
+
+> **Flog score guide** (Jake Scruggs' metric_fu conventions — per-method score):
+> <10 = awesome, 10–20 = good enough, 20–40 = might need refactoring,
+> 40–60 = should be refactored, 60–100 = danger, >100 = out of control.
+> Total score / number of methods = average. A healthy average is <15.
+
+**Top complex methods:**
+
+EOF
+
+    echo '```'
+    echo "$FLOG_OUTPUT"
+    echo '```'
+
+    cat << EOF
+
+### Duplication (Flay)
+
+EOF
+
+    echo '```'
+    echo "$FLAY_OUTPUT"
+    echo '```'
+
+    cat << EOF
+
+> **Flay guide:** Duplication mass is the total size of structurally similar code.
+> Higher mass = more copy-paste code. 0 = no duplication detected.
+> Each reported structure shows the files and lines where similar code exists —
+> these are candidates for extraction into shared methods or modules.
+
+## Documentation Quality
+
+**Rating**: $DOC_RATING $DOC_LABEL ($DOC_TOTAL/30)
+
+> **Documentation score guide (30-point scale):**
+> 🔴 **Poor** (0–5) = little to no documentation — boilerplate README or less.
+> 🟡 **Minimal** (6–13) = some effort — a real README, scattered comments, or a few supporting docs.
+> 🟢 **Adequate** (14–30) = substantive README, code-level docs, and supporting documents present.
+>
+> Scored across 5 categories: README quality (8), code-level docs (8),
+> API & architectural docs (6), supporting documents (4), tests as documentation (4).
+
+### README
+
+$README_DETAIL
+
+**Score**: $README_SCORE/8
+
+### Code-Level Documentation
+
+**Inline comments**: $COMMENT_LINES_COUNT comment lines / $TOTAL_RUBY_LINES source lines ($COMMENT_RATIO%)
+EOF
+
+    comment_bar=$(bar_chart_scaled "${COMMENT_RATIO%%.*}" 20)
+    echo '```'
+    echo "$comment_bar ${COMMENT_RATIO}%"
+    echo '```'
+
+    cat << EOF
+
+**YARD annotations**: $YARD_FILE_COUNT/$TOTAL_SRC_COUNT files ($YARD_PCT%)
+
+**Score**: $CODE_DOC_SCORE/8
+
+### API & Architectural Docs
+
+| Artifact | Status |
+|---|---|
+| \`docs/\` directory | $([ "$DOCS_DIR_FILES" -gt 0 ] && echo "Present ($DOCS_DIR_FILES files)" || echo "Missing") |
+| OpenAPI/Swagger spec | $HAS_SWAGGER |
+| Additional root-level docs | $([ "$EXTRA_MD_COUNT" -gt 0 ] && echo "$EXTRA_MD_NAMES" || echo "None") |
+| Annotated routes | $([ -f "$PROJECT_ROOT/config/routes.rb" ] && echo "$ROUTE_COMMENTS comment lines$([ "$ROUTE_COMMENTS" -ge 5 ] && echo " ✓" || echo "")" || echo "N/A") |
+
+**Score**: $API_DOC_SCORE/6
+
+### Supporting Documents
+
+| Document | Status |
+|---|---|
+| CHANGELOG | $HAS_CHANGELOG |
+| CONTRIBUTING.md | $HAS_CONTRIBUTING |
+| LICENSE | $HAS_LICENSE |
+| GitHub templates | $HAS_GH_TEMPLATES |
+
+**Score**: $SUPPORT_DOC_SCORE/4
+
+### Tests as Documentation
+
+EOF
+
+    if [ "$TEST_FILES" -eq 0 ]; then
+      echo "No test suite detected. Tests serve as living documentation — their absence compounds the documentation gap."
+    else
+      echo "**Test files**: $TEST_FILES | **Test-to-source ratio**: ${TEST_RATIO}:1"
+      echo "**Descriptive test blocks**: ${DESC_TEST_PCT}% of test files use descriptive \`describe\`/\`context\` strings"
+    fi
+
+    cat << EOF
+
+**Score**: $TEST_DOC_SCORE/4
+
+### Breakdown
+
+| Category | Score | Max |
+|---|---|---|
+| README quality | $README_SCORE | 8 |
+| Code-level docs | $CODE_DOC_SCORE | 8 |
+| API & architectural docs | $API_DOC_SCORE | 6 |
+| Supporting documents | $SUPPORT_DOC_SCORE | 4 |
+| Tests as documentation | $TEST_DOC_SCORE | 4 |
+| **Total** | **$DOC_TOTAL** | **30** |
+EOF
+  # Strip any absolute paths that may have leaked through tool output, so the
+  # generated reports only contain paths relative to the project/workspace root.
+  # PROJECT_ROOT carries a trailing slash from the glob; WORKSPACE does not.
+  } | sed -e "s|${PROJECT_ROOT}||g" -e "s|${WORKSPACE}/||g" > "$REPORT"
+
+  format_markdown_tables "$REPORT"
+
+  TESTS_YN="no"; [ "$TEST_FILES" -gt 0 ] && TESTS_YN="yes"
+  SHORT_SHA=$(echo "$HEAD_SHA" | cut -c1-7)
+  echo "$PROJECT_NAME|$RUBY_VER_DISPLAY|$RAILS_VER|$EOL_RISK|$TESTS_YN|$ADVISORY_COUNT|$VELOCITY|$REEK_TOTAL|$DOC_RATING $DOC_LABEL ($DOC_TOTAL/30)|$BUS_ASSESSMENT|$SHORT_SHA" >> "$REPORTS_DIR/.index_data"
+  echo "  -> Done: $REPORT"
+done
+
+# ========== Generate INDEX.md ==========
+
+INDEX_FILE="$REPORTS_DIR/INDEX.md"
+INDEX_DATA="$REPORTS_DIR/.index_data"
+
+if [ -f "$INDEX_DATA" ]; then
+  # Sort alphabetically by project name for stable row order
+  sort -t'|' -k1,1 -o "$INDEX_DATA" "$INDEX_DATA"
+
+  TOTAL_PROJECTS=0
+  EOL_RED=0; EOL_YELLOW=0; EOL_GREEN=0
+  WITH_TESTS=0; NO_TESTS_COUNT=0
+  TOTAL_ADVISORIES=0; ADV_ZERO=0; ADV_HIGH=0
+  VEL_ACTIVE=0; VEL_MAINTAINED=0; VEL_STALE=0; VEL_DORMANT=0
+  DOC_POOR=0; DOC_MINIMAL=0; DOC_ADEQUATE=0
+  TABLE_ROWS=""
+  EOL_LIST=""
+
+  while IFS='|' read -r name ruby rails eol tests advs velocity smells docs bus sha; do
+    TOTAL_PROJECTS=$((TOTAL_PROJECTS + 1))
+
+    case "$eol" in
+      *🔴*) EOL_RED=$((EOL_RED + 1)); EOL_LIST="${EOL_LIST}- **${name}** — Ruby ${ruby}, Rails ${rails}
+";;
+      *🟡*) EOL_YELLOW=$((EOL_YELLOW + 1));;
+      *🟢*) EOL_GREEN=$((EOL_GREEN + 1));;
+    esac
+
+    case "$tests" in
+      yes) WITH_TESTS=$((WITH_TESTS + 1));;
+      no)  NO_TESTS_COUNT=$((NO_TESTS_COUNT + 1));;
+    esac
+
+    TOTAL_ADVISORIES=$((TOTAL_ADVISORIES + advs))
+    [ "$advs" -eq 0 ] && ADV_ZERO=$((ADV_ZERO + 1))
+    [ "$advs" -gt 50 ] && ADV_HIGH=$((ADV_HIGH + 1))
+
+    case "$velocity" in
+      Active)     VEL_ACTIVE=$((VEL_ACTIVE + 1));;
+      Maintained) VEL_MAINTAINED=$((VEL_MAINTAINED + 1));;
+      Stale)      VEL_STALE=$((VEL_STALE + 1));;
+      Dormant)    VEL_DORMANT=$((VEL_DORMANT + 1));;
+    esac
+
+    case "$docs" in
+      *Poor*)     DOC_POOR=$((DOC_POOR + 1));;
+      *Minimal*)  DOC_MINIMAL=$((DOC_MINIMAL + 1));;
+      *Adequate*) DOC_ADEQUATE=$((DOC_ADEQUATE + 1));;
+    esac
+
+    TABLE_ROWS="${TABLE_ROWS}| [${name}](./${name}-health-report.md) | \`${sha}\` | ${ruby} | ${rails} | ${eol} | ${tests} | ${advs} | ${velocity} | ${smells} smells | ${docs} |
+"
+  done < "$INDEX_DATA"
+
+  # Top 10 projects by advisory count (desc)
+  TOP_ADV=$(sort -t'|' -k6,6 -nr "$INDEX_DATA" | head -10 | awk -F'|' '{printf "- **%s** — %s known vulnerabilities\n", $1, $6}')
+
+  {
+    cat << INDEXEOF
+# Project Health Reports — $TODAY
+
+**$TOTAL_PROJECTS projects evaluated** across the Engagedly SaaS platform.
+
+## Dashboard
+
+### EOL Risk
+- 🔴 **Critical** (Ruby or Rails past EOL): $EOL_RED projects
+- 🟡 **Unknown/Caution**: $EOL_YELLOW projects
+- 🟢 **All versions current**: $EOL_GREEN projects
+
+### Velocity
+- **Active** (>10 commits/90d): $VEL_ACTIVE projects
+- **Maintained** (1–10 commits/90d): $VEL_MAINTAINED projects
+- **Stale** (0 commits/90d, some in year): $VEL_STALE projects
+- **Dormant** (0 commits/365d): $VEL_DORMANT projects
+
+### Test Coverage
+- **With tests**: $WITH_TESTS projects
+- **Without tests**: $NO_TESTS_COUNT projects
+
+### Security Advisories
+- **Total advisories across all projects**: $TOTAL_ADVISORIES
+- **Projects with 0 advisories**: $ADV_ZERO
+- **Projects with >50 advisories**: $ADV_HIGH
+
+### Documentation Quality
+- 🔴 **Poor** (0–5/30): $DOC_POOR projects
+- 🟡 **Minimal** (6–13/30): $DOC_MINIMAL projects
+- 🟢 **Adequate** (14–30/30): $DOC_ADEQUATE projects
+
+---
+
+## All Projects
+
+| Project | SHA | Ruby | Rails | EOL Risk | Tests | Advisories | Velocity | Quality | Docs |
+|---------|-----|------|-------|----------|-------|------------|----------|---------|------|
+${TABLE_ROWS}
+---
+
+## Critical Action Items
+
+### Immediate: EOL Versions ($EOL_RED projects)
+
+These projects run Ruby or Rails versions that are **past end-of-life** and no longer receive security patches:
+
+${EOL_LIST}
+### Urgent: Security Advisories (top 10)
+
+${TOP_ADV}
+
+### Missing Tests ($NO_TESTS_COUNT of $TOTAL_PROJECTS projects)
+
+Only $WITH_TESTS project(s) have any automated test files. Adding test coverage should be a priority, especially for actively developed projects.
+
+---
+
+INDEXEOF
+  } > "$INDEX_FILE"
+
+  format_markdown_tables "$INDEX_FILE"
+  echo "  -> Generated: $INDEX_FILE"
+fi
+
+echo ""
+echo "=== All reports generated ==="
