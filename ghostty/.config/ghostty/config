@@ -103,7 +103,7 @@ term = xterm-256color
 # be fixed in a future update:
 #
 #   - macOS: titlebar tabs style is not updated when switching themes.
-theme = Nord
+theme = Onenord
 
 # The font families to use.
 #
