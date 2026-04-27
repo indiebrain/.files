@@ -149,6 +149,9 @@
           (5 . (rainbow (height 1.1)))
           (t . (variable-pitch extrabold)))
 
+        modus-operandi-tinted-palette-overrides
+        '((bg-main "#f7f8fa"))
+
         modus-vivendi-tinted-palette-overrides
         '((bg-main "#2E3440"))
         )
