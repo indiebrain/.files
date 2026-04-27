@@ -58,6 +58,9 @@ export HISTFILESIZE=10000000
 ## Never write commands that match these expressions to the history
 export HISTIGNORE=bg*:cd*:clear*:exit*:fg*:ll*:ls*:pwd*:history*
 
+## XDG Config
+export XDG_CONFIG_HOME=${HOME}/.config
+
 # Aliases
 alias gs="git status"
 alias gl='git log --graph --oneline --decorate --max-count 10'
