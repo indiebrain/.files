@@ -208,9 +208,6 @@ if type mise &> /dev/null; then
     eval "$(mise activate bash)"
 fi
 
-# Per-host shell configuration overrides
-[ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
-
 # Stable K9S configuration directory across hosts
 export K9S_CONFIG_DIR=~/.config/k9s
 
@@ -250,3 +247,6 @@ export OLLAMA_KEEP_ALIVE=15m
 ## Controls the maximum number of models that can be loaded into
 ## memory at the same time when using the Ollama service
 export OLLAMA_MAX_LOADED_MODELS=2
+
+# Per-host shell configuration overrides
+[ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
