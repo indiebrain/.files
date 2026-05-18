@@ -1,0 +1,115 @@
+#!/usr/bin/env bash
+#
+# find-access-keys — search a deploy tree for references to access key IDs.
+#
+# For each key, reports matches as one of:
+#   encrypted — key appears inside a decrypted SOPS payload
+#   clear     — key appears as cleartext in any file under CWD
+#   base64    — base64-encoded key appears in any file under CWD
+#
+# Usage:
+#   find-access-keys KEY [KEY ...]
+#
+# Run from the root of the repo containing config/deploy/**/secrets.yaml and
+# bin/deployer.
+
+set -o pipefail
+
+if [ $# -lt 1 ]; then
+  echo "Usage: $(basename "$0") KEY [KEY ...]" >&2
+  exit 64
+fi
+
+ACCESS_KEY_IDS="$*"
+
+declare -A decrypted_sops findings
+
+cleanup() {
+  for f in "${!decrypted_sops[@]}"; do
+    decrypted_sops[$f]=""
+  done
+  unset decrypted_sops findings
+}
+trap cleanup EXIT
+
+DEPLOYER=$(find . -type f -name deployer -perm -u+x 2>/dev/null | head -1)
+if [ -z "$DEPLOYER" ]; then
+  echo "ERROR: could not find an executable named 'deployer' anywhere under $(pwd)" >&2
+  echo "       run this script from the root of a repo that contains one." >&2
+  exit 1
+fi
+echo "Using deployer: $DEPLOYER"
+
+# Prefer ripgrep when available — faster on large trees. Fall back to grep -r.
+# --no-ignore + --hidden so .gitignored and dotfiles are still scanned (a leaked
+# key in tmp/ or .env should still be found). -uu also disables binary skipping.
+if command -v rg >/dev/null 2>&1; then
+  search() { rg --no-ignore --hidden -uu -l -F "$1" . 2>/dev/null; }
+  echo "Using ripgrep for searches"
+else
+  search() { grep -rlF "$1" . 2>/dev/null; }
+  echo "Using grep for searches (install ripgrep for faster scans)"
+fi
+
+# If host has AWS credentials, mount them read-only into the deployer container
+# and forward AWS_PROFILE / AWS_SESSION_TOKEN so sops can use them for KMS decrypt.
+# The deployer wrapper interpolates ${EXTRA_ARGS} into its `docker run` invocation.
+if [ -f "$HOME/.aws/credentials" ] || [ -f "$HOME/.aws/config" ]; then
+  echo "Mounting $HOME/.aws (read-only) into deployer container"
+  export EXTRA_ARGS="${EXTRA_ARGS:-} --mount type=bind,source=$HOME/.aws,destination=/root/.aws,readonly --env AWS_PROFILE --env AWS_SESSION_TOKEN"
+fi
+
+echo "=== Decrypting secrets...(this can take a moment)"
+while IFS= read -r -d '' f; do
+  sops_err=$(mktemp)
+  if d=$("$DEPLOYER" sops -d "$f" 2>"$sops_err"); then
+    decrypted_sops[$f]=$d
+    rm -f "$sops_err"
+  else
+    rc=$?
+    echo "ERROR: sops failed to decrypt $f (exit $rc)" >&2
+    echo "--- sops stdout ---" >&2
+    printf '%s\n' "$d" >&2
+    echo "--- sops stderr ---" >&2
+    cat "$sops_err" >&2
+    echo "-------------------" >&2
+    rm -f "$sops_err"
+    exit $rc
+  fi
+done < <(find . -type f -name secrets.yaml -print0)
+unset d
+
+echo "=== Searching for references..."
+for key in $ACCESS_KEY_IDS; do
+  b64=$(printf '%s' "$key" | base64)
+
+  echo "=== Searching for ${key} in encrypted secrets..."
+  for f in "${!decrypted_sops[@]}"; do
+    if printf '%s\n' "${decrypted_sops[$f]}" | grep -qF "$key"; then
+      findings[$key]+="encrypted:$f "
+    fi
+  done
+
+  echo "=== Searching for ${key} in cleartext..."
+  while IFS= read -r m; do
+    [ -n "$m" ] && findings[$key]+="clear:$m "
+  done < <(search "$key")
+
+  echo "=== Searching for ${key} in base64 encoded values..."
+  while IFS= read -r m; do
+    [ -n "$m" ] && findings[$key]+="base64:$m "
+  done < <(search "$b64")
+done
+
+echo
+echo "=== Results ==="
+for key in $ACCESS_KEY_IDS; do
+  if [ -n "${findings[$key]}" ]; then
+    echo "HIT  $key"
+    for entry in ${findings[$key]}; do
+      printf '       %-10s %s\n' "${entry%%:*}" "${entry#*:}"
+    done
+  else
+    echo "MISS $key"
+  fi
+done
