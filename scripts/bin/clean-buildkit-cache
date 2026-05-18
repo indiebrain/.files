@@ -1,0 +1,52 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+usage() {
+  echo "Usage: $(basename "$0") [-f|--force] <app-name> <cluster>" >&2
+  echo "  Deletes BuildKitCache (bktc) resources in pac-ci-builds whose" >&2
+  echo "  spec.cacheKey contains <app-name>, on the given kube context." >&2
+  echo "  -f, --force   Skip the confirmation prompt." >&2
+  exit 1
+}
+
+FORCE=0
+POSITIONAL=()
+while [ "$#" -gt 0 ]; do
+  case "$1" in
+    -f|--force) FORCE=1; shift ;;
+    -h|--help) usage ;;
+    --) shift; POSITIONAL+=("$@"); break ;;
+    -*) echo "Unknown option: $1" >&2; usage ;;
+    *) POSITIONAL+=("$1"); shift ;;
+  esac
+done
+
+[ "${#POSITIONAL[@]}" -eq 2 ] || usage
+
+APP_NAME="${POSITIONAL[0]}"
+CLUSTER="${POSITIONAL[1]}"
+NAMESPACE="pac-ci-builds"
+
+names=$(kubectl --context "$CLUSTER" -n "$NAMESPACE" get bktc -o json \
+  | jq -r --arg app "$APP_NAME" \
+      '.items[] | select(.spec.cacheKey | contains($app)) | .metadata.name')
+
+if [ -z "$names" ]; then
+  echo "No bktc resources match cacheKey contains \"$APP_NAME\" in $CLUSTER/$NAMESPACE."
+  exit 0
+fi
+
+count=$(echo "$names" | wc -l | tr -d ' ')
+echo "Found $count bktc resource(s) in $CLUSTER/$NAMESPACE matching \"$APP_NAME\":"
+echo "$names" | sed 's/^/  /'
+echo
+
+if [ "$FORCE" -ne 1 ]; then
+  read -r -p "Delete these resources? [y/N] " reply
+  case "$reply" in
+    y|Y|yes|YES) ;;
+    *) echo "Aborted."; exit 0 ;;
+  esac
+fi
+
+echo "$names" | xargs kubectl --context "$CLUSTER" -n "$NAMESPACE" delete bktc
