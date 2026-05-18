@@ -67,10 +67,10 @@
   (setq org-refile-use-cache t)
   (setq org-reverse-note-order nil)
   (setq org-todo-keywords
-        '((sequence "TODO(t)" "MAYBE(m)" "WAIT(w@/!)" "|" "CANCEL(c@)" "DONE(d!)")))
+        '((sequence "TODO(t)" "ACTIVE(a)" "BLOCKED(b@/!)" "|" "CANCEL(c@)" "DONE(d!)")))
   (setq org-todo-keyword-faces
-        '(("WAIT" . '(bold org-todo))
-          ("MAYBE" . '(shadow org-todo))
+        '(("BLOCKED" . '(bold org-todo))
+          ("ACTIVE" . '(shadow org-todo))
           ("CANCEL" . '(bold org-done))))
   (setq org-use-fast-todo-selection 'expert)
   (setq org-priority-faces
