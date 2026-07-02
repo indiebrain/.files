@@ -4,6 +4,8 @@
 # usage:
 #   $ flush_dns_cache
 
+set -euo pipefail
+
 platform=`uname`
 
 if [[ ${platform} == "Darwin" ]]

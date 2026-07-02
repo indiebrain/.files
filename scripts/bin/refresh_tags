@@ -4,4 +4,6 @@
 # usage:
 #   $ refresh_tags
 
+set -euo pipefail
+
 git tag -l | xargs git tag -d && git fetch

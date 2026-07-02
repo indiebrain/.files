@@ -6,6 +6,8 @@
 #   Install the dotfiles
 #
 
+set -euo pipefail
+
 DOTFILES_HOME="$HOME/.files"
 PLATFORM="$(uname)"
 
@@ -79,21 +81,22 @@ function ensure_local_dotfiles() {
 }
 
 function place_configuration() {
-    pushd "$DOTFILES_HOME" || echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting" || exit 1
+    pushd "$DOTFILES_HOME" || { echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting"; exit 1; }
     stow --verbose \
         asdf \
-        gnome-terminal \
-        proselint \
-        emacs \
         bash \
-        ssh \
-        iterm2 \
-        scripts \
-        containers \
+        emacs \
+        firefox \
+        ghostty \
         git \
+        gnome-terminal \
+        iterm2 \
+        k9s \
+        proselint \
         ripgrep \
         ruby \
-        git
+        scripts \
+        ssh
     popd || return
 }
 

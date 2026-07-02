@@ -4,6 +4,8 @@
 # usage:
 #  $ inode-consumption
 
+set -euo pipefail
+
 platform=`uname`
 if [[ ${platform} == "Linux" ]]
 then

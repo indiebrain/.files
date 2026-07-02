@@ -26,7 +26,7 @@ GNU/Linux or MacOS operating systems.
 
 The install script performs the following steps:
 
-1. ensures the the dotfiles are present in the user's home directory.
+1. ensures the dotfiles are present in the user's home directory.
 2. ensures that host's package manager is up to date
 3. ensures that the host system has the prerequisite software
    installed - =git=, =stow=, etc. If a dependency is missing, the
@@ -41,7 +41,7 @@ $ git clone git@github.com:indiebrain/.files.git ~/.files
 $ ~/.files/install
 #+END_SRC
 
-* How project this works
+* How this project works
 :PROPERTIES:
 :ID:       627304DE-BAA2-4227-BCCE-AE768D10DA41
 :END:
@@ -59,7 +59,7 @@ host file system.
 
 This dotfiles repository is self-contained, all configuration lives
 inside the root - files should NOT be placed outside of the dotfiles
-home directory (usually =~/.files=) t on the host file system.
+home directory (usually =~/.files=) on the host file system.
 
 The use of GNU Stow affords the ability to "Soft
 Uninstall" the configuration provided herein by removing the symbolic
@@ -71,24 +71,32 @@ To completely remove these dotfiles:
 
 1. run the =uninstall= script
 2. remove the dotfiles home directory (usually =~/.files=) from the
-   local file sytem - via =rm -rf=
+   local file system - via =rm -rf=
 
-* Optional packages
+* Packages
 
-The configuration will generate a number of optional GNU Stow
-packages - for example: ==, =gnome-terminal=, =iterm2=.  These are not
-"stowed" in the install script as they may not be required on the
-host. It is up to the user to determine if they should be placed.
-Placing an optional package can be done with the GNU Stow program from
-within the dofiles home directory:
+Each top-level directory is a GNU Stow "package" whose internal layout
+mirrors the home directory. The =install= script stows every package in
+the repository except =rectangle= (see below). To place a single package
+by hand - for example after adding a new one - run GNU Stow from within
+the dotfiles home directory:
 
 #+begin_src sh
 $ stow PACKAGE
 #+end_src
 
+** =rectangle=
+
+The =rectangle= directory holds =RectangleConfig.json=, an exported
+configuration for the [[https://rectangleapp.com/][Rectangle]] window
+manager. Rectangle keeps its live preferences in the macOS defaults
+system rather than a file GNU Stow can symlink, so this package is NOT
+stowed by =install=. Apply it by hand from Rectangle's menu -
+=Settings -> Import...= - and select =rectangle/RectangleConfig.json=.
+
 ** =scripts=
 
 This package contains a number of utility shell scripts. When stowed via
-=stow scripts=, is linked into the =$HOME/bin= directory. This directory is
-automatically included on the user's path so all scripts should be
-immediately discover-able by Bash.
+=stow scripts=, it is linked into the =$HOME/bin= directory. This
+directory is automatically included on the user's path so all scripts
+should be immediately discoverable by Bash.
