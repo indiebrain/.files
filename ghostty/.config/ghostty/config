@@ -747,7 +747,7 @@ mouse-hide-while-typing = true
 #
 # This can be toggled at runtime using the `toggle_mouse_reporting` keybind
 # action.
-mouse-reporting = false
+mouse-reporting = true
 
 # macOS doesn't have a distinct "alt" key and instead has the "option"
 # key which behaves slightly differently. On macOS by default, the
