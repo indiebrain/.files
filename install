@@ -101,9 +101,16 @@ function place_configuration() {
     popd || return
 }
 
+function secure_ssh_permissions() {
+    # Directory permissions are not tracked by git/stow, so enforce the
+    # owner-only mode OpenSSH expects on every install.
+    chmod 700 "$DOTFILES_HOME/ssh/.ssh"
+}
+
 ensure_package_manager
 ensure_dependencies
 ensure_local_dotfiles
 place_configuration
+secure_ssh_permissions
 
 exit 0
