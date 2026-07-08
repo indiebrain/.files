@@ -15,6 +15,7 @@ function remove_configuration() {
     stow --delete \
         asdf \
         bash \
+        btop \
         emacs \
         firefox \
         ghostty \

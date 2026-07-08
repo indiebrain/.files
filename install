@@ -85,6 +85,7 @@ function place_configuration() {
     stow --verbose \
         asdf \
         bash \
+        btop \
         emacs \
         firefox \
         ghostty \
