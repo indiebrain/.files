@@ -1,24 +1,24 @@
 # -----------------------------------------------------------------------------
-# Modus Vivendi Tinted skin for k9s
+# Modus Vivendi skin for k9s
 #
-# Dark theme with slightly warmer, tinted backgrounds.
+# Protesilaos Stavrou's main dark theme (WCAG AAA contrast).
 # Theme by Protesilaos Stavrou: https://protesilaos.com/emacs/modus-themes
 # Colors taken from the official modus-themes palette.
 # -----------------------------------------------------------------------------
 
 # Palette (semantic roles)...
 foreground: &foreground "#ffffff"
-background: &background "#0d0e1c"
-panel: &panel "#1d2235"
-subtle: &subtle "#2b3045"
+background: &background "#000000"
+panel: &panel "#1e1e1e"
+subtle: &subtle "#303030"
 faint: &faint "#989898"
-border: &border "#61647a"
-accent: &accent "#11c777"
+border: &border "#646464"
+accent: &accent "#6ae4b9"
 key: &key "#00bcff"
-string: &string "#2fafff"
-builtin: &builtin "#feacd0"
-logo: &logo "#feacd0"
-cursor: &cursor "#ff66ff"
+string: &string "#79a8ff"
+builtin: &builtin "#f78fe7"
+logo: &logo "#f78fe7"
+cursor: &cursor "#00eff0"
 addColor: &add "#44bc44"
 newColor: &new "#00d3d0"
 modifyColor: &modify "#d0bc00"

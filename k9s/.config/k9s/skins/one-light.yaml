@@ -1,67 +1,67 @@
 # -----------------------------------------------------------------------------
-# Kanagawa Skin
+# OneLight Skin
 # -----------------------------------------------------------------------------
 
 # Styles...
-foreground: &foreground "#dcd7ba"
-background: &background "#1f1f28"
-black: &black "#090618"
-blue: &blue "#7e9cd8"
-green: &green "#76946a"
-grey: &grey "#727169"
-orange: &orange "#ffa066"
-purple: &purple "#957fb8"
-red: &red "#c34043"
-yellow: &yellow "#c0a36e"
-yellow_bright: &yellow_bright "#e6c384"
+foreground: &foreground "#383a42"
+background: &background "#fafafa"
+white: &white "#ffffff"
+blue: &blue "#4078f2"
+green: &green "#50a14f"
+grey: &grey "#a0a1a7"
+orange: &orange "#c18401"
+purple: &purple "#a626a4"
+red: &red "#e45649"
+cyan: &cyan "#0184bc"
+highlight: &highlight "#e5e5e6"
 
 # Skin...
 k9s:
   body:
     fgColor: *foreground
     bgColor: *background
-    logoColor: *green
+    logoColor: *blue
   prompt:
     fgColor: *foreground
     bgColor: *background
     suggestColor: *orange
   info:
     fgColor: *grey
-    sectionColor: *green
+    sectionColor: *blue
   help:
     fgColor: *foreground
     bgColor: *background
-    keyColor: *yellow
+    keyColor: *orange
     numKeyColor: *blue
     sectionColor: *purple
   dialog:
-    fgColor: *orange
+    fgColor: *foreground
     bgColor: *background
-    buttonFgColor: *foreground
-    buttonBgColor: *green
-    buttonFocusFgColor: *black
-    buttonFocusBgColor: *blue
+    buttonFgColor: *white
+    buttonBgColor: *blue
+    buttonFocusFgColor: *white
+    buttonFocusBgColor: *cyan
     labelFgColor: *orange
     fieldFgColor: *blue
   frame:
     border:
-      fgColor: *green
-      focusColor: *green
+      fgColor: *highlight
+      focusColor: *blue
     menu:
       fgColor: *grey
-      keyColor: *yellow
-      numKeyColor: *yellow
+      keyColor: *orange
+      numKeyColor: *orange
     crumbs:
-      fgColor: *black
-      bgColor: *green
-      activeColor: *yellow
+      fgColor: *white
+      bgColor: *blue
+      activeColor: *orange
     status:
-      newColor: *blue
-      modifyColor: *green
+      newColor: *cyan
+      modifyColor: *blue
       addColor: *grey
       pendingColor: *orange
       errorColor: *red
-      highlightColor: *yellow
+      highlightColor: *orange
       killColor: *purple
       completedColor: *grey
     title:
@@ -74,33 +74,33 @@ k9s:
     charts:
       bgColor: *background
       defaultDialColors:
-        - *green
+        - *blue
         - *red
       defaultChartColors:
-        - *green
+        - *blue
         - *red
     table:
-      fgColor: *yellow
+      fgColor: *foreground
       bgColor: *background
-      cursorFgColor: *black
+      cursorFgColor: *white
       cursorBgColor: *blue
-      markColor: *yellow_bright
+      markColor: *orange
       header:
         fgColor: *grey
         bgColor: *background
-        sorterColor: *orange
+        sorterColor: *cyan
     xray:
       fgColor: *blue
       bgColor: *background
       cursorColor: *foreground
-      graphicColor: *yellow_bright
+      graphicColor: *orange
       showIcons: false
     yaml:
       keyColor: *red
       colonColor: *grey
-      valueColor: *grey
+      valueColor: *foreground
     logs:
-      fgColor: *grey
+      fgColor: *foreground
       bgColor: *background
       indicator:
         fgColor: *blue

@@ -1,125 +1,128 @@
 # -----------------------------------------------------------------------------
-# K9s Modus Operandi Tinted (light, lower contrast)
-# Author: [@indiebrain](https://github.com/indiebrain)
+# Modus Operandi Tinted skin for k9s
+#
+# Light theme with warm, subtly tinted backgrounds.
+# Theme by Protesilaos Stavrou: https://protesilaos.com/emacs/modus-themes
+# Colors taken from the official modus-themes palette.
 # -----------------------------------------------------------------------------
 
-# Styles...
+# Palette (semantic roles)...
 foreground: &foreground "#000000"
 background: &background "#fbf7f0"
-current_line: &current_line "#f0c1cf"
-selection: &selection "#595959"
-comment: &comment "#bdad93"
-cyan: &cyan "#005e8b"
-green: &green "#006800"
-yellow: &yellow "#6f5500"
-magenta: &magenta "#721045"
-blue: &blue "#0031a9"
-red: &red "#a60000"
+panel: &panel "#efe9dd"
+subtle: &subtle "#dfd5cf"
+faint: &faint "#595959"
+border: &border "#9f9690"
+accent: &accent "#006300"
+key: &key "#0000b0"
+string: &string "#00598b"
+builtin: &builtin "#721045"
+logo: &logo "#721045"
+cursor: &cursor "#d00000"
+addColor: &add "#006300"
+newColor: &new "#00598b"
+modifyColor: &modify "#6d5000"
+errorColor: &error "#a60000"
+warnColor: &warn "#894000"
+killColor: &kill "#721045"
 
 # Skin...
 k9s:
   body:
     fgColor: *foreground
     bgColor: *background
-    logoColor: *blue
-    logoColorInfo: *magenta
-    logoColorWarn: *yellow
-    logoColorError: *red
+    logoColor: *logo
   prompt:
     fgColor: *foreground
-    bgColor: *background
-    suggestColor: *comment
-    border:
-      command: *blue
-      default: *foreground
+    bgColor: *panel
+    suggestColor: *accent
+  info:
+    fgColor: *faint
+    sectionColor: *accent
+    cpuColor: *accent
+    memColor: *builtin
   help:
     fgColor: *foreground
-    bgColor: *background
-    sectionColor: *magenta
-    keyColor: *foreground
-    numKeyColor: *foreground
+    bgColor: *panel
+    keyColor: *key
+    numKeyColor: *builtin
+    sectionColor: *accent
+  dialog:
+    fgColor: *foreground
+    bgColor: *panel
+    buttonFgColor: *background
+    buttonBgColor: *accent
+    buttonFocusFgColor: *background
+    buttonFocusBgColor: *builtin
+    labelFgColor: *warn
+    fieldFgColor: *foreground
   frame:
-    title:
-      fgColor: *foreground
-      bgColor: *background
-      highlightColor: *selection
-      counterColor: *foreground
-      filterColor: *foreground
     border:
-      fgColor: *foreground
-      focusColor: *selection
+      fgColor: *border
+      focusColor: *accent
     menu:
       fgColor: *foreground
-      keyColor: *foreground
-      numKeyColor: *foreground
+      keyColor: *key
+      numKeyColor: *builtin
     crumbs:
-      fgColor: *foreground
-      bgColor: *background
-      activeColor: *current_line
+      fgColor: *background
+      bgColor: *accent
+      activeColor: *warn
     status:
-      newColor: *cyan
-      modifyColor: *yellow
-      addColor: *blue
-      pendingColor: *yellow
-      errorColor: *red
-      highlightColor: *cyan
-      killColor: *magenta
-      completedColor: *selection
-  info:
-    sectionColor: *magenta
-    fgColor: *foreground
+      newColor: *new
+      modifyColor: *modify
+      addColor: *add
+      errorColor: *error
+      pendingColor: *warn
+      highlightColor: *accent
+      killColor: *kill
+      completedColor: *faint
+    title:
+      fgColor: *accent
+      bgColor: *panel
+      highlightColor: *builtin
+      counterColor: *foreground
+      filterColor: *key
   views:
+    charts:
+      bgColor: *background
+      defaultDialColors:
+        - *accent
+        - *error
+      defaultChartColors:
+        - *accent
+        - *error
     table:
       fgColor: *foreground
       bgColor: *background
       cursorFgColor: *background
-      cursorBgColor: *foreground
-      markColor: *selection
+      cursorBgColor: *cursor
+      markColor: *warn
       header:
-        fgColor: *foreground
+        fgColor: *faint
         bgColor: *background
-        sorterColor: *foreground
+        sorterColor: *accent
     xray:
       fgColor: *foreground
       bgColor: *background
-      cursorColor: *current_line
-      cursorTextColor: *foreground
-      graphicColor: *foreground
-    charts:
-      bgColor: *background
-      dialBgColor: *background
-      chartBgColor: *background
-      defaultDialColors:
-        - *green
-        - *red
-      defaultChartColors:
-        - *green
-        - *red
-      resourceColors:
-        - *green
-        - *red
+      cursorColor: *cursor
+      cursorTextColor: *background
+      graphicColor: *builtin
+      showIcons: false
     yaml:
-      keyColor: *foreground
+      keyColor: *key
+      colonColor: *faint
       valueColor: *foreground
-      colonColor: *foreground
-    picker:
-      mainColor: *foreground
-      focusColor: *current_line
-      shortcutColor: *comment
     logs:
       fgColor: *foreground
       bgColor: *background
       indicator:
-        fgColor: *foreground
-        bgColor: *background
-        toggleOnColor: *green
-        toggleOffColor: *red
-  dialog:
-    fgColor: *foreground
-    bgColor: *background
-    buttonFgColor: *foreground
-    buttonBgColor: *background
-    buttonFocusFgColor: *background
-    buttonFocusBgColor: *foreground
-    labelFgColor: *selection
-    fieldFgColor: *foreground
+        fgColor: *background
+        bgColor: *accent
+        toggleOnColor: *add
+        toggleOffColor: *faint
+    help:
+      fgColor: *foreground
+      bgColor: *panel
+      indicator:
+        fgColor: *accent

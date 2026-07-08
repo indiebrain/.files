@@ -1,30 +1,30 @@
 # -----------------------------------------------------------------------------
-# Modus Vivendi Tinted skin for k9s
+# Modus Operandi Deuteranopia skin for k9s
 #
-# Dark theme with slightly warmer, tinted backgrounds.
+# Light theme tuned for red-green color deficiency (blue/yellow axis).
 # Theme by Protesilaos Stavrou: https://protesilaos.com/emacs/modus-themes
 # Colors taken from the official modus-themes palette.
 # -----------------------------------------------------------------------------
 
 # Palette (semantic roles)...
-foreground: &foreground "#ffffff"
-background: &background "#0d0e1c"
-panel: &panel "#1d2235"
-subtle: &subtle "#2b3045"
-faint: &faint "#989898"
-border: &border "#61647a"
-accent: &accent "#11c777"
-key: &key "#00bcff"
-string: &string "#2fafff"
-builtin: &builtin "#feacd0"
-logo: &logo "#feacd0"
-cursor: &cursor "#ff66ff"
-addColor: &add "#44bc44"
-newColor: &new "#00d3d0"
-modifyColor: &modify "#d0bc00"
-errorColor: &error "#ff5f59"
-warnColor: &warn "#fec43f"
-killColor: &kill "#b6a0ff"
+foreground: &foreground "#000000"
+background: &background "#ffffff"
+panel: &panel "#f2f2f2"
+subtle: &subtle "#e0e0e0"
+faint: &faint "#595959"
+border: &border "#9f9f9f"
+accent: &accent "#0031a9"
+key: &key "#0000b0"
+string: &string "#3548cf"
+builtin: &builtin "#721045"
+logo: &logo "#0000b0"
+cursor: &cursor "#0000ff"
+addColor: &add "#0031a9"
+newColor: &new "#005e8b"
+modifyColor: &modify "#695500"
+errorColor: &error "#a60000"
+warnColor: &warn "#973300"
+killColor: &kill "#721045"
 
 # Skin...
 k9s:

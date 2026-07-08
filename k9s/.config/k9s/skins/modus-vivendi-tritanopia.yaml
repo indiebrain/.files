@@ -1,29 +1,29 @@
 # -----------------------------------------------------------------------------
-# Modus Vivendi Tinted skin for k9s
+# Modus Vivendi Tritanopia skin for k9s
 #
-# Dark theme with slightly warmer, tinted backgrounds.
+# Dark theme tuned for blue-yellow color deficiency (red/cyan axis).
 # Theme by Protesilaos Stavrou: https://protesilaos.com/emacs/modus-themes
 # Colors taken from the official modus-themes palette.
 # -----------------------------------------------------------------------------
 
 # Palette (semantic roles)...
 foreground: &foreground "#ffffff"
-background: &background "#0d0e1c"
-panel: &panel "#1d2235"
-subtle: &subtle "#2b3045"
+background: &background "#000000"
+panel: &panel "#1e1e1e"
+subtle: &subtle "#303030"
 faint: &faint "#989898"
-border: &border "#61647a"
-accent: &accent "#11c777"
-key: &key "#00bcff"
-string: &string "#2fafff"
+border: &border "#646464"
+accent: &accent "#00d3d0"
+key: &key "#00d3d0"
+string: &string "#00d3d0"
 builtin: &builtin "#feacd0"
-logo: &logo "#feacd0"
-cursor: &cursor "#ff66ff"
+logo: &logo "#00d3d0"
+cursor: &cursor "#ff5f5f"
 addColor: &add "#44bc44"
 newColor: &new "#00d3d0"
-modifyColor: &modify "#d0bc00"
-errorColor: &error "#ff5f59"
-warnColor: &warn "#fec43f"
+modifyColor: &modify "#feacd0"
+errorColor: &error "#ff6740"
+warnColor: &warn "#ff7f86"
 killColor: &kill "#b6a0ff"
 
 # Skin...
