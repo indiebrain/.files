@@ -10,8 +10,7 @@ k9s:
     logoless: false
     crumbsless: false
     noIcons: false
-    skin: nord
-    # skin: nord-light
+    skin: modus-operandi
   skipLatestRevCheck: false
   disablePodCounting: false
   shellPod:

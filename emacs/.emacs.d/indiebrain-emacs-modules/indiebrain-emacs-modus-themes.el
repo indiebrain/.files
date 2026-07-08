@@ -149,20 +149,20 @@
           (5 . (rainbow (height 1.1)))
           (t . (variable-pitch extrabold)))
 
-        modus-operandi-tinted-palette-overrides
-        '((bg-main "#f7f8fa"))
-
-        modus-vivendi-tinted-palette-overrides
-        '((bg-main "#2E3440"))
+        ;; modus-operandi-tinted-palette-overrides
+        ;; '((bg-main "#f7f8fa"))
+        ;;
+        ;; modus-vivendi-tinted-palette-overrides
+        ;; '((bg-main "#2E3440"))
         )
 
   (setopt
         ;; The themes between which the `modus-themes-toggle' function
         ;; should toggle.
-        modus-themes-to-toggle '(modus-operandi-tinted modus-vivendi-tinted))
+        modus-themes-to-toggle '(modus-operandi modus-vivendi))
 
 
-  (modus-themes-load-theme 'modus-vivendi-tinted)
+  (modus-themes-load-theme 'modus-operandi)
 
 
   (indiebrain-emacs-keybind global-map
