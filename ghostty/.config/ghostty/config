@@ -587,7 +587,7 @@ keybind = super+arrow_down=jump_to_prompt:1
 keybind = super+f=start_search
 keybind = super+e=search_selection
 keybind = super+shift+f=end_search
-keybind = escape=end_search
+keybind = performable:escape=end_search
 keybind = super+g=navigate_search:next
 keybind = super+shift+g=navigate_search:previous
 keybind = super+alt+i=inspector:toggle
