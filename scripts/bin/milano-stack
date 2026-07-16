@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+#
+# milano-stack — work with Shipit::Stacks in a milano environment.
+#
+# Actions:
+#   find STACK_ID   print "<owner>/<name>\t<environment>" for a Shipit::Stack,
+#                   or with --url the stack's web URL instead
+#
+# Actions run `bin/rails runner` in a dedicated shell pod (see lib/milano.sh).
+# By default they target the production cluster and namespace; pass
+# --context / --namespace to point elsewhere.
+#
+# Usage:
+#   milano stack find 1234
+#   milano stack find --url 1234
+#   milano stack --context wc-staging-hq --namespace milano-staging find 1234
+
+set -Eeuo pipefail
+
+# Host used to build stack URLs (--url). Defaults to production; override with
+# the MILANO_HOST environment variable when pointing at another environment.
+: "${MILANO_HOST:=https://milano.powerapp.cloud}"
+
+# Locate lib/milano.sh via the dir the dispatcher exported, falling back to our
+# own location when this script is run directly.
+if [ -z "${MILANO_BIN_DIR:-}" ]; then
+  resolved="$0"
+  case "$resolved" in
+    */*) ;;
+    *) resolved="$(command -v -- "$resolved")" ;;
+  esac
+  MILANO_BIN_DIR="$(cd "$(dirname "$resolved")" && pwd)"
+fi
+# shellcheck source=lib/milano.sh
+. "$MILANO_BIN_DIR/lib/milano.sh"
+
+usage() {
+  cat <<EOF
+Usage: milano stack [options] <action> [args]
+
+Actions:
+  find STACK_ID     print "<owner>/<name>\\t<environment>\\t<cluster>" for a
+                    Shipit::Stack
+
+Options:
+  -u, --url                print the stack's web URL instead of owner/name+env
+  -c, --context CONTEXT    kubectl context to use   (default: $DEFAULT_CONTEXT)
+  -n, --namespace NS       Kubernetes namespace      (default: $DEFAULT_NAMESPACE)
+  -t, --ttl DURATION       max console-pod lifetime  (default: $DEFAULT_TTL; e.g. 30s, 10m, 3h, 1d)
+  -h, --help               show this help and exit
+EOF
+}
+
+output_url=0
+
+find_stack() {
+  local stack_id="${1:-}"
+  [ -n "$stack_id" ] || { usage >&2; die "find requires a STACK_ID"; }
+  case "$stack_id" in
+    *[!0-9]*) die "STACK_ID must be a positive integer, got '$stack_id'" ;;
+  esac
+
+  # The snippet prints its answer as tab-separated fields behind the result
+  # marker, and warns + exits non-zero when the stack is missing so a "not
+  # found" is distinguishable from a connection or boot failure. Formatting is
+  # left to the shell so --url is a pure display choice.
+  # ClusterAssignment.for_stack is a read-only accessor — it reports the current
+  # assignment without triggering one. ActiveRecord logging is silenced so no
+  # SQL noise reaches the answer stream.
+  local owner name environment cluster
+  milano_query '
+    ActiveRecord::Base.logger = nil
+    # Shipit::Stack is the STI base, so find_by returns subtypes too, e.g. a
+    # Shipit::ReviewStack.
+    stack = Shipit::Stack.find_by(id: ARGV[0])
+    unless stack
+      warn "No Shipit::Stack found with id=#{ARGV[0]}"
+      exit 1
+    end
+    repo = stack.repository
+    cluster = ClusterAssignment.for_stack(stack)
+    cluster = cluster.join(",") if cluster.is_a?(Array)
+    cluster = "unassigned" if cluster.nil? || cluster.to_s.strip.empty?
+    puts "__milano_result__ #{repo.owner}\t#{repo.name}\t#{stack.environment}\t#{cluster}"
+  ' "$stack_id"
+
+  IFS=$'\t' read -r owner name environment cluster <<<"$QUERY_OUTPUT"
+  if [ "$output_url" -eq 1 ]; then
+    printf '%s/%s/%s/%s\n' "$MILANO_HOST" "$owner" "$name" "$environment"
+  else
+    printf '%s/%s\t%s\t%s\n' "$owner" "$name" "$environment" "$cluster"
+  fi
+}
+
+# --- argument parsing ---------------------------------------------------------
+action=""
+positional=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -u|--url)       output_url=1; shift ;;
+    -c|--context)   context="${2:?missing value for $1}"; shift 2 ;;
+    -n|--namespace) namespace="${2:?missing value for $1}"; shift 2 ;;
+    -t|--ttl)       ttl="${2:?missing value for $1}"; shift 2 ;;
+    -h|--help)      usage; exit 0 ;;
+    -?*)            usage >&2; die "unknown option: $1" ;;
+    *)
+      if [ -z "$action" ]; then action="$1"; else positional+=("$1"); fi
+      shift ;;
+  esac
+done
+
+[ -n "$action" ] || { usage >&2; exit 64; }
+
+case "$action" in
+  find) find_stack "${positional[@]}" ;;
+  *)    usage >&2; die "unknown action: $action" ;;
+esac

@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+#
+# milano — command-line entry point for milano operational tasks.
+#
+# Dispatches "milano <group> ..." to a "milano-<group>" executable on PATH,
+# git-style. Add a new group by dropping a "milano-<group>" script next to this
+# one; no change to this dispatcher is required.
+#
+# Usage:
+#   milano find stack STACK_ID
+#   milano help
+
+set -Eeuo pipefail
+
+# Resolve our own directory so dispatched commands can locate lib/milano.sh,
+# whether we were invoked by absolute path, relative path, or bare name on PATH.
+resolved="$0"
+case "$resolved" in
+  */*) ;;
+  *) resolved="$(command -v -- "$resolved")" ;;
+esac
+MILANO_BIN_DIR="$(cd "$(dirname "$resolved")" && pwd)"
+export MILANO_BIN_DIR
+
+self="$(basename "$0")"
+
+usage() {
+  cat <<EOF
+Usage: $self <command> [args]
+
+Commands:
+  stack          work with Shipit::Stacks       (e.g. "stack find 1234")
+  task           work with Shipit::Tasks        (e.g. "task find 5678")
+  review-stack   report on Shipit::ReviewStacks (e.g. "review-stack list-leaked-namespaces")
+  help           show this help
+
+Run "$self <command> --help" for command-specific help.
+EOF
+}
+
+command="${1:-}"
+case "$command" in
+  ''|-h|--help|help)
+    usage
+    exit 0
+    ;;
+esac
+shift
+
+subcommand="$self-$command"
+if command -v "$subcommand" >/dev/null 2>&1; then
+  exec "$subcommand" "$@"
+fi
+
+echo "ERROR: unknown command '$command'" >&2
+echo >&2
+usage >&2
+exit 64

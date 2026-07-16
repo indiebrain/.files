@@ -1,0 +1,114 @@
+#!/usr/bin/env bash
+#
+# milano-task — work with Shipit::Tasks in a milano environment.
+#
+# Actions:
+#   find TASK_ID    print "<owner>/<name>\t<environment>" for the stack that
+#                   owns a Shipit::Task, or with --url the task's web URL instead
+#
+# Actions run `bin/rails runner` in a dedicated shell pod (see lib/milano.sh).
+# By default they target the production cluster and namespace; pass
+# --context / --namespace to point elsewhere.
+#
+# Usage:
+#   milano task find 5678
+#   milano task find --url 5678
+#   milano task --context wc-staging-hq --namespace milano-staging find 5678
+
+set -Eeuo pipefail
+
+# Host used to build task URLs (--url). Defaults to production; override with
+# the MILANO_HOST environment variable when pointing at another environment.
+: "${MILANO_HOST:=https://milano.powerapp.cloud}"
+
+# Locate lib/milano.sh via the dir the dispatcher exported, falling back to our
+# own location when this script is run directly.
+if [ -z "${MILANO_BIN_DIR:-}" ]; then
+  resolved="$0"
+  case "$resolved" in
+    */*) ;;
+    *) resolved="$(command -v -- "$resolved")" ;;
+  esac
+  MILANO_BIN_DIR="$(cd "$(dirname "$resolved")" && pwd)"
+fi
+# shellcheck source=lib/milano.sh
+. "$MILANO_BIN_DIR/lib/milano.sh"
+
+usage() {
+  cat <<EOF
+Usage: milano task [options] <action> [args]
+
+Actions:
+  find TASK_ID      print "<owner>/<name>\\t<environment>" for the stack that
+                    owns a Shipit::Task
+
+Options:
+  -u, --url                print the task's web URL instead of owner/name+env
+  -c, --context CONTEXT    kubectl context to use   (default: $DEFAULT_CONTEXT)
+  -n, --namespace NS       Kubernetes namespace      (default: $DEFAULT_NAMESPACE)
+  -t, --ttl DURATION       max console-pod lifetime  (default: $DEFAULT_TTL; e.g. 30s, 10m, 3h, 1d)
+  -h, --help               show this help and exit
+EOF
+}
+
+output_url=0
+
+find_task() {
+  local task_id="${1:-}"
+  [ -n "$task_id" ] || { usage >&2; die "find requires a TASK_ID"; }
+  case "$task_id" in
+    *[!0-9]*) die "TASK_ID must be a positive integer, got '$task_id'" ;;
+  esac
+
+  if [ "$output_url" -eq 1 ]; then
+    # /task/:id is Shipit's canonical by-id lookup (TasksController#lookup); it
+    # redirects to the correct deploy or task page server-side. Building it needs
+    # only the id, so there is no cluster round-trip and no existence check —
+    # Shipit resolves (or 404s) the id when the URL is visited.
+    printf '%s/task/%s\n' "$MILANO_HOST" "$task_id"
+    return 0
+  fi
+
+  # The snippet warns + exits non-zero when the task is missing so a "not found"
+  # is distinguishable from a connection or boot failure. ActiveRecord logging
+  # is silenced so no SQL noise reaches the answer stream.
+  milano_query '
+    ActiveRecord::Base.logger = nil
+    # Shipit::Task is the STI base, so find_by returns subtypes too (Deploy,
+    # Rollback, ...). task.stack likewise may be a Shipit::ReviewStack.
+    task = Shipit::Task.find_by(id: ARGV[0])
+    unless task
+      warn "No Shipit::Task found with id=#{ARGV[0]}"
+      exit 1
+    end
+    stack = task.stack
+    repo = stack.repository
+    puts "__milano_result__ #{repo.owner}/#{repo.name}\t#{stack.environment}"
+  ' "$task_id"
+
+  printf '%s\n' "$QUERY_OUTPUT"
+}
+
+# --- argument parsing ---------------------------------------------------------
+action=""
+positional=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -u|--url)       output_url=1; shift ;;
+    -c|--context)   context="${2:?missing value for $1}"; shift 2 ;;
+    -n|--namespace) namespace="${2:?missing value for $1}"; shift 2 ;;
+    -t|--ttl)       ttl="${2:?missing value for $1}"; shift 2 ;;
+    -h|--help)      usage; exit 0 ;;
+    -?*)            usage >&2; die "unknown option: $1" ;;
+    *)
+      if [ -z "$action" ]; then action="$1"; else positional+=("$1"); fi
+      shift ;;
+  esac
+done
+
+[ -n "$action" ] || { usage >&2; exit 64; }
+
+case "$action" in
+  find) find_task "${positional[@]}" ;;
+  *)    usage >&2; die "unknown action: $action" ;;
+esac

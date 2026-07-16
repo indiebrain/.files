@@ -1,0 +1,496 @@
+#!/usr/bin/env bash
+#
+# milano-review-stack — report on Shipit::ReviewStacks in a milano environment.
+#
+# Actions:
+#   list-stuck             Review Stacks whose Pull Request is closed but which
+#                          have not finished deprovisioning (they still hold
+#                          cluster resources). --refresh reconciles Pull Request
+#                          state from GitHub first: authoritative but slower and
+#                          subject to GitHub API rate limits.
+#   list-leaked-namespaces Kubernetes namespaces that outlived their
+#                          deprovisioned (or deleted) Review Stack. Each is
+#                          reported with its milano stack page (when the record
+#                          still exists) and its GitHub pull request link, so a
+#                          human can cross-reference before cleaning up. Restrict
+#                          the clusters inspected to one or more tiers with --tier
+#                          (repeatable); Review Stacks are only ever provisioned
+#                          in the beta tier, so --tier beta scopes the sweep to
+#                          exactly where they live.
+#   delete-leaked-namespaces
+#                          Interactively delete the leaked namespaces found by
+#                          list-leaked-namespaces, one confirmation per namespace,
+#                          via milano's Kubernetes client. Discovery and deletion
+#                          run in the console pod; the per-namespace confirmation
+#                          runs locally (the pod has no terminal). Each confirmed
+#                          namespace is re-verified as still leaked immediately
+#                          before it is deleted.
+#
+# The report logic is self-contained in the bin/rails runner snippets below, so
+# this tool depends only on durable milano internals (Shipit::ReviewStack,
+# Shipit.github, and the Cluster / KubernetesClients libraries) — not on any
+# app-side reporter class. Snippets run in a console pod (see lib/milano.sh). By
+# default they target the production cluster and namespace; pass --context /
+# --namespace to point elsewhere.
+#
+# Usage:
+#   milano review-stack list-stuck
+#   milano review-stack list-stuck --refresh
+#   milano review-stack list-leaked-namespaces
+#   milano review-stack list-leaked-namespaces --tier beta
+
+set -Eeuo pipefail
+
+# Host used to build milano stack URLs in the leaked-namespace report. Defaults
+# to production; override with MILANO_HOST when pointing at another environment.
+: "${MILANO_HOST:=https://milano.powerapp.cloud}"
+
+# Locate lib/milano.sh via the dir the dispatcher exported, falling back to our
+# own location when this script is run directly.
+if [ -z "${MILANO_BIN_DIR:-}" ]; then
+  resolved="$0"
+  case "$resolved" in
+    */*) ;;
+    *) resolved="$(command -v -- "$resolved")" ;;
+  esac
+  MILANO_BIN_DIR="$(cd "$(dirname "$resolved")" && pwd)"
+fi
+# shellcheck source=lib/milano.sh
+. "$MILANO_BIN_DIR/lib/milano.sh"
+
+usage() {
+  cat <<EOF
+Usage: milano review-stack [options] <action>
+
+Actions:
+  list-stuck               Review Stacks whose Pull Request is closed but not
+                           finished deprovisioning
+  list-leaked-namespaces   Kubernetes namespaces that outlived their Review Stack
+  delete-leaked-namespaces interactively delete leaked namespaces, one
+                           confirmation per namespace, via milano's kube client
+
+Options:
+      --refresh            (list-stuck) reconcile Pull Request state from GitHub
+                           before checking
+      --tier TIER          (list/delete-leaked-namespaces) only inspect clusters
+                           in this tier; repeatable (e.g. --tier beta). Default:
+                           all clusters. Review Stacks live only in the beta tier.
+  -c, --context CONTEXT    kubectl context to use   (default: $DEFAULT_CONTEXT)
+  -n, --namespace NS       Kubernetes namespace      (default: $DEFAULT_NAMESPACE)
+  -t, --ttl DURATION       max console-pod lifetime  (default: $DEFAULT_TTL; e.g. 30s, 10m, 3h, 1d)
+  -h, --help               show this help and exit
+EOF
+}
+
+# Print a report snippet's output as-is (it is human-formatted), and propagate
+# the runner's exit code so a failure inside the reporter is not masked.
+run_report() {
+  milano_run "$@"
+  printf '%s\n' "$RUN_OUTPUT"
+  return "${RUN_CODE:-0}"
+}
+
+# Review Stacks whose Pull Request is closed — so they should have been archived
+# and deprovisioned — but whose provision_status has not reached "deprovisioned".
+# CleanupOrphanedReviewStacks only acts on "provisioned" stacks, so ones that
+# stall part-way through deprovisioning are never re-examined; this surfaces
+# them. With refresh, each candidate's Pull Request is reconciled with GitHub
+# first (authoritative, slower, rate-limited); otherwise the stored state is used.
+list_stuck() {
+  local refresh_arg=""
+  [ "$refresh" -eq 1 ] && refresh_arg="refresh"
+
+  run_report '
+    ActiveRecord::Base.logger = nil
+    refresh = ARGV[0] == "refresh"
+
+    candidates = Shipit::ReviewStack
+      .where.not(provision_status: :deprovisioned)
+      .includes(:pull_request)
+
+    stacks = candidates.select do |stack|
+      pull_request = stack.pull_request
+      next false if pull_request.nil?
+      if refresh
+        pull_request.update!(
+          github_pull_request: Shipit.github.api.pull_request(
+            stack.github_repo_name, pull_request.number
+          )
+        )
+      end
+      pull_request.state == "closed"
+    end
+
+    if stacks.empty?
+      puts "No stuck Review Stacks found."
+    else
+      puts "Found #{stacks.size} Review Stack(s) stuck in deprovisioning:"
+      puts
+      format = "%-8s  %-16s  %-45s  %-8s  %s\n"
+      printf(format, "ID", "STATUS", "REPO", "PR", "ARCHIVED SINCE")
+      stacks.each do |stack|
+        printf(
+          format,
+          stack.id,
+          stack.provision_status,
+          stack.github_repo_name,
+          "##{stack.pull_request&.number}",
+          stack.archived_since || "(not archived)"
+        )
+      end
+    end
+  ' "$refresh_arg"
+}
+
+# Shared detection. Given ARGV[0] = the milano host (for stack URLs) and
+# ARGV[1..] = tiers to restrict the sweep to (empty means all clusters), this
+# lists the review-stack namespaces in the selected clusters, matches each back
+# to its owning stack via the stack-id label, and leaves a `leaks` array of
+# hashes in scope:
+#   { cluster:, namespace:, stack_id:, reason: (:stack_missing|:stack_deprovisioned),
+#     stack_url:, pr_url: }
+# A namespace is leaked when its stack is deprovisioned, or when no stack record
+# exists for it at all. WARNING lines are printed for clusters we cannot reach,
+# never hidden. The human report and the delete discovery both embed this
+# verbatim, so the safety-critical classification and link-building live in
+# exactly one place. (The string carries no single quotes, so it survives being
+# spliced into the single-quoted runner snippets below.)
+#
+# With one or more tiers, only clusters in those tiers are inspected (via
+# Cluster.in_tiers). Review Stacks are only ever provisioned in the beta tier,
+# so restricting to beta narrows the sweep to exactly where they can live and
+# skips prod/alpha clusters that could never hold a review-stack namespace.
+LEAK_DETECT_RUBY='
+    ActiveRecord::Base.logger = nil
+    require "milano/cluster"
+    require "milano/kubernetes_clients"
+
+    review_stack_selector = "milano.powerapp.cloud/review-stack=yes"
+    stack_id_label = "milano.powerapp.cloud/stack-id"
+    # Namespaces carry the bare repository name (no owner) that the provisioner
+    # stamps as app.kubernetes.io/name — enough to rebuild links after the stack
+    # record itself is gone.
+    repo_name_label = "app.kubernetes.io/name"
+
+    # ARGV[0] is the milano host for stack URLs; the rest, if any, are tiers to
+    # restrict the sweep to. Empty tiers means "all clusters" (the default). A
+    # tier that matches no configured cluster is a typo or a dead tier — fail
+    # loudly rather than report a false all-clear.
+    milano_host = ARGV[0]
+    tiers = ARGV.drop(1).reject { |arg| arg.strip.empty? }
+    clusters =
+      if tiers.any?
+        matched = Cluster.in_tiers(tiers).pluck(:name)
+        if matched.empty?
+          warn "No configured clusters match tier(s): #{tiers.join(", ")}"
+          warn "Known tiers: #{Cluster.all.pluck(:tier).uniq.sort.join(", ")}"
+          exit 1
+        end
+        matched
+      else
+        Cluster.all.pluck(:name)
+      end
+
+    unreachable = []
+    namespaces = clusters.flat_map do |cluster|
+      begin
+        KubernetesClients
+          .fetch(context: cluster)
+          .get_namespaces(label_selector: review_stack_selector)
+          .map do |ns|
+            labels = (ns.metadata.labels&.to_h || {}).transform_keys(&:to_s)
+            {
+              cluster: cluster,
+              namespace: ns.metadata.name,
+              stack_id: labels[stack_id_label]&.to_i,
+              repo_name: labels[repo_name_label],
+            }
+          end
+      rescue => e
+        unreachable << { cluster: cluster, error: e }
+        []
+      end
+    end
+
+    stacks_by_id = Shipit::ReviewStack
+      .where(id: namespaces.filter_map { |n| n[:stack_id] }.uniq)
+      .index_by(&:id)
+
+    # GitHub web base (e.g. https://github.com/), taken from the configured
+    # client so this stays correct under GitHub Enterprise instead of a hardcode.
+    # A lookup failure must not sink the whole report, so fall back to the public
+    # host and note it.
+    github_web =
+      begin
+        Shipit.github.api.web_endpoint.chomp("/")
+      rescue => e
+        warn "WARNING: could not determine GitHub web endpoint (#{e.message}); defaulting to https://github.com"
+        "https://github.com"
+      end
+
+    # A stack record still present (merely deprovisioned) has an owner, so its
+    # milano page and PR link come straight from the database. Once the record
+    # is deleted we only have the namespace: recover the repo name from its
+    # label, the PR number from the namespace name (provisioner names it
+    # "<repo>-<environment>", e.g. nitro-web-pr56719), and the owner from the
+    # still-present Repository row. The milano stack page would 404 for a deleted
+    # record, so we omit it there and link only the PR, which still exists.
+    links_for = lambda do |leak, stack|
+      if stack
+        repo = stack.repository
+        stack_url = "#{milano_host}/#{repo.owner}/#{repo.name}/#{stack.environment}"
+        pr = stack.pull_request
+        pr_url = pr ? "#{github_web}/#{stack.github_repo_name}/pull/#{pr.number}" : "(no pull request)"
+        [stack_url, pr_url]
+      else
+        # namespace is "<repository.name>-pr<number>"; recovering the repo name
+        # from the namespace itself (rather than the app.kubernetes.io/name
+        # label, which is stack.repo_name and can diverge) keeps it matching the
+        # Repository.name that built it. Fall back to the label if the name does
+        # not fit the pr<number> shape.
+        match = leak[:namespace].match(/\A(?<repo>.+)-pr(?<number>\d+)\z/)
+        repo = match ? match[:repo] : leak[:repo_name]
+        pr_number = match && match[:number]
+        owners = repo ? Shipit::Repository.where(name: repo).distinct.pluck(:owner) : []
+        pr_url =
+          if pr_number && owners.one?
+            "#{github_web}/#{owners.first}/#{repo}/pull/#{pr_number}"
+          elsif pr_number && owners.many?
+            "(ambiguous owner for repo #{repo}: #{owners.join(", ")})"
+          else
+            "(unresolved from #{leak[:namespace]})"
+          end
+        ["(record deleted — no milano page)", pr_url]
+      end
+    end
+
+    leaks = namespaces.filter_map do |n|
+      stack = stacks_by_id[n[:stack_id]]
+      reason =
+        if stack.nil?
+          :stack_missing
+        elsif stack.deprovisioned?
+          :stack_deprovisioned
+        end
+      next if reason.nil?
+      stack_url, pr_url = links_for.call(n, stack)
+      n.merge(reason: reason, stack_url: stack_url, pr_url: pr_url)
+    end
+
+    unreachable.each do |u|
+      warn "WARNING: could not inspect cluster #{u[:cluster]}: #{u[:error].message}"
+    end
+    warn "" if unreachable.any?
+'
+
+# Report the leaked namespaces as a human-readable stanza per namespace, each
+# with its milano stack page and GitHub pull request link for cross-referencing.
+list_leaked_namespaces() {
+  run_report "$LEAK_DETECT_RUBY"'
+    if leaks.empty?
+      puts "No leaked Review Stack namespaces found."
+    else
+      puts "Found #{leaks.size} leaked namespace(s):"
+      leaks.each do |leak|
+        reason = leak[:reason] == :stack_missing ? "stack record deleted" : "stack deprovisioned"
+        puts
+        puts "[#{leak[:cluster]}] #{leak[:namespace]}"
+        puts "  reason:   #{reason} (stack id #{leak[:stack_id] || "unknown"})"
+        puts "  stack:    #{leak[:stack_url]}"
+        puts "  pull req: #{leak[:pr_url]}"
+      end
+    end
+  ' "$@"
+}
+
+# Interactively delete leaked namespaces, one confirmation per namespace, via
+# milano's Kubernetes client. The console pod that runs the delete cannot reach
+# the terminal, so the flow is three steps: (1) discover the leaks in a pod run,
+# emitting one machine-readable record per namespace; (2) prompt locally for each
+# namespace, showing its links so a human can cross-reference before deciding;
+# (3) delete only the confirmed namespaces in a second pod run that re-verifies
+# each is STILL leaked immediately before deleting.
+delete_leaked_namespaces() {
+  # Destructive and irreversible: require a real terminal so a piped or scripted
+  # invocation cannot mass-delete without a human confirming each namespace.
+  if ! { : < /dev/tty; } 2>/dev/null; then
+    die "delete-leaked-namespaces needs an interactive terminal for per-namespace confirmation"
+  fi
+
+  msg "Discovering leaked namespaces (creates a console pod)..."
+  # Discovery reuses the shared detector and prints one tab-separated record per
+  # leak behind the result marker: cluster, namespace, stack_id, reason,
+  # stack_url, pr_url. The marker string matches lib/milano.sh (see milano-stack).
+  milano_run "$LEAK_DETECT_RUBY"'
+    leaks.each do |leak|
+      reason = leak[:reason] == :stack_missing ? "stack record deleted" : "stack deprovisioned"
+      puts "__milano_result__ " + [
+        leak[:cluster], leak[:namespace], leak[:stack_id] || "",
+        reason, leak[:stack_url], leak[:pr_url]
+      ].join("\t")
+    end
+  ' "$MILANO_HOST" "${tiers[@]}"
+
+  # Surface anything that is not a record (warnings, errors) on stderr.
+  printf '%s\n' "$RUN_OUTPUT" | grep -v "^${RESULT_MARKER}" | grep -v "^[[:space:]]*$" >&2 || true
+
+  local -a records=()
+  local line
+  while IFS= read -r line; do
+    case "$line" in
+      "$RESULT_MARKER"*) records+=("${line#"$RESULT_MARKER"}") ;;
+    esac
+  done <<< "$RUN_OUTPUT"
+
+  if [ "${#records[@]}" -eq 0 ]; then
+    msg "No leaked namespaces found; nothing to delete."
+    return 0
+  fi
+
+  msg "Found ${#records[@]} leaked namespace(s). Confirm each for deletion ([y]es / [N]o / [q]uit)."
+  # NOTE: do not name any of these locals `namespace`, `context`, or `ttl` — bash
+  # is dynamically scoped, so a local by those names would shadow the globals in
+  # lib/milano.sh and send the delete pass's console pod to the wrong namespace.
+  local -a confirmed=()
+  local rec cluster ns stack_id reason stack_url pr_url reply idx=0
+  for rec in "${records[@]}"; do
+    idx=$((idx + 1))
+    IFS=$'\t' read -r cluster ns stack_id reason stack_url pr_url <<< "$rec"
+    {
+      printf '\n(%d/%d) [%s] %s\n' "$idx" "${#records[@]}" "$cluster" "$ns"
+      printf '      reason:   %s (stack id %s)\n' "$reason" "${stack_id:-unknown}"
+      printf '      stack:    %s\n' "$stack_url"
+      printf '      pull req: %s\n' "$pr_url"
+      printf '      Delete this namespace? [y/N/q] '
+    } > /dev/tty
+    IFS= read -r reply < /dev/tty || reply=""
+    case "$reply" in
+      y|Y|yes|YES)
+        confirmed+=("${cluster}"$'\t'"${ns}")
+        printf '      -> queued for deletion\n' > /dev/tty ;;
+      q|Q|quit)
+        printf '      -> quitting; no further prompts\n' > /dev/tty
+        break ;;
+      *)
+        printf '      -> skipped\n' > /dev/tty ;;
+    esac
+  done
+
+  if [ "${#confirmed[@]}" -eq 0 ]; then
+    msg ""
+    msg "No namespaces confirmed; nothing deleted."
+    return 0
+  fi
+
+  msg ""
+  msg "Deleting ${#confirmed[@]} confirmed namespace(s) via milano's kube client..."
+  # Re-verify then delete. Each confirmed entry is "cluster\tnamespace". We
+  # re-detect the live leaked set in just the involved clusters so the decision
+  # is made against fresh cluster + database state, not the snapshot the human
+  # saw — a namespace could have been re-provisioned while they were deciding.
+  # delete_namespace is called without a block, so it issues the delete and
+  # returns rather than blocking on finalizers (which would risk the pod TTL for
+  # a large batch); it already treats a missing namespace as success.
+  run_report '
+    ActiveRecord::Base.logger = nil
+    require "milano/kubernetes_clients"
+
+    review_stack_selector = "milano.powerapp.cloud/review-stack=yes"
+    stack_id_label = "milano.powerapp.cloud/stack-id"
+
+    confirmed = ARGV.map { |arg| arg.split("\t", 2) }.select { |pair| pair.size == 2 }
+    clusters = confirmed.map(&:first).uniq
+
+    unreachable = {}
+    live = {}
+    clusters.each do |cluster|
+      begin
+        live[cluster] = {}
+        KubernetesClients
+          .fetch(context: cluster)
+          .get_namespaces(label_selector: review_stack_selector)
+          .each do |ns|
+            labels = (ns.metadata.labels&.to_h || {}).transform_keys(&:to_s)
+            live[cluster][ns.metadata.name] = labels[stack_id_label]&.to_i
+          end
+      rescue => e
+        unreachable[cluster] = e.message
+        live.delete(cluster)
+      end
+    end
+
+    all_ids = live.values.flat_map(&:values).compact.uniq
+    stacks_by_id = Shipit::ReviewStack.where(id: all_ids).index_by(&:id)
+
+    status_of = lambda do |cluster, namespace|
+      present = live[cluster]
+      next :cluster_unreachable if present.nil?
+      next :already_gone unless present.key?(namespace)
+      stack = stacks_by_id[present[namespace]]
+      next :leaked if stack.nil? || stack.deprovisioned?
+      :not_leaked
+    end
+
+    deleted = 0
+    confirmed.each do |cluster, namespace|
+      case status_of.call(cluster, namespace)
+      when :cluster_unreachable
+        warn "SKIP  #{cluster}/#{namespace}: cluster unreachable during re-check (#{unreachable[cluster]})"
+      when :already_gone
+        puts "GONE  #{cluster}/#{namespace}: already absent"
+      when :not_leaked
+        warn "SKIP  #{cluster}/#{namespace}: no longer leaked (re-provisioned?) — NOT deleting"
+      when :leaked
+        begin
+          KubernetesClients.fetch(context: cluster).delete_namespace(namespace: namespace)
+          puts "DEL   #{cluster}/#{namespace}: delete requested"
+          deleted += 1
+        rescue => e
+          warn "FAIL  #{cluster}/#{namespace}: #{e.message}"
+        end
+      end
+    end
+
+    puts
+    puts "Requested deletion of #{deleted} namespace(s)."
+  ' "${confirmed[@]}"
+}
+
+# --- argument parsing ---------------------------------------------------------
+action=""
+refresh=0
+tiers=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --refresh)      refresh=1; shift ;;
+    --tier)         tiers+=("${2:?missing value for $1}"); shift 2 ;;
+    -c|--context)   context="${2:?missing value for $1}"; shift 2 ;;
+    -n|--namespace) namespace="${2:?missing value for $1}"; shift 2 ;;
+    -t|--ttl)       ttl="${2:?missing value for $1}"; shift 2 ;;
+    -h|--help)      usage; exit 0 ;;
+    -?*)            usage >&2; die "unknown option: $1" ;;
+    *)
+      [ -n "$action" ] && { usage >&2; die "unexpected extra argument: $1"; }
+      action="$1"; shift ;;
+  esac
+done
+
+[ -n "$action" ] || { usage >&2; exit 64; }
+
+# --tier only applies to the leaked-namespaces actions; reject it elsewhere so a
+# misplaced flag fails loudly instead of being silently ignored.
+case "$action" in
+  list-leaked-namespaces|delete-leaked-namespaces) ;;
+  *)
+    if [ "${#tiers[@]}" -gt 0 ]; then
+      usage >&2
+      die "--tier is only valid for the leaked-namespaces actions"
+    fi ;;
+esac
+
+case "$action" in
+  list-stuck)               list_stuck ;;
+  list-leaked-namespaces)   list_leaked_namespaces "$MILANO_HOST" "${tiers[@]}" ;;
+  delete-leaked-namespaces) delete_leaked_namespaces ;;
+  *)                        usage >&2; die "unknown action: $action" ;;
+esac
