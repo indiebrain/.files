@@ -4,7 +4,7 @@
 #
 # Walks every context in your kubeconfig and checks each cluster for the named
 # namespace(s), then reports the contexts (and their clusters) where each one
-# exists.
+# exists, along with ready-to-run kubectl and k9s commands scoped to it.
 #
 # Usage:
 #   kube-find-namespace NAMESPACE [NAMESPACE ...]
@@ -155,6 +155,8 @@ for ns in "${namespaces[@]}"; do
       else
         printf '  %s\n' "$ctx"
       fi
+      printf '      kubectl --context %s -n %s get all\n' "$ctx" "$ns"
+      printf '      k9s --context %s -n %s\n' "$ctx" "$ns"
     done
   else
     echo "Namespace '$ns' was not found in any searched cluster."
