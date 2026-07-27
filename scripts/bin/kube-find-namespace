@@ -1,0 +1,170 @@
+#!/usr/bin/env bash
+#
+# kube-find-namespace — report which Kubernetes clusters contain a namespace.
+#
+# Walks every context in your kubeconfig and checks each cluster for the named
+# namespace(s), then reports the contexts (and their clusters) where each one
+# exists.
+#
+# Usage:
+#   kube-find-namespace NAMESPACE [NAMESPACE ...]
+#   kube-find-namespace NAMESPACE [NAMESPACE ...] --context CTX [--context CTX ...]
+#
+# Options:
+#   -c, --context CTX   Limit the search to the given context. Repeatable.
+#                       Defaults to every context in the kubeconfig.
+#   -h, --help          Show this help.
+#
+# Each cluster is queried in parallel. Exit status is 0 when every requested
+# namespace is found in at least one cluster, 1 when any namespace is found in
+# none, and 64 on a usage error.
+
+set -Eeuo pipefail
+
+self="$(basename "$0")"
+
+usage() {
+  cat <<EOF
+Usage: $self NAMESPACE [NAMESPACE ...] [-c CTX ...]
+
+Report which Kubernetes clusters contain each NAMESPACE by checking every
+context in your kubeconfig (or only the contexts given with -c/--context).
+
+Options:
+  -c, --context CTX   Limit the search to CTX. Repeatable.
+  -h, --help          Show this help.
+EOF
+}
+
+declare -a namespaces=()
+declare -a contexts=()
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    -c|--context)
+      if [ $# -lt 2 ]; then
+        echo "ERROR: $1 requires a context name" >&2
+        exit 64
+      fi
+      contexts+=("$2")
+      shift 2
+      ;;
+    --)
+      shift
+      while [ $# -gt 0 ]; do
+        namespaces+=("$1")
+        shift
+      done
+      ;;
+    -*)
+      echo "ERROR: unknown option '$1'" >&2
+      echo >&2
+      usage >&2
+      exit 64
+      ;;
+    *)
+      namespaces+=("$1")
+      shift
+      ;;
+  esac
+done
+
+if [ ${#namespaces[@]} -eq 0 ]; then
+  usage >&2
+  exit 64
+fi
+
+if ! command -v kubectl >/dev/null 2>&1; then
+  echo "ERROR: kubectl not found on PATH" >&2
+  exit 1
+fi
+
+# Default to every context in the kubeconfig when none were named.
+if [ ${#contexts[@]} -eq 0 ]; then
+  while IFS= read -r ctx; do
+    [ -n "$ctx" ] && contexts+=("$ctx")
+  done < <(kubectl config get-contexts -o name)
+fi
+
+if [ ${#contexts[@]} -eq 0 ]; then
+  echo "ERROR: no contexts found in kubeconfig" >&2
+  exit 1
+fi
+
+# Map each context to its cluster once, so reporting doesn't re-query per hit.
+declare -A cluster_of=()
+while IFS=$'\t' read -r name cluster; do
+  [ -n "$name" ] && cluster_of[$name]="$cluster"
+done < <(kubectl config view \
+  -o "jsonpath={range .contexts[*]}{.name}{'\t'}{.context.cluster}{'\n'}{end}" 2>/dev/null)
+
+# Check one context for one namespace. Prints "FOUND" or "MISSING" (or "ERROR"
+# when the cluster is unreachable) so the caller can collect results.
+check_context() {
+  local ctx="$1" ns="$2" err
+  err="$(kubectl --context="$ctx" --request-timeout=10s \
+    get namespace "$ns" -o name 2>&1 >/dev/null)" && { echo "FOUND"; return; }
+  case "$err" in
+    *NotFound*|*"not found"*) echo "MISSING" ;;
+    *) echo "ERROR: ${err##*$'\n'}" >&2; echo "ERROR" ;;
+  esac
+}
+
+echo "Searching ${#contexts[@]} context(s) for ${#namespaces[@]} namespace(s)..." >&2
+
+workdir="$(mktemp -d)"
+cleanup() { rm -rf "$workdir"; }
+trap cleanup EXIT
+
+# Query every (context, namespace) pair in parallel; capture each verdict to a
+# uniquely-numbered file so results survive names with slashes or colons.
+i=0
+for ctx in "${contexts[@]}"; do
+  for ns in "${namespaces[@]}"; do
+    {
+      result="$(check_context "$ctx" "$ns")"
+      printf '%s\t%s\t%s\n' "$result" "$ctx" "$ns" >"$workdir/$i"
+    } &
+    i=$((i + 1))
+  done
+done
+wait
+
+declare -A found_in=()          # namespace -> space-separated list of contexts
+declare -A errored_seen=()      # context -> 1 (dedupe unreachable clusters)
+while IFS=$'\t' read -r status ctx ns; do
+  case "$status" in
+    FOUND) found_in[$ns]+="$ctx " ;;
+    ERROR) errored_seen[$ctx]=1 ;;
+  esac
+done < <(cat "$workdir"/* 2>/dev/null)
+
+missing_any=0
+for ns in "${namespaces[@]}"; do
+  echo
+  if [ -n "${found_in[$ns]:-}" ]; then
+    echo "=== Namespace '$ns' found in ==="
+    for ctx in ${found_in[$ns]}; do
+      cluster="${cluster_of[$ctx]:-}"
+      if [ -n "$cluster" ]; then
+        printf '  %-40s (cluster: %s)\n' "$ctx" "$cluster"
+      else
+        printf '  %s\n' "$ctx"
+      fi
+    done
+  else
+    echo "Namespace '$ns' was not found in any searched cluster."
+    missing_any=1
+  fi
+done
+
+if [ ${#errored_seen[@]} -gt 0 ]; then
+  echo
+  echo "Note: could not reach ${#errored_seen[@]} context(s): ${!errored_seen[*]}" >&2
+fi
+
+[ "$missing_any" -eq 0 ]
