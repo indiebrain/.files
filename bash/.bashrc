@@ -215,41 +215,29 @@ fi
 export K9S_CONFIG_DIR=~/.config/k9s
 
 # Ollama config
-
-## flash Attention is a feature of most modern models that can
-## significantly reduce memory usage as the context size grows.
-export OLLAMA_FLASH_ATTENTION=1
-
-## Specifies the quantization type for the K/V (Key/Value) cache. This
-## setting is crucial for optimizing memory usage when running large
-## language models (LLMs). Supported Quantization Types
-##
-## The currently available K/V cache quantization types are:
-##
-##     - f16 - high precision and memory usage (default).
-##
-##     - q8_0 - 8-bit quantization, uses approximately 1/2 the memory
-##       of f16 with a very small loss in precision, this usually has
-##       no noticeable impact on the model’s quality (recommended if
-##       not using f16).
-##
-##     - q4_0 - 4-bit quantization, uses approximately 1/4 the memory
-##       of f16 with a small-medium loss in precision that may be more
-##       noticeable at higher context sizes.
-##
-export OLLAMA_KV_CACHE_TYPE=q8_0
-
-## The maximum time allowed for a request to complete in the Ollama
-## API: default 30s
-export OLLAMA_REQUEST_TIMEOUT=300s
-
-## How long models remain loaded in memory when idle: default: 5
-## minutes.
-export OLLAMA_KEEP_ALIVE=15m
-
-## Controls the maximum number of models that can be loaded into
-## memory at the same time when using the Ollama service
-export OLLAMA_MAX_LOADED_MODELS=2
+#
+# NOTE: The Ollama *server* runs under launchd and does NOT read this
+# file -- .bashrc is only sourced by interactive shells. The server's
+# real config lives in the user-owned LaunchAgent, which is the source
+# of truth:
+#
+#     ~/Library/LaunchAgents/com.aaron-kuehler.ollama.plist
+#
+# That agent replaces the Homebrew-managed service, because the stock
+# ollama formula hardcodes OLLAMA_FLASH_ATTENTION / OLLAMA_KV_CACHE_TYPE
+# in its service block and regenerates its plist on every `brew services`
+# action and `brew upgrade`, clobbering any custom env vars. Keep the two
+# files in sync by hand if you change these.
+#
+# The exports below only take effect if you run `ollama serve` by hand in
+# a terminal; they are kept for that fallback case. See the KV cache
+# quantization notes at https://ollama.readthedocs.io (f16 / q8_0 / q4_0).
+export OLLAMA_FLASH_ATTENTION=1     # reduce KV cache memory growth as context grows
+export OLLAMA_KV_CACHE_TYPE=q8_0    # ~1/2 the memory of f16, negligible quality loss (needs flash attn)
+export OLLAMA_CONTEXT_LENGTH=32768  # default context window; override big jobs per-model via Modelfile num_ctx
+export OLLAMA_REQUEST_TIMEOUT=300s  # API request timeout (default 30s)
+export OLLAMA_KEEP_ALIVE=15m        # keep models resident when idle (default 5m)
+export OLLAMA_MAX_LOADED_MODELS=2   # allow two models resident at once
 
 # Per-host shell configuration overrides
 [ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
