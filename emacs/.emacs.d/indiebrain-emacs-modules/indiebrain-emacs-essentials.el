@@ -148,6 +148,10 @@
   (indiebrain-emacs-keybind global-map
     "C-M-<mouse-3>" #'tear-off-window))
 
+;;; Line wrapping
+;; Wrap prose at 80 columns
+(setq-default fill-column 80)
+
 ;;; Scrolling behavior
 ;; These four come from the C source code.
 (setq-default scroll-preserve-screen-position t
