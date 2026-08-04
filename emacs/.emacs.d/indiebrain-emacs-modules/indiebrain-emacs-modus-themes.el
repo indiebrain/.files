@@ -162,8 +162,13 @@
         modus-themes-to-toggle '(modus-operandi modus-vivendi))
 
 
-  (modus-themes-load-theme 'modus-operandi)
-
+  ;; Light/dark pair for `auto-dark', whose theme-independent machinery
+  ;; lives in the `indiebrain-emacs-theme-extras' module.  `auto-dark'
+  ;; follows the operating system appearance and loads the matching theme,
+  ;; re-theming open frames live as the setting changes through the day.
+  ;; `<f5>' still toggles between the two by hand.  The format is
+  ;; (DARK-THEMES LIGHT-THEMES).
+  (setq auto-dark-themes '((modus-vivendi) (modus-operandi)))
 
   (indiebrain-emacs-keybind global-map
     "<f5>" #'modus-themes-toggle))

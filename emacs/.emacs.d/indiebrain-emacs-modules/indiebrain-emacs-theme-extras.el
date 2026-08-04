@@ -171,5 +171,28 @@
   (indiebrain-emacs-keybind global-map
     "C-c p" #'cursory-set-preset))
 
+;;; auto-dark - follow the operating system light/dark appearance
+;;
+;; Theme-independent machinery for matching the system appearance.  It loads
+;; the light or dark theme declared by the active theme-family module (via
+;; `auto-dark-themes') and re-themes open frames live as the operating system
+;; setting changes through the day.  Detection is per-platform:
+;;
+;;   - macOS: the built-in `ns-system-appearance' signal.
+;;   - Linux: the XDG desktop portal `color-scheme' preference over D-Bus, as
+;;     published by GNOME and other portal-backed desktops.  A bare window
+;;     manager without a portal (for example a stock Hyprland setup) does not
+;;     expose this preference, so following there needs extra glue.
+;;
+;; The theme-family module sets `auto-dark-themes'.  We only enable following
+;; when it did, so a family with no light/dark pair (Nord is dark-only) opts
+;; out instead of leaving frames with no theme at all.
+;;
+;; Read the manual: <https://github.com/LionyxML/auto-dark-emacs>.
+(indiebrain-emacs-package auto-dark
+  (:install t)
+  (when auto-dark-themes
+    (auto-dark-mode 1)))
+
 (provide 'indiebrain-emacs-theme-extras)
 ;;; indiebrain-emacs-theme-extras.el ends here
