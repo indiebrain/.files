@@ -103,7 +103,7 @@ term = xterm-256color
 # be fixed in a future update:
 #
 #   - macOS: titlebar tabs style is not updated when switching themes.
-theme = Modus Operandi
+theme = light:Modus Operandi,dark:Modus Vivendi
 
 # The font families to use.
 #
