@@ -98,6 +98,13 @@ function place_configuration() {
         ruby \
         scripts \
         ssh
+
+    # The ollama package carries a macOS LaunchAgent. Other platforms have no
+    # launchd to read it, so it is placed only on Darwin.
+    if [ "$PLATFORM" == "Darwin" ]
+    then
+        stow --verbose ollama
+    fi
     popd || return
 }
 

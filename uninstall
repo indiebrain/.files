@@ -9,6 +9,7 @@
 set -euo pipefail
 
 DOTFILES_HOME="$HOME/.files"
+PLATFORM="$(uname)"
 
 function remove_configuration() {
     pushd "$DOTFILES_HOME" || { echo "Failed to change working directory to '$DOTFILES_HOME'. Aborting"; exit 1; }
@@ -28,6 +29,14 @@ function remove_configuration() {
         ruby \
         scripts \
         ssh
+
+    # The ollama package is placed only on Darwin, so only remove it there.
+    # Booting the agent out first leaves no service pointing at a dead link.
+    if [ "$PLATFORM" == "Darwin" ]
+    then
+        launchctl bootout "gui/$(id -u)/com.aaron-kuehler.ollama" 2> /dev/null || true
+        stow --delete ollama
+    fi
     popd || return
 }
 

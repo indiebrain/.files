@@ -77,7 +77,8 @@ To completely remove these dotfiles:
 
 Each top-level directory is a GNU Stow "package" whose internal layout
 mirrors the home directory. The =install= script stows every package in
-the repository except =rectangle= (see below). To place a single package
+the repository except =rectangle=, and stows =ollama= only on macOS (see
+below). To place a single package
 by hand - for example after adding a new one - run GNU Stow from within
 the dotfiles home directory:
 
@@ -93,6 +94,29 @@ manager. Rectangle keeps its live preferences in the macOS defaults
 system rather than a file GNU Stow can symlink, so this package is NOT
 stowed by =install=. Apply it by hand from Rectangle's menu -
 =Settings -> Import...= - and select =rectangle/RectangleConfig.json=.
+
+** =ollama=
+
+The =ollama= directory holds =com.aaron-kuehler.ollama.plist=, a
+user-owned launchd agent that runs the Ollama server with tuned memory,
+context, and concurrency settings. It replaces the Homebrew-managed
+service, which regenerates its own plist on every =brew services= action
+and upgrade and so cannot carry custom environment variables. The plist's
+leading comment holds the memory sizing and the reload commands.
+
+launchd is macOS-only, so =install= stows this package only on Darwin.
+GNU Stow links the plist rather than copying it, and launchd resolves the
+link when the agent is bootstrapped. After editing the plist, reload the
+file itself; =launchctl kickstart= restarts the process from the
+configuration launchd already holds, which ignores the edit:
+
+#+begin_src sh
+$ launchctl bootout gui/$(id -u)/com.aaron-kuehler.ollama
+$ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.aaron-kuehler.ollama.plist
+#+end_src
+
+The =OLLAMA_*= exports in the =bash= package apply only to a hand-run
+=ollama serve=. The two sets are kept in sync by hand.
 
 ** =scripts=
 

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<!--
+	  User-owned Ollama service.
+
+	  Replaces the Homebrew-managed service (homebrew.mxcl.ollama) because the
+	  stock ollama formula hardcodes OLLAMA_FLASH_ATTENTION / OLLAMA_KV_CACHE_TYPE
+	  into its service block and regenerates the plist on every `brew services`
+	  action and `brew upgrade`, wiping any custom env vars.
+
+	  This agent points at /opt/homebrew/opt/ollama/bin/ollama (a stable symlink
+	  brew keeps current), so `brew upgrade ollama` still updates the binary.
+	  After `brew upgrade ollama`, restart to pick up the new binary:
+	    launchctl kickstart -k gui/$(id -u)/com.aaron-kuehler.ollama
+
+	  After editing anything in this file, kickstart is not enough: launchd
+	  restarts the process from its already-loaded configuration, so the env
+	  vars below are ignored. Reload the file itself:
+	    launchctl bootout gui/$(id -u)/com.aaron-kuehler.ollama
+	    launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.aaron-kuehler.ollama.plist
+	  Verify with: ps eww $(pgrep -f 'ollama serve') | tr ' ' '\n' | grep OLLAMA
+
+	  Do NOT `brew services start ollama` again, or two servers will fight over
+	  port 11434. To revert to brew management:
+	    launchctl bootout gui/$(id -u)/com.aaron-kuehler.ollama
+	    rm ~/Library/LaunchAgents/com.aaron-kuehler.ollama.plist
+	    brew services start ollama
+
+	  Memory sizing (128 GB machine). The scheduler admits a model against free
+	  *system* RAM, not just free GPU memory, so two large models will not
+	  co-reside: gpt-oss:120b (64 GB) plus qwen3-coder:30b (33 GB) exceeds what
+	  is left after the rest of the system. OLLAMA_MAX_LOADED_MODELS=3 is sized
+	  to keep one large driver model resident alongside two small helpers, each
+	  3-4 GB: opencode's small_model role and the editor's completion model.
+	  That is roughly 72 GB of the 128 GB. The cap is a ceiling, not a promise:
+	  admission is still checked against free system RAM, so a request for a
+	  second large model is refused or evicts the driver rather than making a
+	  third slot appear. Size any additional resident model against the 40 GB
+	  of headroom, not against the slot count.
+
+	  Context and parallelism are cheap here because flash attention plus a
+	  q8_0 KV cache keep the cache small: gpt-oss:120b uses about 1.6 GB per
+	  32k of context. OLLAMA_NUM_PARALLEL allocates that cache per slot, so
+	  the KV budget is NUM_PARALLEL * CONTEXT_LENGTH. At 2 slots and 64k that
+	  is roughly 6.5 GB, against about 40 GB of headroom. Raise CONTEXT_LENGTH
+	  before raising NUM_PARALLEL; long agent turns run out of context far more
+	  often than they run out of concurrency.
+	-->
+	<key>Label</key>
+	<string>com.aaron-kuehler.ollama</string>
+	<key>ProgramArguments</key>
+	<array>
+		<string>/opt/homebrew/opt/ollama/bin/ollama</string>
+		<string>serve</string>
+	</array>
+	<key>EnvironmentVariables</key>
+	<dict>
+		<key>OLLAMA_FLASH_ATTENTION</key>
+		<string>1</string>
+		<key>OLLAMA_KV_CACHE_TYPE</key>
+		<string>q8_0</string>
+		<key>OLLAMA_CONTEXT_LENGTH</key>
+		<string>65536</string>
+		<key>OLLAMA_NUM_PARALLEL</key>
+		<string>2</string>
+		<key>OLLAMA_MAX_LOADED_MODELS</key>
+		<string>3</string>
+		<key>OLLAMA_KEEP_ALIVE</key>
+		<string>15m</string>
+		<key>OLLAMA_REQUEST_TIMEOUT</key>
+		<string>300s</string>
+	</dict>
+	<key>KeepAlive</key>
+	<true/>
+	<key>RunAtLoad</key>
+	<true/>
+	<key>WorkingDirectory</key>
+	<string>/opt/homebrew/var</string>
+	<key>StandardOutPath</key>
+	<string>/opt/homebrew/var/log/ollama.log</string>
+	<key>StandardErrorPath</key>
+	<string>/opt/homebrew/var/log/ollama.log</string>
+</dict>
+</plist>
