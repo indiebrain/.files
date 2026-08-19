@@ -234,10 +234,11 @@ export K9S_CONFIG_DIR=~/.config/k9s
 # quantization notes at https://ollama.readthedocs.io (f16 / q8_0 / q4_0).
 export OLLAMA_FLASH_ATTENTION=1     # reduce KV cache memory growth as context grows
 export OLLAMA_KV_CACHE_TYPE=q8_0    # ~1/2 the memory of f16, negligible quality loss (needs flash attn)
-export OLLAMA_CONTEXT_LENGTH=32768  # default context window; override big jobs per-model via Modelfile num_ctx
+export OLLAMA_CONTEXT_LENGTH=65536  # per-slot context window; ~3.3 GB of KV cache on gpt-oss:120b
+export OLLAMA_NUM_PARALLEL=2        # concurrent slots; KV cost is NUM_PARALLEL * CONTEXT_LENGTH
 export OLLAMA_REQUEST_TIMEOUT=300s  # API request timeout (default 30s)
 export OLLAMA_KEEP_ALIVE=15m        # keep models resident when idle (default 5m)
-export OLLAMA_MAX_LOADED_MODELS=2   # allow two models resident at once
+export OLLAMA_MAX_LOADED_MODELS=3   # one large driver plus two small helpers; the plist explains why not two large
 
 # Per-host shell configuration overrides
 [ -f $HOME/.bashrc.local ] && source $HOME/.bashrc.local
