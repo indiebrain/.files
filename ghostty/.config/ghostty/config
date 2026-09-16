@@ -42,13 +42,15 @@
 # Changing this value at runtime works after a small delay.
 auto-update = download
 
-# This will be used to set the `TERM` environment variable.
-# HACK: We set this with an `xterm` prefix because vim uses that to enable key
-# protocols (specifically this will enable `modifyOtherKeys`), among other
-# features. An option exists in vim to modify this: `:set
-# keyprotocol=ghostty:kitty`, however a bug in the implementation prevents it
-# from working properly. https://github.com/vim/vim/pull/13211 fixes this.
-term = xterm-256color
+# `term` sets the `TERM` environment variable. This configuration leaves it at
+# Ghostty's default, `xterm-ghostty`, whose terminfo entry advertises truecolor
+# through the `Tc`, `setrgbf`, and `setrgbb` capabilities. Terminal Emacs reads
+# those to render 24-bit color.
+#
+# Do not set an `xterm-256color` prefix here. It makes vim enable its key
+# protocols, but its terminfo entry advertises none of the truecolor
+# capabilities, so terminal Emacs falls back to approximating theme colors from
+# a 256 color palette.
 
 # A theme to use. This can be a built-in theme name, a custom theme
 # name, or an absolute path to a custom theme file. Ghostty also supports
