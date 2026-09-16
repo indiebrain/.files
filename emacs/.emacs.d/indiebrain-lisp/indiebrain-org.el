@@ -181,9 +181,18 @@ To be used with `advice-add'.")
   "Run `indiebrain-org-after-deadline-or-schedule-hook'."
   (run-hooks 'indiebrain-org-after-deadline-or-schedule-hook))
 
+(defvar indiebrain-org--appt-timer nil
+  "Timer that defers the next `org-agenda-to-appt' refresh.")
+
 (defun indiebrain-org-org-agenda-to-appt ()
-  "Make `org-agenda-to-appt' always refresh appointment list."
-  (org-agenda-to-appt :refresh))
+  "Refresh the appointment list once Emacs has been idle for a moment.
+Scanning `org-agenda-files' takes about half a second, so refreshing
+inline adds that delay to every TODO state change, capture finalize,
+and agenda edit.  Repeated requests coalesce into a single refresh."
+  (when (timerp indiebrain-org--appt-timer)
+    (cancel-timer indiebrain-org--appt-timer))
+  (setq indiebrain-org--appt-timer
+        (run-with-idle-timer 5 nil #'org-agenda-to-appt :refresh)))
 
 (dolist (hook '(org-capture-after-finalize-hook
                 org-after-todo-state-change-hook
