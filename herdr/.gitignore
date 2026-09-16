@@ -1,0 +1,5 @@
+**/.config/herdr/*.log
+**/.config/herdr/*.sock
+**/.config/herdr/.plugins.lock
+**/.config/herdr/release-notes.json
+**/.config/herdr/session.json

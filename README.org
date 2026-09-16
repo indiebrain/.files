@@ -118,6 +118,17 @@ $ launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.aaron-kuehler.olla
 The =OLLAMA_*= exports in the =bash= package apply only to a hand-run
 =ollama serve=. The two sets are kept in sync by hand.
 
+** =herdr=
+
+The =herdr= directory holds =.config/herdr/config.toml=, the settings for
+herdr: theme selection and light/dark switching, toast delivery, and how
+agent panes are labeled and sorted.
+
+herdr keeps its running state beside that file in the same directory:
+logs, Unix domain sockets, the current session, cached release notes, and
+a plugin lock file. Those are generated per host and change constantly, so
+the package ignores them and tracks only =config.toml=.
+
 ** =scripts=
 
 This package contains a number of utility shell scripts. When stowed via

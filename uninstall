@@ -22,6 +22,7 @@ function remove_configuration() {
         ghostty \
         git \
         gnome-terminal \
+        herdr \
         iterm2 \
         k9s \
         proselint \
