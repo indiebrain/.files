@@ -1,0 +1,3 @@
+#!/bin/bash
+# Test stub: run the command without privileges (all paths are in the sandbox).
+exec "$@"

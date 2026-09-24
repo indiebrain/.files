@@ -1,0 +1,4 @@
+#!/bin/bash
+# Test stub: a real gum would block on a TTY; fail so the shim must intercept.
+echo "gum $*" >>"$STUB_LOG"
+exit 1

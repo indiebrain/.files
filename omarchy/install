@@ -1,0 +1,69 @@
+#!/bin/bash
+#
+# dotfiles-omarchy: layer personal dotfiles, packages and removals on top of a
+# stock Omarchy install. Every module is idempotent, so this is safe to re-run
+# at any time; the post-update hook re-runs it after each `omarchy update`.
+#
+# Usage: ./install [--only a,b] [--skip a,b] [--hook] [--dry-run] [--list]
+
+set -euo pipefail
+
+OVERLAY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+export OVERLAY_DIR
+
+# shellcheck source=lib/common.sh
+source "$OVERLAY_DIR/lib/common.sh"
+# shellcheck source=overlay.conf
+source "$OVERLAY_DIR/overlay.conf"
+USER_CONF="${XDG_CONFIG_HOME:-$HOME/.config}/dotfiles-omarchy/overlay.conf"
+# shellcheck disable=SC1090
+[[ -f $USER_CONF ]] && source "$USER_CONF"
+
+# Modules that are cheap and non-interactive enough to run after every
+# `omarchy update` (they re-assert removals, packages and links).
+HOOK_MODULES="preflight,remove,packages,tools,dotfiles,shell"
+
+usage() {
+  sed -n '2,8p' "$0" | sed 's/^# \{0,1\}//'
+  exit "${1:-0}"
+}
+
+only="" skip="" list=0
+while (( $# > 0 )); do
+  case "$1" in
+    --only) only="${2:?--only needs a list}"; shift 2 ;;
+    --skip) skip="${2:?--skip needs a list}"; shift 2 ;;
+    --hook) only="$HOOK_MODULES"; shift ;;
+    --dry-run | -n) DRY_RUN=1; shift ;;
+    --list) list=1; shift ;;
+    -h | --help) usage 0 ;;
+    *) warn "unknown option: $1"; usage 1 ;;
+  esac
+done
+export DRY_RUN
+
+# "modules/30-dotfiles.sh" -> "dotfiles"
+module_name() {
+  local base="${1##*/}"
+  base="${base%.sh}"
+  printf '%s\n' "${base#*-}"
+}
+
+in_list() {
+  [[ ",$2," == *",$1,"* ]]
+}
+
+for module in "$OVERLAY_DIR"/modules/[0-9][0-9]-*.sh; do
+  name="$(module_name "$module")"
+  if (( list )); then
+    printf '%s\n' "$name"
+    continue
+  fi
+  [[ -n $only ]] && ! in_list "$name" "$only" && continue
+  [[ -n $skip ]] && in_list "$name" "$skip" && continue
+  log "Module: $name"
+  # shellcheck disable=SC1090
+  source "$module"
+done
+
+(( list )) || log "Done."

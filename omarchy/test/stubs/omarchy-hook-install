@@ -1,0 +1,5 @@
+#!/bin/bash
+# Test stub: same behaviour as upstream (copy into hooks/<type>.d/).
+echo "omarchy-hook-install $*" >>"$STUB_LOG"
+mkdir -p "$HOME/.config/omarchy/hooks/$1.d"
+cp -- "$2" "$HOME/.config/omarchy/hooks/$1.d/$(basename -- "$2")"

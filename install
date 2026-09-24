@@ -11,6 +11,12 @@ set -euo pipefail
 DOTFILES_HOME="$HOME/.files"
 PLATFORM="$(uname)"
 
+# Omarchy (Arch + Hyprland) has its own installer under omarchy/, which drives
+# Omarchy's package helpers and stows the Linux-relevant packages itself.
+function is_omarchy() {
+    [ "$PLATFORM" == "Linux" ] && [ -x "$(command -v omarchy-pkg-add)" ]
+}
+
 function ensure_package_manager() {
     if [ "$PLATFORM" == "Darwin" ] && ! [ -x "$(command -v brew)" ]
     then
@@ -114,6 +120,12 @@ function secure_ssh_permissions() {
     # owner-only mode OpenSSH expects on every install.
     chmod 700 "$DOTFILES_HOME/ssh/.ssh"
 }
+
+if is_omarchy
+then
+    ensure_local_dotfiles
+    exec "$DOTFILES_HOME/omarchy/install" "$@"
+fi
 
 ensure_package_manager
 ensure_dependencies
