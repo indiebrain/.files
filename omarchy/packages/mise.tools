@@ -1,0 +1,9 @@
+# Command-line tools installed as small mise-backed wrappers in ~/.local/bin,
+# through Omarchy's own `omarchy-mise-install` (the way stock Omarchy ships
+# them). The preinstall removal deletes these wrappers, so anything you want to
+# keep is listed here and put back on every run and after every update.
+#
+# Format: <mise package> [command-name [bin-name]]
+
+claude   # Claude Code CLI
+gh       # GitHub CLI

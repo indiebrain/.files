@@ -1,0 +1,9 @@
+# Extra packages to remove, beyond Omarchy's preinstalls (which the remove
+# module handles through `omarchy-remove-preinstalls`). One per line.
+#
+# Uncomment to trim further. Check `pacman -Qi <pkg>` "Required By" first;
+# omarchy-pkg-drop uses `pacman -Rns`, which refuses to break dependencies.
+
+# omarchy-nvim     # Omarchy's Neovim setup (you use Emacs)
+# foot             # previous default terminal, once ghostty is default
+# chromium         # once firefox is default browser

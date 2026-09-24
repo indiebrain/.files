@@ -1,0 +1,14 @@
+name: omarchy
+on:
+  push:
+    paths: ["omarchy/**", "hypr/**", "install", ".github/workflows/omarchy.yml"]
+  pull_request:
+    paths: ["omarchy/**", "hypr/**", "install", ".github/workflows/omarchy.yml"]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo apt-get update && sudo apt-get install -y stow shellcheck
+      - run: shellcheck -x -s bash omarchy/install omarchy/lib/common.sh omarchy/modules/*.sh omarchy/test/run omarchy/test/stubs/*
+      - run: omarchy/test/run

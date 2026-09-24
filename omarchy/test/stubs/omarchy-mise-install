@@ -1,0 +1,6 @@
+#!/bin/bash
+# Test stub: record the call and write the wrapper like upstream does.
+echo "omarchy-mise-install $*" >>"$STUB_LOG"
+mkdir -p "$HOME/.local/bin"
+printf '#!/bin/bash\n' >"$HOME/.local/bin/${2:-$1}"
+chmod +x "$HOME/.local/bin/${2:-$1}"

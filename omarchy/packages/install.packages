@@ -1,0 +1,32 @@
+# Repo packages installed on top of Omarchy (pacman). One per line; `#` comments.
+# Grouped by why they're here so it's obvious what to delete later.
+
+# Dotfiles plumbing
+stow
+git-lfs          # git/.gitconfig enables the lfs filters
+gnupg            # git/.gitconfig signs commits (commit.gpgSign)
+
+# Editor: Emacs (config in dotfiles emacs/.emacs.d)
+emacs-wayland
+aspell
+aspell-en
+ctags            # universal-ctags, for scripts/bin/refresh_tags
+
+# Terminal + font (dotfiles ghostty/ uses Hack)
+ghostty
+ttf-hack
+
+# Writing
+proselint
+
+# Kubernetes (dotfiles k9s/)
+kubectl
+k9s
+
+# AI
+claude-desktop   # Claude Desktop (what omarchy-install-ai-claude installs)
+
+# Desktop apps (from initial-host-setup on macOS)
+firefox-developer-edition
+signal-desktop
+nextcloud-client

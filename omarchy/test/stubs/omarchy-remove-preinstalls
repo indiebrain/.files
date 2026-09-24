@@ -1,0 +1,5 @@
+#!/bin/bash
+# Test stub: mimic upstream's `gum confirm` gate and its wrapper removal.
+gum confirm "Remove preinstalls?" || exit 1
+rm -f "$HOME/.local/bin/claude" "$HOME/.local/bin/gh"
+echo "omarchy-remove-preinstalls confirmed" >>"$STUB_LOG"

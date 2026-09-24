@@ -1,0 +1,88 @@
+#!/bin/bash
+#
+# Runs omarchy/install end to end against a throwaway $HOME holding a copy
+# of this repo as ~/.files, with every Omarchy command stubbed out.
+# Needs git and stow. Usage: omarchy/test/run
+
+# check() evals its assertion later, so single quotes are intentional.
+# shellcheck disable=SC2016,SC2034
+set -euo pipefail
+
+ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+SANDBOX="$(mktemp -d)"
+trap 'rm -rf "$SANDBOX"' EXIT
+export OVERLAY_ALLOW_ROOT=1 HOME="$SANDBOX/home" STUB_LOG="$SANDBOX/calls.log" XDG_STATE_HOME="" XDG_CONFIG_HOME=""
+export PATH="$ROOT/test/stubs:$PATH" OLLAMA_DROPIN="$SANDBOX/etc/ollama.service.d/10-dotfiles.conf"
+mkdir -p "$HOME/.config/ghostty" "$HOME/.config/hypr"
+: >"$STUB_LOG"
+
+fails=0
+pass() { printf 'ok   %s\n' "$1"; }
+fail() { printf 'FAIL %s\n' "$1"; fails=$((fails + 1)); }
+check() { if eval "$2"; then pass "$1"; else fail "$1"; fi; }
+
+# Copy this checkout (tracked + untracked, minus ignored) to ~/.files, the way
+# a real machine has it, and run the copy's omarchy/install from there.
+REPO="$(cd "$ROOT/.." && pwd)"
+mkdir -p "$HOME/.files"
+git -C "$REPO" ls-files -z --cached --others --exclude-standard |
+  (cd "$REPO" && xargs -0 tar cf - --) | tar xf - -C "$HOME/.files"
+INSTALL="$HOME/.files/omarchy/install"
+
+# Omarchy-seeded files that the dotfiles will displace.
+echo '# omarchy bashrc' >"$HOME/.bashrc"
+echo 'theme = omarchy' >"$HOME/.config/ghostty/config"
+echo '-- omarchy seed' >"$HOME/.config/hypr/bindings.lua"
+echo '# my host tweaks' >"$HOME/.bashrc.local"
+
+"$INSTALL" >"$SANDBOX/out1.log" 2>&1 || { cat "$SANDBOX/out1.log"; fail "first run exits 0"; }
+"$INSTALL" >"$SANDBOX/out2.log" 2>&1 || { cat "$SANDBOX/out2.log"; fail "second run exits 0"; }
+
+backups="$HOME/.local/state/dotfiles-omarchy/backups"
+check ".bashrc is a stow link" '[[ -L $HOME/.bashrc && $(readlink -f $HOME/.bashrc) == $HOME/.files/bash/.bashrc ]]'
+check "ghostty config linked, dir kept real" '[[ -L $HOME/.config/ghostty/config && ! -L $HOME/.config/ghostty ]]'
+check "hypr bindings linked from dotfiles" '[[ $(readlink -f $HOME/.config/hypr/bindings.lua) == $HOME/.files/hypr/.config/hypr/bindings.lua ]]'
+check "omarchy .bashrc backed up" 'grep -rqs "omarchy bashrc" "$backups"'
+check "omarchy ghostty config backed up" 'grep -rqs "theme = omarchy" "$backups"'
+check "ssh dir is 700" '[[ $(stat -c %a $HOME/.files/ssh/.ssh) == 700 ]]'
+check ".bashrc.local keeps host lines" 'grep -q "my host tweaks" $HOME/.bashrc.local'
+check ".bashrc.local has one omarchy block" '(( $(grep -c ">>> omarchy" $HOME/.bashrc.local) == 1 ))'
+check "preinstalls removed via shim" 'grep -q "omarchy-remove-preinstalls confirmed" $STUB_LOG'
+check "packages installed" 'grep -q "^omarchy-pkg-add .*emacs-wayland" $STUB_LOG'
+check "claude code wrapper installed" 'grep -q "^omarchy-mise-install claude$" $STUB_LOG'
+check "gh wrapper installed" 'grep -q "^omarchy-mise-install gh$" $STUB_LOG'
+check "claude desktop installed" 'grep -q "^omarchy-pkg-add .*claude-desktop" $STUB_LOG'
+check "ollama installed (cpu build here)" 'grep -q "^omarchy-pkg-add ollama$" $STUB_LOG'
+check "ollama settings applied" 'grep -q "OLLAMA_KV_CACHE_TYPE=q8_0" $OLLAMA_DROPIN'
+check "ollama service enabled" 'grep -q "^systemctl enable --now ollama.service" $STUB_LOG'
+check "emacs daemon enabled" 'grep -q "^systemctl --user enable --now emacs.service" $STUB_LOG'
+check "defaults set" 'grep -q "^omarchy-default-editor emacs" $STUB_LOG'
+check "dev edition set as default browser" 'grep -q "^xdg-settings set default-web-browser firefox-developer-edition.desktop" $STUB_LOG'
+check "omarchy-default-browser not used for dev edition" '! grep -q "^omarchy-default-browser firefox" $STUB_LOG'
+check "dev edition package installed" 'grep -q "^omarchy-pkg-add .*firefox-developer-edition" $STUB_LOG'
+check "post-update hook installed" 'grep -q -- "--hook" $HOME/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy'
+check "hook installed once" '(( $(grep -c "^omarchy-hook-install" $STUB_LOG) == 1 ))'
+check "second run backs nothing up" '! grep -q "Backing up" $SANDBOX/out2.log'
+
+# Hook mode runs only the hook-safe modules.
+: >"$STUB_LOG"
+bash "$HOME/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy" >"$SANDBOX/out3.log" 2>&1 || { cat "$SANDBOX/out3.log"; fail "hook exits 0"; }
+check "hook skips defaults module" '! grep -q "^omarchy-default-" $STUB_LOG'
+check "hook re-runs removals" 'grep -q "omarchy-remove-preinstalls confirmed" $STUB_LOG'
+check "hook puts claude back after removal" 'grep -q "^omarchy-mise-install claude$" $STUB_LOG'
+
+# Dry run changes nothing.
+: >"$STUB_LOG"
+rm "$HOME/.config/hypr/bindings.lua"
+"$INSTALL" --dry-run >"$SANDBOX/out4.log" 2>&1
+check "dry run makes no changing calls" '! grep -Ev "^(omarchy-default-[a-z]+ |xdg-settings get .*|systemctl (--user )?(is-enabled|cat) .*)$" $STUB_LOG'
+check "dry run leaves files alone" '[[ ! -e $HOME/.config/hypr/bindings.lua ]]'
+
+check "top-level install hands off to omarchy/install" '[[ $("$HOME/.files/install" --list | head -1) == "preflight" ]]'
+check "--list prints modules" '[[ $("$INSTALL" --list | tr "\n" " ") == "preflight remove packages tools dotfiles shell defaults emacs ollama hooks " ]]'
+
+if (( fails )); then
+  echo "--- first run output"; cat "$SANDBOX/out1.log"
+  exit 1
+fi
+echo "all passed"
