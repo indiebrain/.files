@@ -51,7 +51,7 @@ omarchy/
 
 ## What gets installed
 
-- **Repo packages** (`packages/install.packages`): stow, git-lfs, gnupg, emacs-wayland, aspell, ctags, ghostty, ttf-hack, proselint, kubectl, k9s, claude-desktop, firefox-developer-edition, signal-desktop, nextcloud-client.
+- **Repo packages** (`packages/install.packages`): stow, git-lfs, gnupg, emacs-wayland, aspell, ctags, ghostty, ttf-hack, proselint, kubectl, k9s, globalprotect-openconnect (GlobalProtect VPN), claude-desktop, firefox-developer-edition, signal-desktop, nextcloud-client.
 - **CLI wrappers** (`packages/mise.tools`): Claude Code (`claude`) and GitHub CLI (`gh`). The preinstall removal deletes Omarchy's wrappers; this puts back the ones listed, on every run and after every update.
 - **Ollama**: `ollama-cuda` if `nvidia-smi` exists, `ollama-rocm` if `rocminfo` exists, otherwise `ollama` (the same choice Omarchy's menu makes; pin one with `OLLAMA_PACKAGE`). Server settings live in `ollama/ollama.service.conf`, the Linux twin of the macOS LaunchAgent. The server runs as the `ollama` system user, so the `OLLAMA_*` exports in `.bashrc` don't reach it.
 - **Defaults**: Ghostty (terminal), Emacs (editor), Firefox Developer Edition (browser). Omarchy's `omarchy default browser` only knows a fixed list, so Developer Edition is set with `xdg-settings`, which is what Omarchy's browser launcher reads.
@@ -63,6 +63,16 @@ omarchy/
 - **Bash.** `.bashrc` replaces Omarchy's and already sources `~/.bashrc.local`; the shell module keeps a marked block there that sources Omarchy's `env-bootstrap` (OMARCHY_PATH, `omarchy-*` on PATH, mise shims). Set `OMARCHY_BASH=full` to also load Omarchy's aliases, functions and prompt tools. Lines outside the block are yours.
 - **Removals follow upstream.** The remove module calls Omarchy's own `omarchy-remove-preinstalls` (with a `gum` shim that answers its confirm prompt), so when upstream adds or drops a preinstall, this follows. Extra removals go in `packages/remove.packages`.
 - **Updates.** `omarchy update` runs `~/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy`, which re-runs the `preflight,remove,packages,tools,dotfiles,shell` modules. It does not `git pull` this repo; update it yourself.
+
+## GlobalProtect VPN
+
+`globalprotect-openconnect` is the open-source GlobalProtect client, from Arch's extra repo. Connect with SAML SSO in your default browser (Firefox Developer Edition):
+
+```bash
+gpclient connect --browser default vpn.example.com
+```
+
+The CLI is free; its GUI is paid after a 7-day trial. If your VPN insists on Palo Alto's official client (e.g. strict HIP checks), that client ships as a `PanGPLinux-*.tgz` from your company's support portal; package it with the AUR `globalprotect-bin` recipe.
 
 ## Per-host overrides
 
