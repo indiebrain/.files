@@ -17,7 +17,8 @@ this repository. Contributions are welcome. Please feel free to open
 issues, or submit fixes.
 
 This repository is intended to work on hosts running flavors of Debian
-GNU/Linux or MacOS operating systems.
+GNU/Linux, MacOS, or [[https://omarchy.org][Omarchy]] (Arch Linux). On Omarchy the =install=
+script hands off to =omarchy/install=; see =omarchy/README.md=.
 
 * Installing
 :PROPERTIES:

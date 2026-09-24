@@ -1,0 +1,9 @@
+#!/bin/bash
+# Test stub: record the call; `get` answers with the last value set.
+echo "xdg-settings $*" >>"$STUB_LOG"
+state="$HOME/.xdg-settings-stub"
+case "$1" in
+  get) [[ -f $state ]] && cat "$state" ;;
+  set) echo "$3" >"$state" ;;
+esac
+exit 0

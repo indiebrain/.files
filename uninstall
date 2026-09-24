@@ -38,6 +38,14 @@ function remove_configuration() {
         launchctl bootout "gui/$(id -u)/com.aaron-kuehler.ollama" 2> /dev/null || true
         stow --delete ollama
     fi
+
+    # The hypr package is placed only on Omarchy (by omarchy/install). The
+    # post-update hook would otherwise re-link everything on the next update.
+    if [ -x "$(command -v omarchy-pkg-add)" ]
+    then
+        stow --delete hypr
+        rm -f "$HOME/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy"
+    fi
     popd || return
 }
 

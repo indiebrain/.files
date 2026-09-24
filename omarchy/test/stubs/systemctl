@@ -1,0 +1,11 @@
+#!/bin/bash
+# Test stub: record the call; units count as enabled once `enable` ran.
+echo "systemctl $*" >>"$STUB_LOG"
+args=("$@")
+[[ ${args[0]} == --user ]] && args=("${args[@]:1}")
+state="$HOME/.systemctl-stub-enabled"
+case "${args[0]}" in
+  is-enabled) grep -qxF "${args[-1]}" "$state" 2>/dev/null ;;
+  enable) echo "${args[-1]}" >>"$state" ;;
+  *) exit 0 ;;
+esac
