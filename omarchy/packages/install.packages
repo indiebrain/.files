@@ -23,6 +23,13 @@ proselint
 kubectl
 k9s
 
+# VPN: Palo Alto GlobalProtect via the open-source client (Arch extra).
+# CLI is free: `gpclient connect --browser default <portal>` does SAML SSO in
+# the default browser. The bundled GUI (gpclient launch-gui) is paid after a
+# 7-day trial. The official PanGPLinux client needs a tarball from your
+# company's support portal, so it can't be installed from here.
+globalprotect-openconnect
+
 # AI
 claude-desktop   # Claude Desktop (what omarchy-install-ai-claude installs)
 

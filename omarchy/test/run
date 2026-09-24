@@ -51,6 +51,7 @@ check "preinstalls removed via shim" 'grep -q "omarchy-remove-preinstalls confir
 check "packages installed" 'grep -q "^omarchy-pkg-add .*emacs-wayland" $STUB_LOG'
 check "claude code wrapper installed" 'grep -q "^omarchy-mise-install claude$" $STUB_LOG'
 check "gh wrapper installed" 'grep -q "^omarchy-mise-install gh$" $STUB_LOG'
+check "globalprotect client installed" 'grep -q "^omarchy-pkg-add .*globalprotect-openconnect" $STUB_LOG'
 check "claude desktop installed" 'grep -q "^omarchy-pkg-add .*claude-desktop" $STUB_LOG'
 check "ollama installed (cpu build here)" 'grep -q "^omarchy-pkg-add ollama$" $STUB_LOG'
 check "ollama settings applied" 'grep -q "OLLAMA_KV_CACHE_TYPE=q8_0" $OLLAMA_DROPIN'
