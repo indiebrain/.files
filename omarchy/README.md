@@ -32,7 +32,7 @@ hypr/                   stow package, Omarchy only (Hyprland bindings and window
 omarchy/
   install               runner: sources overlay.conf, then modules/NN-*.sh in order
   overlay.conf          settings: stow list, defaults, toggles
-  lib/common.sh         helpers: log/run/dry-run, manifests, stow with backup, managed blocks
+  lib/common.sh         helpers: log/run/dry-run, manifests, package batches, stow with backup, managed blocks
   modules/
     00-preflight.sh     checks Omarchy + non-root, bootstraps git and stow
     10-remove.sh        omarchy-remove-preinstalls (auto-confirmed) + packages/remove.packages
@@ -62,7 +62,7 @@ omarchy/
 - **Stow list.** `DOTFILES_STOW` in `overlay.conf` picks the packages linked on Omarchy; iTerm2, GNOME Terminal and the ollama LaunchAgent are left out, and `hypr` is added.
 - **Conflicts are backed up, not clobbered.** When Omarchy has seeded a file where a dotfile goes (`~/.bashrc`, `~/.config/ghostty/config`, `~/.config/btop/btop.conf`, `~/.config/hypr/bindings.lua`…), it is moved to `~/.local/state/dotfiles-omarchy/backups/<timestamp>/` before stowing. Stow runs with `--no-folding`, so directories stay real and files Omarchy writes into them never end up in this repo.
 - **Bash.** `.bashrc` replaces Omarchy's and already sources `~/.bashrc.local`; the shell module keeps a marked block there that sources Omarchy's `env-bootstrap` (OMARCHY_PATH, `omarchy-*` on PATH, mise shims). Set `OMARCHY_BASH=full` to also load Omarchy's aliases, functions and prompt tools. Lines outside the block are yours.
-- **Removals follow upstream.** The remove module calls Omarchy's own `omarchy-remove-preinstalls` (with a `gum` shim that answers its confirm prompt), so when upstream adds or drops a preinstall, this follows. Extra removals go in `packages/remove.packages`.
+- **Removals follow upstream.** The remove module calls Omarchy's own `omarchy-remove-preinstalls` (with a `gum` shim that answers its confirm prompt), so when upstream adds or drops a preinstall, this follows. Extra removals go in `packages/remove.packages`, which drops the packages your own defaults displace: `omarchy-nvim`, `neovim`, `foot` and `chromium`.
 - **Updates.** `omarchy update` runs `~/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy`, which re-runs the `preflight,remove,packages,tools,dotfiles,shell` modules. It does not `git pull` this repo; update it yourself.
 
 ## GlobalProtect VPN

@@ -49,6 +49,7 @@ check ".bashrc.local keeps host lines" 'grep -q "my host tweaks" $HOME/.bashrc.l
 check ".bashrc.local has one omarchy block" '(( $(grep -c ">>> omarchy" $HOME/.bashrc.local) == 1 ))'
 check "preinstalls removed via shim" 'grep -q "omarchy-remove-preinstalls confirmed" $STUB_LOG'
 check "packages installed" 'grep -q "^omarchy-pkg-add .*emacs-wayland" $STUB_LOG'
+check "displaced defaults dropped" 'grep -q "^omarchy-pkg-drop .*chromium" $STUB_LOG'
 check "claude code wrapper installed" 'grep -q "^omarchy-mise-install claude$" $STUB_LOG'
 check "gh wrapper installed" 'grep -q "^omarchy-mise-install gh$" $STUB_LOG'
 check "globalprotect client installed" 'grep -q "^omarchy-pkg-add .*globalprotect-openconnect" $STUB_LOG'
