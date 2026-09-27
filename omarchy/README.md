@@ -41,9 +41,11 @@ omarchy/
     30-dotfiles.sh      stow DOTFILES_STOW into $HOME
     40-shell.sh         managed Omarchy block in ~/.bashrc.local
     50-defaults.sh      default terminal/editor/browser
+    55-firefox.sh       firefox/policies.json -> the Developer Edition install
     60-emacs.sh         emacs.service user daemon
     65-ollama.sh        Ollama (GPU build auto-picked) + server settings + system service
     90-hooks.sh         post-update hook -> install --hook
+  firefox/              enterprise policy file: extensions, search, privacy settings
   ollama/               systemd drop-in with the Ollama server settings
   packages/             one entry per line, # comments
   test/run              end-to-end test in a throwaway $HOME with Omarchy commands stubbed
@@ -51,7 +53,7 @@ omarchy/
 
 ## What gets installed
 
-- **Repo packages** (`packages/install.packages`): stow, git-lfs, gnupg, emacs-wayland, aspell, ctags, ghostty, ttf-hack, proselint, kubectl, k9s, globalprotect-openconnect (GlobalProtect VPN), claude-desktop, firefox-developer-edition, signal-desktop, nextcloud-client.
+- **Repo packages** (`packages/install.packages`): stow, git-lfs, gnupg, emacs-wayland, aspell, ctags, ghostty, ttf-hack, keepassxc, proselint, kubectl, k9s, globalprotect-openconnect (GlobalProtect VPN), claude-desktop, firefox-developer-edition, signal-desktop, nextcloud-client.
 - **AUR packages** (`packages/aur.packages`): `ttf-aporetic`, the Aporetic typeface. The Emacs font configuration asks for Aporetic Sans Mono, Aporetic Sans, Aporetic Serif Mono and Aporetic Serif, and this package installs all four.
 - **CLI wrappers** (`packages/mise.tools`): Claude Code (`claude`) and GitHub CLI (`gh`). The preinstall removal deletes Omarchy's wrappers; this puts back the ones listed, on every run and after every update.
 - **Ollama**: `ollama-cuda` if `nvidia-smi` exists, `ollama-rocm` if `rocminfo` exists, otherwise `ollama` (the same choice Omarchy's menu makes; pin one with `OLLAMA_PACKAGE`). Server settings live in `ollama/ollama.service.conf`, the Linux twin of the macOS LaunchAgent. The server runs as the `ollama` system user, so the `OLLAMA_*` exports in `.bashrc` don't reach it.
@@ -64,6 +66,35 @@ omarchy/
 - **Bash.** `.bashrc` replaces Omarchy's and already sources `~/.bashrc.local`; the shell module keeps a marked block there that sources Omarchy's `env-bootstrap` (OMARCHY_PATH, `omarchy-*` on PATH, mise shims). Set `OMARCHY_BASH=full` to also load Omarchy's aliases, functions and prompt tools. Lines outside the block are yours.
 - **Removals follow upstream.** The remove module calls Omarchy's own `omarchy-remove-preinstalls` (with a `gum` shim that answers its confirm prompt), so when upstream adds or drops a preinstall, this follows. Extra removals go in `packages/remove.packages`, which drops the packages your own defaults displace: `omarchy-nvim`, `neovim`, `foot` and `chromium`.
 - **Updates.** `omarchy update` runs `~/.config/omarchy/hooks/post-update.d/50-dotfiles-omarchy`, which re-runs the `preflight,remove,packages,tools,dotfiles,shell` modules. It does not `git pull` this repo; update it yourself.
+
+## Firefox
+
+`firefox/policies.json` is a Firefox enterprise policy file, installed to
+`/usr/lib/firefox-developer-edition/distribution/policies.json`, the directory
+Firefox reads beside its binary. The system-wide `/etc/firefox/policies` path
+only works in a build with system policies compiled in, which the packaged
+Developer Edition is not. It sets:
+
+- **Extensions**: Privacy Badger and KeePassXC-Browser, installed and not
+  removable. KeePassXC itself is a repo package; its browser integration is
+  switched on inside KeePassXC (Settings, Browser Integration), which no policy
+  can do from here.
+- **Search**: DuckDuckGo as the default, the built-in alternatives hidden, no
+  engines installable from webpages, no search suggestions. `Remove` matches
+  engines by display name, so an engine your locale ships under another name
+  stays; `about:preferences#search` lists the names to add.
+- **Saved data**: no offers to save logins, no address or payment-method
+  autofill, no form history.
+- **Telemetry and suggestions**: telemetry and studies off, Firefox Suggest
+  (including sponsored suggestions) off and locked, sponsored new-tab content
+  and stories off, recommendation messages off.
+- **Default browser**: the startup check is off, since `50-defaults.sh` already
+  sets the default with `xdg-settings`.
+
+Policies load at startup, so a running Firefox needs a restart. `about:policies`
+shows what Firefox actually parsed, and its Errors tab names anything it
+rejected. Set `FIREFOX_POLICIES=false` in a per-host override to leave Firefox
+alone.
 
 ## GlobalProtect VPN
 

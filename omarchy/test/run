@@ -13,6 +13,7 @@ SANDBOX="$(mktemp -d)"
 trap 'rm -rf "$SANDBOX"' EXIT
 export OVERLAY_ALLOW_ROOT=1 HOME="$SANDBOX/home" STUB_LOG="$SANDBOX/calls.log" XDG_STATE_HOME="" XDG_CONFIG_HOME=""
 export PATH="$ROOT/test/stubs:$PATH" OLLAMA_DROPIN="$SANDBOX/etc/ollama.service.d/10-dotfiles.conf"
+export FIREFOX_POLICIES_FILE="$SANDBOX/usr/lib/firefox-developer-edition/distribution/policies.json"
 mkdir -p "$HOME/.config/ghostty" "$HOME/.config/hypr"
 : >"$STUB_LOG"
 
@@ -58,6 +59,9 @@ check "claude desktop installed" 'grep -q "^omarchy-pkg-add .*claude-desktop" $S
 check "ollama installed (cpu build here)" 'grep -q "^omarchy-pkg-add ollama$" $STUB_LOG'
 check "ollama settings applied" 'grep -q "OLLAMA_KV_CACHE_TYPE=q8_0" $OLLAMA_DROPIN'
 check "ollama service enabled" 'grep -q "^systemctl enable --now ollama.service" $STUB_LOG'
+check "firefox policies applied" 'grep -q "\"Default\": \"DuckDuckGo\"" $FIREFOX_POLICIES_FILE'
+check "firefox extensions forced" 'grep -q "keepassxc-browser@keepassxc.org" $FIREFOX_POLICIES_FILE'
+check "keepassxc installed" 'grep -q "^omarchy-pkg-add .*keepassxc" $STUB_LOG'
 check "emacs daemon enabled" 'grep -q "^systemctl --user enable --now emacs.service" $STUB_LOG'
 check "defaults set" 'grep -q "^omarchy-default-editor emacs" $STUB_LOG'
 check "dev edition set as default browser" 'grep -q "^xdg-settings set default-web-browser firefox-developer-edition.desktop" $STUB_LOG'
@@ -82,7 +86,7 @@ check "dry run makes no changing calls" '! grep -Ev "^(omarchy-default-[a-z]+ |x
 check "dry run leaves files alone" '[[ ! -e $HOME/.config/hypr/bindings.lua ]]'
 
 check "top-level install hands off to omarchy/install" '[[ $("$HOME/.files/install" --list | head -1) == "preflight" ]]'
-check "--list prints modules" '[[ $("$INSTALL" --list | tr "\n" " ") == "preflight remove packages tools dotfiles shell defaults emacs ollama hooks " ]]'
+check "--list prints modules" '[[ $("$INSTALL" --list | tr "\n" " ") == "preflight remove packages tools dotfiles shell defaults firefox emacs ollama hooks " ]]'
 
 if (( fails )); then
   echo "--- first run output"; cat "$SANDBOX/out1.log"

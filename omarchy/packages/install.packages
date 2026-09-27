@@ -16,6 +16,9 @@ ctags            # universal-ctags, for scripts/bin/refresh_tags
 ghostty
 ttf-hack
 
+# Passwords
+keepassxc        # the KeePassXC-Browser extension comes from firefox/policies.json
+
 # Writing
 proselint
 
