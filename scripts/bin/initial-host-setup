@@ -30,6 +30,7 @@ function setup_macos() {
   binary_packages="
       docker
       firefox-developer-edition
+      font-aporetic
       gpg-suite
       iterm2
       nextcloud
