@@ -56,6 +56,8 @@ function setup_macos() {
       fi
   done
 
+  "$(dirname "${BASH_SOURCE[0]}")/firefox-apply-policies"
+
   if [ -z $(grep ${HOMEBREW_PREFIX}/bin/bash /etc/shells) ]
   then
       sudo bash -c "echo ${HOMEBREW_PREFIX}/bin/bash >> /etc/shells"

@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+#
+# Usage: firefox-apply-policies [/path/to/Firefox.app]
+#
+# Installs firefox/policies.json into a Firefox application bundle on macOS.
+# Why the bundle and not a configuration profile: docs/cir/CIR-003-firefox-policy-configuration.md
+
+set -euo pipefail
+
+DOTFILES_HOME="${DOTFILES_HOME:-$HOME/.files}"
+source_file="$DOTFILES_HOME/firefox/policies.json"
+app="${1:-/Applications/Firefox Developer Edition.app}"
+dest="$app/Contents/Resources/distribution/policies.json"
+
+if [[ ${1:-} == -h || ${1:-} == --help ]]; then
+    sed -n '3,6p' "$0" | sed 's/^# \{0,1\}//'
+    exit 0
+fi
+
+if [[ ! -f $source_file ]]; then
+    echo "No policy file at $source_file" >&2
+    exit 1
+fi
+
+if [[ ! -d $app ]]; then
+    echo "No Firefox application bundle at $app" >&2
+    exit 1
+fi
+
+if ! /usr/bin/ruby -rjson -e 'JSON.parse(File.read(ARGV[0]))' "$source_file" 2>/dev/null; then
+    echo "$source_file is not valid JSON; Firefox would ignore every policy in it" >&2
+    exit 1
+fi
+
+if cmp -s "$source_file" "$dest"; then
+    echo "Firefox policies already current in $(basename "$app")"
+    exit 0
+fi
+
+as_owner=()
+if [[ ! -w "$app/Contents/Resources" ]]; then
+    echo "$app is not writable by $(whoami); using sudo"
+    as_owner=(sudo)
+fi
+
+"${as_owner[@]}" mkdir -p "$(dirname "$dest")"
+"${as_owner[@]}" install -m 644 "$source_file" "$dest"
+echo "Applied Firefox policies to $(basename "$app"). Restart Firefox to pick them up."
+echo "A Firefox update replaces the bundle, so run this again afterwards."
