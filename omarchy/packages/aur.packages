@@ -1,1 +1,8 @@
 # AUR packages (installed with yay via omarchy-pkg-aur-add). One per line.
+
+# Fonts for Emacs. The fontaine presets in
+# emacs/.emacs.d/indiebrain-emacs-modules/indiebrain-emacs-font.el name the
+# Aporetic Sans Mono, Aporetic Sans, Aporetic Serif Mono and Aporetic Serif
+# families; this package carries all four. It installs the prebuilt TrueType
+# files from the upstream release, so there is no font build.
+ttf-aporetic

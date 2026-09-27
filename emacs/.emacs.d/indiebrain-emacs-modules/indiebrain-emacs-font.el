@@ -40,50 +40,26 @@
   (setq-default text-scale-remap-header-line t)
   (setq fontaine-latest-state-file (locate-user-emacs-file "fontaine-latest-state.eld"))
 
-  ;; Iosevka Comfy is a highly customized build of Iosevka with
-  ;; monospaced and duospaced (quasi-proportional) variants as well as
-  ;; support or no support for ligatures:
-  ;; <https://github.com/indiebrain/iosevka-comfy>.
-  ;;
-  ;; | Family                          | Shapes | Spacing | Style      | Ligatures |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy                   | Sans   | Compact | Monospaced | Yes       |
-  ;; | Iosevka Comfy Fixed             | Sans   | Compact | Monospaced | No        |
-  ;; | Iosevka Comfy Duo               | Sans   | Compact | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Motion            | Slab   | Compact | Monospaced | Yes       |
-  ;; | Iosevka Comfy Motion Fixed      | Slab   | Compact | Monospaced | No        |
-  ;; | Iosevka Comfy Motion Duo        | Slab   | Compact | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Wide              | Sans   | Wide    | Monospaced | Yes       |
-  ;; | Iosevka Comfy Wide Fixed        | Sans   | Wide    | Monospaced | No        |
-  ;; | Iosevka Comfy Wide Duo          | Sans   | Wide    | Duospaced  | Yes       |
-  ;; |---------------------------------+--------+---------+------------+-----------|
-  ;; | Iosevka Comfy Wide Motion       | Slab   | Wide    | Monospaced | Yes       |
-  ;; | Iosevka Comfy Wide Motion Fixed | Slab   | Wide    | Monospaced | No        |
-  ;; | Iosevka Comfy Wide Motion Duo   | Slab   | Wide    | Duospaced  | Yes       |
+  ;; Aporetic fonts: <https://github.com/protesilaos/aporetic>.
   (setq fontaine-presets
         '((small
-           :default-family "Iosevka Comfy Motion"
+           :default-family "Aporetic Serif Mono"
            :default-height 80
-           :variable-pitch-family "Iosevka Comfy Duo")
+           :variable-pitch-family "Aporetic Sans")
           (regular) ; like this it uses all the fallback values and is named `regular'
           (medium
-           :default-weight semilight
-           :default-height 120
-           :bold-weight extrabold)
+           :default-height 130)
           (large
            :inherit medium
            :default-height 150)
           (presentation
            :inherit medium
-           :default-weight light
            :default-height 180)
           (t
            ;; I keep all properties for didactic purposes, but most can be
            ;; omitted.  See the fontaine manual for the technicalities:
            ;; <https://protesilaos.com/emacs/fontaine>.
-           :default-family "Iosevka Comfy"
+           :default-family "Aporetic Sans Mono"
            :default-weight regular
            :default-height 120
            :fixed-pitch-family nil ; falls back to :default-family
@@ -92,7 +68,7 @@
            :fixed-pitch-serif-family nil ; falls back to :default-family
            :fixed-pitch-serif-weight nil ; falls back to :default-weight
            :fixed-pitch-serif-height 1.0
-           :variable-pitch-family "Iosevka Comfy Motion Duo"
+           :variable-pitch-family "Aporetic Serif"
            :variable-pitch-weight nil
            :variable-pitch-height 1.0
            :bold-family nil ; use whatever the underlying face has

@@ -52,6 +52,7 @@ omarchy/
 ## What gets installed
 
 - **Repo packages** (`packages/install.packages`): stow, git-lfs, gnupg, emacs-wayland, aspell, ctags, ghostty, ttf-hack, proselint, kubectl, k9s, globalprotect-openconnect (GlobalProtect VPN), claude-desktop, firefox-developer-edition, signal-desktop, nextcloud-client.
+- **AUR packages** (`packages/aur.packages`): `ttf-aporetic`, the Aporetic typeface. The Emacs font configuration asks for Aporetic Sans Mono, Aporetic Sans, Aporetic Serif Mono and Aporetic Serif, and this package installs all four.
 - **CLI wrappers** (`packages/mise.tools`): Claude Code (`claude`) and GitHub CLI (`gh`). The preinstall removal deletes Omarchy's wrappers; this puts back the ones listed, on every run and after every update.
 - **Ollama**: `ollama-cuda` if `nvidia-smi` exists, `ollama-rocm` if `rocminfo` exists, otherwise `ollama` (the same choice Omarchy's menu makes; pin one with `OLLAMA_PACKAGE`). Server settings live in `ollama/ollama.service.conf`, the Linux twin of the macOS LaunchAgent. The server runs as the `ollama` system user, so the `OLLAMA_*` exports in `.bashrc` don't reach it.
 - **Defaults**: Ghostty (terminal), Emacs (editor), Firefox Developer Edition (browser). Omarchy's `omarchy default browser` only knows a fixed list, so Developer Edition is set with `xdg-settings`, which is what Omarchy's browser launcher reads.
