@@ -305,7 +305,9 @@
 ;;;;; nodejs (npm-mode)
 (indiebrain-emacs-package npm-mode
   (:install t)
-  (setopt npm-mode-command-prefix "C-c j")
+  (indiebrain-emacs-keybind npm-mode-keymap
+    "C-c j" npm-mode-command-keymap
+    "C-c n" nil)
   (add-hook 'js2-mode-hook 'npm-mode))
 
 ;;;; Markdown (markdown-mode)
