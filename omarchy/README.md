@@ -42,6 +42,7 @@ omarchy/
     40-shell.sh         managed Omarchy block in ~/.bashrc.local
     50-defaults.sh      default terminal/editor/browser
     55-firefox.sh       firefox/policies.json -> the Developer Edition install
+    56-keepassxc.sh     browser integration: Browser/Enabled + native messaging host
     60-emacs.sh         emacs.service user daemon
     65-ollama.sh        Ollama (GPU build auto-picked) + server settings + system service
     90-hooks.sh         post-update hook -> install --hook
@@ -95,6 +96,32 @@ Policies load at startup, so a running Firefox needs a restart. `about:policies`
 shows what Firefox actually parsed, and its Errors tab names anything it
 rejected. Set `FIREFOX_POLICIES=false` in a per-host override to leave Firefox
 alone.
+
+## KeePassXC browser integration
+
+KeePassXC talks to its browser extension through a native messaging host, and on
+Linux the presence of
+`~/.mozilla/native-messaging-hosts/org.keepassxc.keepassxc_browser.json` is what
+both Firefox and KeePassXC read as "Firefox integration is on". No configuration
+key says it. So `56-keepassxc.sh` writes that file, pointing at the
+`keepassxc-proxy` on PATH, and sets `Browser/Enabled` in
+`~/.config/keepassxc/keepassxc.ini`. The rest of that file is left alone, since
+it also holds per-host state that does not belong in this repository.
+
+`KEEPASSXC_ALWAYS_ALLOW_ACCESS` sets `Browser/AlwaysAllowAccess`, the setting
+labelled "Never ask before accessing credentials". Without it, KeePassXC asks
+which entries the extension may read, per site, every time. With it, any site
+the extension matches receives its credentials with no confirmation.
+
+KeePassXC writes its whole configuration when it exits, so one left running
+during the install can put the old values back. The module warns when it finds
+one running.
+
+Two steps stay manual, both living in the extension rather than in anything a
+file here can reach: connecting the database, through the extension's Connect
+button, which writes an association key into the database; and switching on
+Passkeys under the extension's Options, General, Passkeys. That card stays
+hidden until the database is connected.
 
 ## GlobalProtect VPN
 
