@@ -6,6 +6,8 @@
 #
 # Usage: ./install [--only a,b] [--skip a,b] [--hook] [--dry-run] [--list]
 
+# shellcheck source-path=SCRIPTDIR
+
 set -euo pipefail
 
 OVERLAY_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
