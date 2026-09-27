@@ -26,7 +26,4 @@ SHIM
 fi
 
 mapfile -t drop < <(read_manifest "$OVERLAY_DIR/packages/remove.packages")
-if (( ${#drop[@]} > 0 )); then
-  log "Removing packages: ${drop[*]}"
-  run omarchy-pkg-drop "${drop[@]}"
-fi
+pkg_batch omarchy-pkg-drop "Removing packages" "${drop[@]}"

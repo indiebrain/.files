@@ -39,6 +39,26 @@ read_manifest() {
   done <"$file"
 }
 
+# Apply <command> to <packages> in a single call, described by <label>. pacman
+# rejects an entire batch when one name is unknown or a dependency blocks it, so
+# a failed batch is retried one package at a time and whatever still fails is
+# reported rather than aborting the run.
+pkg_batch() {
+  local command="$1" label="$2"
+  shift 2
+  (( $# > 0 )) || return 0
+  log "$label: $*"
+  (( DRY_RUN )) && { run "$command" "$@"; return 0; }
+  "$command" "$@" && return 0
+
+  warn "$label: batch call failed, retrying one at a time"
+  local pkg failed=()
+  for pkg in "$@"; do
+    "$command" "$pkg" >/dev/null 2>&1 || failed+=("$pkg")
+  done
+  (( ${#failed[@]} == 0 )) || warn "$label: no luck with ${failed[*]}"
+}
+
 # Move a file out of the way into this run's backup directory, keeping its path.
 backup_path() {
   local target="$1" rel dest
