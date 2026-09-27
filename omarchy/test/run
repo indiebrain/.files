@@ -62,6 +62,9 @@ check "ollama service enabled" 'grep -q "^systemctl enable --now ollama.service"
 check "firefox policies applied" 'grep -q "\"Default\": \"DuckDuckGo\"" $FIREFOX_POLICIES_FILE'
 check "firefox extensions forced" 'grep -q "keepassxc-browser@keepassxc.org" $FIREFOX_POLICIES_FILE'
 check "keepassxc installed" 'grep -q "^omarchy-pkg-add .*keepassxc" $STUB_LOG'
+check "keepassxc browser integration on" 'grep -q "^Enabled=true" $HOME/.config/keepassxc/keepassxc.ini'
+check "keepassxc stops asking per entry" 'grep -q "^AlwaysAllowAccess=true" $HOME/.config/keepassxc/keepassxc.ini'
+check "keepassxc messaging host registered" 'grep -q "keepassxc-browser@keepassxc.org" $HOME/.mozilla/native-messaging-hosts/org.keepassxc.keepassxc_browser.json'
 check "emacs daemon enabled" 'grep -q "^systemctl --user enable --now emacs.service" $STUB_LOG'
 check "defaults set" 'grep -q "^omarchy-default-editor emacs" $STUB_LOG'
 check "dev edition set as default browser" 'grep -q "^xdg-settings set default-web-browser firefox-developer-edition.desktop" $STUB_LOG'
@@ -86,7 +89,7 @@ check "dry run makes no changing calls" '! grep -Ev "^(omarchy-default-[a-z]+ |x
 check "dry run leaves files alone" '[[ ! -e $HOME/.config/hypr/bindings.lua ]]'
 
 check "top-level install hands off to omarchy/install" '[[ $("$HOME/.files/install" --list | head -1) == "preflight" ]]'
-check "--list prints modules" '[[ $("$INSTALL" --list | tr "\n" " ") == "preflight remove packages tools dotfiles shell defaults firefox emacs ollama hooks " ]]'
+check "--list prints modules" '[[ $("$INSTALL" --list | tr "\n" " ") == "preflight remove packages tools dotfiles shell defaults firefox keepassxc emacs ollama hooks " ]]'
 
 if (( fails )); then
   echo "--- first run output"; cat "$SANDBOX/out1.log"
