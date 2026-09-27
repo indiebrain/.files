@@ -2,7 +2,7 @@
 # shellcheck shell=bash
 
 if [[ ${FIREFOX_POLICIES:-false} == "true" ]]; then
-  policies_src="$OVERLAY_DIR/firefox/policies.json"
+  policies_src="$DOTFILES_DIR/firefox/policies.json"
   policies_dest="${FIREFOX_POLICIES_FILE:-/usr/lib/firefox-developer-edition/distribution/policies.json}"
 
   if ! python3 -c 'import json,sys; json.load(open(sys.argv[1]))' "$policies_src" 2>/dev/null; then

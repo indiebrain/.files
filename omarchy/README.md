@@ -41,12 +41,11 @@ omarchy/
     30-dotfiles.sh      stow DOTFILES_STOW into $HOME
     40-shell.sh         managed Omarchy block in ~/.bashrc.local
     50-defaults.sh      default terminal/editor/browser
-    55-firefox.sh       firefox/policies.json -> the Developer Edition install
+    55-firefox.sh       ../firefox/policies.json -> the Developer Edition install
     56-keepassxc.sh     browser integration: Browser/Enabled + native messaging host
     60-emacs.sh         emacs.service user daemon
     65-ollama.sh        Ollama (GPU build auto-picked) + server settings + system service
     90-hooks.sh         post-update hook -> install --hook
-  firefox/              enterprise policy file: extensions, search, privacy settings
   ollama/               systemd drop-in with the Ollama server settings
   packages/             one entry per line, # comments
   test/run              end-to-end test in a throwaway $HOME with Omarchy commands stubbed
@@ -70,7 +69,8 @@ omarchy/
 
 ## Firefox
 
-`firefox/policies.json` is a Firefox enterprise policy file, installed to
+`firefox/policies.json`, at the repository root so macOS can use the same file,
+is a Firefox enterprise policy file. It is installed to
 `/usr/lib/firefox-developer-edition/distribution/policies.json`, the directory
 Firefox reads beside its binary. The system-wide `/etc/firefox/policies` path
 only works in a build with system policies compiled in, which the packaged
