@@ -37,13 +37,19 @@ if cmp -s "$source_file" "$dest"; then
     exit 0
 fi
 
-as_owner=()
+as_bundle_owner() {
+    if [[ -w "$app/Contents/Resources" ]]; then
+        "$@"
+    else
+        sudo "$@"
+    fi
+}
+
 if [[ ! -w "$app/Contents/Resources" ]]; then
     echo "$app is not writable by $(whoami); using sudo"
-    as_owner=(sudo)
 fi
 
-"${as_owner[@]}" mkdir -p "$(dirname "$dest")"
-"${as_owner[@]}" install -m 644 "$source_file" "$dest"
+as_bundle_owner mkdir -p "$(dirname "$dest")"
+as_bundle_owner install -m 644 "$source_file" "$dest"
 echo "Applied Firefox policies to $(basename "$app"). Restart Firefox to pick them up."
 echo "A Firefox update replaces the bundle, so run this again afterwards."
