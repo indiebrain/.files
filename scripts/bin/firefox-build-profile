@@ -1,0 +1,83 @@
+#!/usr/bin/env ruby
+# frozen_string_literal: true
+#
+# Usage: firefox-build-profile [output.mobileconfig]
+#
+# Wraps firefox/policies.json in a macOS configuration profile for Firefox
+# Developer Edition, for installing by hand.
+# Why a profile rather than the app bundle:
+# docs/cir/CIR-003-firefox-policy-configuration.md
+
+require "digest"
+require "json"
+require "open3"
+
+PREFERENCE_DOMAIN = "org.mozilla.firefoxdeveloperedition"
+PROFILE_IDENTIFIER = "com.aaron-kuehler.firefox-developer-edition-policies"
+
+if ARGV.first == "-h" || ARGV.first == "--help"
+  puts File.readlines(__FILE__)[3..8].map { |line| line.sub(/^# ?/, "") }.join
+  exit 0
+end
+
+dotfiles = ENV.fetch("DOTFILES_HOME", File.join(Dir.home, ".files"))
+source = File.join(dotfiles, "firefox", "policies.json")
+output = ARGV.first ||
+         File.join(ENV.fetch("TMPDIR", "/tmp"), "firefox-developer-edition-policies.mobileconfig")
+
+abort "No policy file at #{source}" unless File.exist?(source)
+
+policies = begin
+  JSON.parse(File.read(source)).fetch("policies")
+rescue JSON::ParserError => e
+  abort "#{source} is not valid JSON: #{e.message}"
+rescue KeyError
+  abort "#{source} has no top-level \"policies\" key"
+end
+
+# Derived from the identifier so that regenerating produces the same UUIDs and
+# macOS replaces the installed profile instead of adding a second one.
+def uuid_for(text)
+  digest = Digest::SHA1.hexdigest(text)
+  [digest[0, 8], digest[8, 4], digest[12, 4], digest[16, 4], digest[20, 12]].join("-").upcase
+end
+
+# EnterprisePoliciesEnabled is what turns policy reading on for macOS; the
+# policies themselves are ignored without it.
+settings = { "EnterprisePoliciesEnabled" => true }.merge(policies)
+
+profile = {
+  "PayloadType" => "Configuration",
+  "PayloadVersion" => 1,
+  "PayloadIdentifier" => PROFILE_IDENTIFIER,
+  "PayloadUUID" => uuid_for(PROFILE_IDENTIFIER),
+  "PayloadDisplayName" => "Firefox Developer Edition policies",
+  "PayloadDescription" => "Extensions, search engine, autofill, telemetry and " \
+                          "suggested content settings for Firefox Developer Edition.",
+  "PayloadOrganization" => "indiebrain dotfiles",
+  "PayloadScope" => "User",
+  "PayloadRemovalDisallowed" => false,
+  "PayloadContent" => [
+    {
+      "PayloadType" => "com.apple.ManagedClient.preferences",
+      "PayloadVersion" => 1,
+      "PayloadIdentifier" => "#{PROFILE_IDENTIFIER}.preferences",
+      "PayloadUUID" => uuid_for("#{PROFILE_IDENTIFIER}.preferences"),
+      "PayloadDisplayName" => "Firefox Developer Edition policies",
+      "PayloadContent" => {
+        PREFERENCE_DOMAIN => {
+          "Forced" => [{ "mcx_preference_settings" => settings }]
+        }
+      }
+    }
+  ]
+}
+
+xml, status = Open3.capture2("plutil", "-convert", "xml1", "-o", "-", "-",
+                             stdin_data: JSON.generate(profile))
+abort "plutil could not convert the profile" unless status.success?
+
+File.write(output, xml)
+puts "Wrote #{output} (#{settings.size - 1} policies)"
+puts "Install it:  open #{output.inspect}"
+puts "then approve it in System Settings, Privacy & Security, Profiles."

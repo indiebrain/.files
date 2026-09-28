@@ -130,6 +130,27 @@ logs, Unix domain sockets, the current session, cached release notes, and
 a plugin lock file. Those are generated per host and change constantly, so
 the package ignores them and tracks only =config.toml=.
 
+** =firefox=
+
+Alongside the stowed configuration, this package holds
+=policies.json=, a Firefox enterprise policy file listing the extensions
+to install, DuckDuckGo as the only search engine, no saved logins or
+autofill, and no telemetry or suggested content. GNU Stow skips it, via
+the package's =.stow-local-ignore=, because Firefox reads it from its own
+locations rather than from the home directory. On Omarchy the installer
+copies it into place; on macOS there are two routes:
+
+- =firefox-apply-policies= copies it into the Firefox Developer Edition
+  application bundle. =initial-host-setup= runs this. A Firefox update
+  replaces the bundle and discards the file, so re-run it afterwards. It
+  has to run from a terminal: macOS App Management protection stops
+  background jobs from writing inside an application bundle.
+- =firefox-build-profile= wraps the same file in a macOS configuration
+  profile. Installing it is manual - =open= the generated file, then
+  approve it in System Settings, Privacy & Security, Profiles - but the
+  settings then live in the macOS managed preferences and survive Firefox
+  updates.
+
 ** =scripts=
 
 This package contains a number of utility shell scripts. When stowed via

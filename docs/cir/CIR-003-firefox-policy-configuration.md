@@ -79,13 +79,27 @@ or payment details, and no telemetry or suggested content.
   the Omarchy overlay, listed in that package's `.stow-local-ignore` so stow
   does not link it into the home directory. Each platform's installer copies it
   where that platform's Firefox reads it.
-- **On macOS, the application bundle rather than a configuration profile.** The
-  documented macOS route is a configuration profile, but installing one without
-  device management means a person approving it in System Settings, which an
-  installer cannot do. `scripts/bin/firefox-apply-policies` writes
-  `Contents/Resources/distribution/policies.json` inside the bundle instead.
-  The cost is durability: a Firefox update replaces the bundle and takes the
-  file with it, so the script is written to be re-run and says so.
+- **On macOS, both routes exist, and neither is automatic.**
+  `scripts/bin/firefox-apply-policies` writes
+  `Contents/Resources/distribution/policies.json` inside the application
+  bundle. It needs no approval, but a Firefox update replaces the bundle and
+  takes the file with it, so it has to be re-run.
+  `scripts/bin/firefox-build-profile` wraps the same file in a configuration
+  profile, which lands in the macOS managed preferences and survives updates,
+  at the cost of a person installing it by hand once.
+- **No launchd agent re-applies the bundle copy.** An agent watching the
+  application bundle and re-running the script looks like the obvious way to
+  survive updates, and it does fire, but the write fails with `EPERM`: macOS
+  App Management protection stops a process from modifying another
+  application's bundle unless it holds that permission, a launchd agent holds
+  none, and it cannot prompt for one. The same script succeeds from a terminal,
+  which has been granted it. So the bundle route is inherently manual, and the
+  profile is the only durable answer on macOS.
+- **The profile is generated, not stored.** `policies.json` stays the single
+  source; the profile is derived from it, so the two cannot disagree. Its
+  payload UUIDs are derived from its identifier rather than random, so
+  regenerating produces the same file and macOS replaces an installed profile
+  instead of stacking a second one.
 - **Search engine policy is viable on this channel.** The `SearchEngines` group
   was restricted to the Extended Support Release for years, which would have
   ruled out the search half of this. Firefox 139 opened it to every channel, and
