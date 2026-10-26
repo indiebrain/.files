@@ -3,7 +3,9 @@
 *~
 .#*
 *#
-**/.claude
-**/CLAUDE.md
 
+# Claude Code's per-machine files. What a project shares, CLAUDE.md and
+# .claude/settings.json among it, is that project's to commit, so a rule
+# keeping the rest of .claude out belongs in the repository and not here.
 **/.claude/settings.local.json
+**/CLAUDE.local.md
